@@ -199,6 +199,7 @@ for model in NEW_MODELS:
         "任务类型": model.get("任务类型"),
         "官网": model.get("官网"),
         "备注": model.get("备注"),
+        "模型发布时间": model.get("模型发布时间"),
         "记录创建时间": TODAY,
     }
     new_rows.append(row)
