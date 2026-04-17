@@ -9,14 +9,15 @@ AI 模型追踪 —— 端到端一键更新流水线
     python main.py --skip-verify      # 跳过核实状态步骤
 
 流水线步骤：
-    1. 准备基线：复制 Object-Models.xlsx → Object-Models-Updated.xlsx
+    1. 准备基线：复制 Object-Models-Old.xlsx → Object-Models-Updated.xlsx
     2. 录入腾讯研究院模型：运行 Test/update_models.py
     3. 录入 llmstats 模型：运行 Test/update_llmstats.py
     4. 综合更新（补充模型 + benchmark + 标记列）：运行 Test/final_update.py
     5. 添加核实状态列：运行 Test/add_verify_status.py
-    6. 数据完整性检查：运行 Test/check_result.py
-    7. 生成更新报告：运行 Report/generate_report.py
-    8. 整理 Case 文件：运行 Crawl/Arena_x/format_cases.py
+    6. 填充模型发布时间：运行 Test/add_release_dates.py
+    7. 数据完整性检查：运行 Test/check_result.py
+    8. 生成更新报告：运行 Report/generate_report.py
+    9. 整理 Case 文件：运行 Crawl/Arena_x/format_cases.py
 
 前置条件：
     - Object-Models.xlsx 存在（原始基线表格）
@@ -81,18 +82,24 @@ STEPS = [
     },
     {
         "number": 6,
+        "name": "填充模型发布时间",
+        "description": "根据 llm-updates 时间线和腾讯研究院文章日期填充'模型发布时间'列",
+        "script": ACTION_DIR / "Test" / "add_release_dates.py",
+    },
+    {
+        "number": 7,
         "name": "数据完整性检查",
         "description": "检查更新后表格的字段完整性",
         "script": ACTION_DIR / "Test" / "check_result.py",
     },
     {
-        "number": 7,
+        "number": 8,
         "name": "生成更新报告",
         "description": "生成 Markdown 格式的更新报告（含统计图表）",
         "script": ACTION_DIR / "Report" / "generate_report.py",
     },
     {
-        "number": 8,
+        "number": 9,
         "name": "整理 Case 文件",
         "description": "将 Crawl/Arena_x/ 下的原始 Case 文件整理为标准 Markdown 表格",
         "script": ACTION_DIR / "Crawl" / "Arena_x" / "format_cases.py",
