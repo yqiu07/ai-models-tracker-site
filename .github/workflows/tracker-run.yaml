@@ -1,0 +1,216 @@
+name: Daily Tracker Run
+
+on:
+  # 每天 UTC 22:00（北京时间 06:00）自动运行
+  schedule:
+    - cron: '0 22 * * *'
+
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      since:
+        description: '时间窗口起点 (YYYY-MM-DD)，留空则使用上次推送时间'
+        required: false
+        default: ''
+      until:
+        description: '时间窗口终点 (YYYY-MM-DD)，留空则使用当前时间'
+        required: false
+        default: ''
+      dry_run:
+        description: '是否 dry-run（不更新 state、不推送钉钉）'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "tracker-run"
+  cancel-in-progress: false
+
+env:
+  TZ: Asia/Shanghai
+  PYTHON_VERSION: '3.12'
+
+jobs:
+  run-tracker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd models-tracker
+          pip install -r requirements.txt
+
+      - name: Run tracker pipeline
+        env:
+          TRACKER_FIELD_API_KEY: ${{ secrets.TRACKER_FIELD_API_KEY }}
+          TRACKER_FIELD_API_BASE: ${{ secrets.TRACKER_FIELD_API_BASE }}
+          TRACKER_FIELD_MODEL: ${{ secrets.TRACKER_FIELD_MODEL }}
+          TRACKER_NOTE_MODEL: ${{ secrets.TRACKER_NOTE_MODEL }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          TRACKER_PROXY: ''
+          TRACKER_SITE_URL: ${{ vars.TRACKER_SITE_URL }}
+          TRACKER_SKIP_SSL_VERIFY: 'false'
+        run: |
+          cd models-tracker
+
+          # 构建命令参数
+          CMD="python tracker.py --output-format both"
+
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            CMD="$CMD --dry-run"
+          fi
+
+          if [ -n "${{ github.event.inputs.since }}" ]; then
+            CMD="$CMD --since ${{ github.event.inputs.since }}"
+          fi
+
+          if [ -n "${{ github.event.inputs.until }}" ]; then
+            CMD="$CMD --until ${{ github.event.inputs.until }}"
+          fi
+
+          echo "Running: $CMD"
+          $CMD
+        timeout-minutes: 30
+
+      - name: Archive Markdown to site content
+        run: |
+          #!/bin/bash
+          set -e
+
+          SOURCE_DIR="models-tracker/docs/markdown"
+          TARGET_DIR="models-tracker/site/content/cn"
+
+          if [ ! -d "$SOURCE_DIR" ] || [ -z "$(ls -A $SOURCE_DIR 2>/dev/null)" ]; then
+            echo "No markdown files generated, skipping archive."
+            exit 0
+          fi
+
+          for md_file in "$SOURCE_DIR"/*.md; do
+            filename=$(basename "$md_file")
+            # 从文件名提取年月: 2026-04-23.md -> 2026-04
+            YEAR_MONTH=$(echo "$filename" | cut -c 1-7)
+            TARGET_MONTH_DIR="$TARGET_DIR/$YEAR_MONTH"
+
+            # 创建月度目录和 _index.md
+            if [ ! -d "$TARGET_MONTH_DIR" ]; then
+              mkdir -p "$TARGET_MONTH_DIR"
+              YEAR=$(echo "$filename" | cut -c 1-4)
+              MONTH=$(echo "$filename" | cut -c 6-7)
+              year_month_num="${YEAR}${MONTH}"
+              index_weight=$((300000 - year_month_num))
+              printf -- "---\ntitle: %s-%s\nweight: %d\nbreadcrumbs: false\nsidebar:\n  open: true\n---\n" \
+                "$YEAR" "$MONTH" "$index_weight" > "$TARGET_MONTH_DIR/_index.md"
+              echo "Created month index: $TARGET_MONTH_DIR/_index.md"
+            fi
+
+            # 复制日报文件
+            cp "$md_file" "$TARGET_MONTH_DIR/$filename"
+            echo "Archived: $md_file -> $TARGET_MONTH_DIR/$filename"
+          done
+
+      - name: Update homepage cards
+        run: |
+          #!/bin/bash
+          set -e
+
+          TARGET_INDEX="models-tracker/site/content/cn/_index.md"
+          if [ ! -f "$TARGET_INDEX" ]; then
+            echo "Homepage not found, skipping card update."
+            exit 0
+          fi
+
+          # 查找最近 6 篇日报
+          ALL_NOTES=$(find models-tracker/site/content/cn -path "models-tracker/site/content/cn/*/????-??-??.md" -type f | sort -r | head -n 6)
+
+          if [ -z "$ALL_NOTES" ]; then
+            echo "No daily notes found, skipping card update."
+            exit 0
+          fi
+
+          # 更新最新日报链接
+          LATEST_NOTE=$(echo "$ALL_NOTES" | head -n 1)
+          LATEST_FILENAME=$(basename "$LATEST_NOTE" .md)
+          LATEST_YEAR_MONTH=$(echo "$LATEST_FILENAME" | cut -c 1-7)
+          LATEST_LINK="/${LATEST_YEAR_MONTH}/${LATEST_FILENAME}"
+
+          sed -i "s|LATEST_DAILY_URL|${LATEST_LINK}|g" "$TARGET_INDEX"
+          # 也更新已有链接（重复运行时）
+          sed -i "s|link=\"[^\"]*\" >}}.*阅读最新日报|link=\"${LATEST_LINK}\" >}}阅读最新日报|g" "$TARGET_INDEX"
+
+          # 生成卡片内容
+          CARDS_FILE=$(mktemp)
+          echo "$ALL_NOTES" | while read -r note_path; do
+            if [ -z "$note_path" ]; then continue; fi
+
+            note_filename=$(basename "$note_path" .md)
+            note_year_month=$(echo "$note_filename" | cut -c 1-7)
+            note_link="/${note_year_month}/${note_filename}"
+
+            n_y=$(echo "$note_filename" | cut -c 1-4)
+            n_m=$(echo "$note_filename" | cut -c 6-7)
+            n_d=$(echo "$note_filename" | cut -c 9-10)
+            note_display_title="${n_y}/${n_m}/${n_d}"
+
+            echo "  {{< card link=\"${note_link}\" title=\"AI模型日报 ${note_display_title}\" icon=\"calendar\" >}}" >> "$CARDS_FILE"
+          done
+
+          # 替换卡片区域
+          python3 -c '
+import re, sys
+index_path = sys.argv[1]
+cards_path = sys.argv[2]
+with open(cards_path) as f: cards = f.read().strip()
+with open(index_path) as f: content = f.read()
+pattern = r"<!-- LATEST_6_CARDS_START -->.*?<!-- LATEST_6_CARDS_END -->"
+replacement = f"<!-- LATEST_6_CARDS_START -->\n{cards}\n<!-- LATEST_6_CARDS_END -->"
+if re.search(pattern, content, re.DOTALL):
+    new_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+else:
+    new_content = content
+with open(index_path, "w") as f: f.write(new_content)
+' "$TARGET_INDEX" "$CARDS_FILE"
+          rm "$CARDS_FILE"
+
+          echo "Homepage cards updated."
+
+      - name: Fold previous month sidebar
+        run: |
+          #!/bin/bash
+          set -e
+
+          LATEST_NOTE=$(find models-tracker/site/content/cn -path "models-tracker/site/content/cn/*/????-??-??.md" -type f | sort -r | head -n 1)
+          if [ -z "$LATEST_NOTE" ]; then exit 0; fi
+
+          LATEST_MONTH=$(basename "$LATEST_NOTE" .md | cut -c 1-7)
+
+          if [[ "$LATEST_MONTH" =~ ^[0-9]{4}-[0-9]{2}$ ]]; then
+            PREV_MONTH=$(date -d "$LATEST_MONTH-01 -1 month" +"%Y-%m")
+            PREV_INDEX="content/cn/$PREV_MONTH/_index.md"
+
+            if [ -f "$PREV_INDEX" ] && grep -q "open: true" "$PREV_INDEX"; then
+              sed -i 's/open: true/open: false/g' "$PREV_INDEX"
+              echo "Folded sidebar for $PREV_MONTH"
+            fi
+          fi
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(content): daily tracker update"
+          file_pattern: 'models-tracker/site/content/* models-tracker/state/*'
+          commit_user_name: "GitHub Actions Bot"
+          commit_user_email: "actions@github.com"
