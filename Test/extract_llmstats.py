@@ -6,7 +6,7 @@ import pandas as pd
 import re
 
 # 加载已有模型
-df = pd.read_excel(r"D:\yuwang\action\Object-Models-Updated.xlsx")
+df = pd.read_excel(r"D:\yuwang\action\data\Object-Models-Updated.xlsx")
 existing_names = set()
 for name in df["模型名称"].dropna():
     existing_names.add(str(name).lower().strip())

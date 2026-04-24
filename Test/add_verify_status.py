@@ -5,7 +5,7 @@
 """
 import pandas as pd
 
-df = pd.read_excel(r"D:\yuwang\action\Object-Models-Updated.xlsx")
+df = pd.read_excel(r"D:\yuwang\action\data\Object-Models-Updated.xlsx")
 
 # HuggingFace实际核实结果
 HF_SUCCESS = {
@@ -127,7 +127,7 @@ for idx, row in df.iterrows():
             update_count += 1
             print("  [更新尺寸] {}: {}".format(name, params))
 
-df.to_excel(r"D:\yuwang\action\Object-Models-Updated.xlsx", index=False, engine="openpyxl")
+df.to_excel(r"D:\yuwang\action\data\Object-Models-Updated.xlsx", index=False, engine="openpyxl")
 
 print("\n总行数: {}".format(len(df)))
 print("列名: {}".format(list(df.columns)))

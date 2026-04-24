@@ -1,0 +1,51 @@
+标题: 腾讯研究院AI速递 20260423
+链接: https://www.sohu.com/a/1013204317_455313
+序号: 42
+================================================================================
+
+生成式AI
+一、OpenAI
+正式
+发布ChatGPT Images 2.0，多语言与思考能力
+1.OpenAI发布ChatGPT Images 2.0，支持复杂视觉任务和高密度文本渲染，最高2K分辨率，宽高比可在3:1至1:3间灵活调整；
+2.模型首次引入"思考能力"，可联网获取实时信息，单次提示最多生成8张角色与元素保持一致的图像；
+3.多语言渲染显著增强，中日韩印地孟加拉语文本表现突出，已向ChatGPT、Codex与API全量用户开放。
+二、Anthropic招募STEM研究员，驻场补齐Claude判断力短板
+1.Anthropic推出STEM Fellow项目，招募各学科专家驻场旧金山三个月，每周津贴3800美元，机器学习经验非必需；
+2.项目核心是让科学家用专业判断力校准Claude"自信但错误"的输出，弥补模型在长周期科研任务中的能力短板；
+3.这是三代Fellowship的深化，从发放API额度走向与顶级科学家共建，AI竞争从算力比拼转向行业专家资源争夺。
+三、谷歌发布Deep Research智能体，支持MCP协议与原生图表
+1.谷歌发布Deep Research和Deep Research Max两款自主研究智能体，基于Gemini 3.1 Pro构建，通过Gemini API付费套餐开放预览；
+2.新增MCP协议支持，可安全连接企业私有数据库与第三方数据源，已与FactSet、标普、PitchBook等金融数据商达成合作；
+3.报告中可原生生成图表和信息图，支持多模态输入与协作式规划，向企业级研究分析基础设施方向演进。
+四、Claude限流砍Pro权益，OpenAI趁机用Codex承接用户
+2.OpenAI趁机对用户开放Codex测试，免费与付费套餐均可使用，Codex负责人发文直接对标Claude Code；
+3.Codex近期新增Computer Use、内置浏览器、Chronicle屏幕记忆与90多项插件，
+目标
+从代码工具演变为全能桌面助手。
+五、马斯克SpaceX宣布600亿美元收购AI编程工具Cursor
+1.马斯克旗下SpaceX宣布拟以600亿美元收购Cursor，较去年11月估值翻倍，亦可选择以100亿美元建立合作关系；
+2.此前SpaceX以1.25万亿美元并购xAI，但Grok追赶OpenAI与Anthropic效果不佳，收购旨在借Cursor工程师生态补齐短板；
+3.SpaceX筹备6月IPO目标估值1.5万亿美元，Cursor
+或
+可接入百万H100当量的Colossus超算以提升模型训练能力。
+六、商汤绝影发布端侧大模型Sage，PinchBench完成率94%
+1.商汤绝影发布端侧多模态智能体基座大模型Sage，采用MoE架构，总参数32B、激活仅3B，已在英伟达Orin X平台部署；
+2.在PinchBench评测中最佳任务完成率达94%，超越Claude Opus 4.6（93.3%）、GPT-5.4（90.5%）等云端旗舰模型；
+3.依托自研SCOUT分级协同学习与ERL可擦除强化学习技术，训练算力节省60%、复杂任务完成率提升20%。
+前沿科技
+七、智平方
+港
+科
+大
+推出AlphaBrain Platform具身智能开源社区
+1.智平方联合港科大（广州）发布AlphaBrain Platform，全球首个一站式具身智能模型开源社区，打通数据、训练、模型与评测全链路；
+2.一次性开源三大"全球首创"：类脑VLA模型NeuroVLA、基于RL Token的VLA训练架构、可插拔世界模型架构WA；
+3.RL后训练参数从3.9B压缩至137M，单张4090显卡即可微调，覆盖LIBERO等8大主流Benchmark，显著降低研究门槛。
+报告观点
+八、《福布斯AI 50榜单》发布，Anthropic估值3800亿居首
+1.《福布斯》发布第八届AI 50榜单，OpenAI与Anthropic累计融资2426亿美元，占上榜企业总融资额3056亿美元的约80%；
+2.20家新面孔入围，包括开源模型公司Reflection（估值80亿美元）、AI演示工具Gamma、AI药物研发Chai Discovery等；
+3.四家女性创始企业上榜，包含穆拉蒂的Thinking Machine Labs与李飞飞的World Labs，并首次推出AI 50 Brink早期榜单。
+👇加入AGI数据库，AI智能问答
+返回搜狐，查看更多
