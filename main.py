@@ -144,6 +144,21 @@ def log_header(step_number, step_name, description):
     print(f"{'='*60}")
 
 
+
+def progress_bar(current, total, width=30):
+    """渲染进度条字符串。"""
+    filled = int(width * current / total)
+    bar = "█" * filled + "░" * (width - filled)
+    percent = int(100 * current / total)
+    return f"[{current}/{total}] {bar} {percent}%"
+
+def log_progress(step_num, total_steps, step_name):
+    """显示整体流水线进度。"""
+    bar = progress_bar(step_num, total_steps)
+    print(f"\n{'─'*60}")
+    print(f"  {bar}  步骤 {step_num}: {step_name}")
+    print(f"{'─'*60}")
+
 def run_script(script_path):
     """运行 Python 脚本，捕获输出"""
     if not script_path.exists():
@@ -553,6 +568,172 @@ def step_generate_acceptance_report():
 # 主流程
 # ============================================================
 
+
+# ============================================================
+# 步骤校验（每步执行完后验证产出）
+# ============================================================
+
+def verify_step(step_num, since_int=None, until_int=None):
+    """验证每步执行后的产出是否符合预期。返回 (passed, messages) 元组。"""
+    import pandas as pd
+    messages = []
+    passed = True
+
+    if step_num == 1:
+        # 校验：Updated.xlsx 存在且行数>0，Medium.xlsx 存在
+        if UPDATED_FILE.exists():
+            row_count = len(pd.read_excel(UPDATED_FILE, engine="openpyxl"))
+            messages.append(f"✅ Updated.xlsx 存在（{row_count} 行）")
+            if row_count == 0:
+                messages.append("❌ Updated.xlsx 行数为 0")
+                passed = False
+        else:
+            messages.append("❌ Updated.xlsx 不存在")
+            passed = False
+        if MEDIUM_FILE.exists():
+            medium_count = len(pd.read_excel(MEDIUM_FILE, engine="openpyxl"))
+            messages.append(f"✅ Medium.xlsx 存在（{medium_count} 行）")
+        else:
+            messages.append("⚠️ Medium.xlsx 不存在（首次运行属正常）")
+
+    elif step_num == 2:
+        # 校验：Updated.xlsx 行数、Extract/articles/ 文件数、TXCrawl_result.xlsx
+        articles_dir = ACTION_DIR / "Extract" / "articles"
+        txcrawl_result = ACTION_DIR / "Extract" / "TXCrawl_result.xlsx"
+        llmstats_json = ACTION_DIR / "Crawl" / "Arena_x" / "llmstats_models.json"
+        tx_dir = ACTION_DIR / "TXresearch"
+
+        if UPDATED_FILE.exists():
+            row_count = len(pd.read_excel(UPDATED_FILE, engine="openpyxl"))
+            messages.append(f"✅ Updated.xlsx 存在（{row_count} 行）")
+        else:
+            messages.append("❌ Updated.xlsx 不存在")
+            passed = False
+
+        # llmstats 校验
+        if llmstats_json.exists():
+            import json
+            with open(llmstats_json, "r", encoding="utf-8") as f:
+                llm_data = json.load(f)
+            messages.append(f"✅ llmstats_models.json 存在（{len(llm_data)} 条）")
+        else:
+            messages.append("⚠️ llmstats_models.json 不存在（llmstats 可能未抓取成功）")
+
+        # 腾讯研究院校验
+        if articles_dir.exists():
+            txt_files = list(articles_dir.glob("*.txt"))
+            messages.append(f"✅ Extract/articles/ 有 {len(txt_files)} 篇文章")
+            if since_int and until_int:
+                tag = f"{since_int}-{until_int}"
+                json_cache = tx_dir / f"articles_{tag}.json"
+                if json_cache.exists():
+                    messages.append(f"✅ 腾讯研究院 JSON 缓存存在: articles_{tag}.json")
+                else:
+                    messages.append(f"⚠️ 腾讯研究院 JSON 缓存不存在: articles_{tag}.json")
+                    messages.append(f"   💡 可能原因：Selenium/Chrome/ChromeDriver 未安装")
+                    messages.append(f"   💡 手动运行：cd Crawl\\TXresearch && python crawl_sohu.py --since {since_int} --until {until_int}")
+        else:
+            messages.append("⚠️ Extract/articles/ 目录不存在")
+
+        # TXCrawl_result.xlsx 校验
+        if txcrawl_result.exists():
+            tx_df = pd.read_excel(txcrawl_result, engine="openpyxl")
+            messages.append(f"✅ TXCrawl_result.xlsx 存在（{len(tx_df)} 行）")
+            # 检查是否有模型提取结果
+            model_col = "文章提及的新兴模型"
+            if model_col in tx_df.columns:
+                filled = tx_df[model_col].dropna().astype(str)
+                filled = filled[filled.str.len() > 0]
+                if len(filled) == 0:
+                    messages.append("⚠️ TXCrawl_result.xlsx 中[文章提及的新兴模型]列为空（需人机协作完成 L2 提取）")
+                else:
+                    messages.append(f"✅ TXCrawl_result.xlsx 中有 {len(filled)}/{len(tx_df)} 篇已提取模型信息")
+        else:
+            messages.append("⚠️ TXCrawl_result.xlsx 不存在")
+
+    elif step_num == 3:
+        # 校验：check_result.py 的输出（通过文件存在性判断）
+        check_files = list((ACTION_DIR / "Test").glob("DataForCheck*.md"))
+        if check_files:
+            messages.append(f"✅ 数据检查报告存在（{len(check_files)} 个文件）")
+        else:
+            messages.append("⚠️ 未找到数据检查报告文件")
+
+    elif step_num == 4:
+        # 校验：Report/ 下有 update_report_*.md
+        report_files = sorted(REPORT_DIR.glob("update_report_*.md"), reverse=True)
+        if report_files:
+            messages.append(f"✅ 更新报告存在: {report_files[0].name}")
+        else:
+            messages.append("⚠️ 未找到更新报告（Report/update_report_*.md）")
+
+    elif step_num == 5:
+        # 校验：format_cases.py 的输出
+        formatted = ACTION_DIR / "Crawl" / "Arena_x" / "formatted_leaderboards.md"
+        if formatted.exists():
+            messages.append(f"✅ Case 文件已整理: {formatted.name}")
+        else:
+            messages.append("⚠️ formatted_leaderboards.md 不存在（format_cases.py 可能未执行或脚本不存在）")
+
+    elif step_num == 6:
+        # 校验：diff_result.md 存在
+        diff_path = REPORT_DIR / "diff_result.md"
+        if diff_path.exists():
+            messages.append(f"✅ 对比报告存在: {diff_path.name}")
+            with open(diff_path, "r", encoding="utf-8") as f:
+                diff_content = f.read()
+            if "遗漏" in diff_content:
+                # 提取遗漏数量
+                import re
+                match = re.search(r"⚠️ 遗漏 \| (\d+)", diff_content)
+                if match and int(match.group(1)) > 0:
+                    messages.append(f"⚠️ 有 {match.group(1)} 个遗漏模型，请检查")
+        else:
+            messages.append("⚠️ diff_result.md 不存在")
+
+    elif step_num == 7:
+        # 校验：only.xlsx 存在或无新增
+        if ONLY_FILE.exists():
+            only_count = len(pd.read_excel(ONLY_FILE, engine="openpyxl"))
+            messages.append(f"✅ only.xlsx 存在（{only_count} 个新增模型）")
+        else:
+            messages.append("ℹ️ only.xlsx 不存在（可能无新增模型）")
+
+    elif step_num == 8:
+        # 校验：E2E-Test-Report.md + Update-Log.md 存在
+        if TEST_REPORT_FILE.exists():
+            messages.append(f"✅ 验收报告存在: {TEST_REPORT_FILE.name}")
+        else:
+            messages.append("❌ E2E-Test-Report.md 不存在")
+            passed = False
+        if UPDATE_LOG_FILE.exists():
+            messages.append(f"✅ 更新日志存在: {UPDATE_LOG_FILE.name}")
+        else:
+            messages.append("❌ Update-Log.md 不存在")
+            passed = False
+
+        # 数据质量校验
+        if UPDATED_FILE.exists():
+            df = pd.read_excel(UPDATED_FILE, engine="openpyxl")
+            total = len(df)
+            for col_name in ["公司", "备注", "模型发布时间"]:
+                if col_name in df.columns:
+                    filled = df[col_name].dropna().astype(str)
+                    filled = filled[(filled.str.len() > 0) & (filled != "nan")]
+                    pct = len(filled) / total * 100 if total > 0 else 0
+                    icon = "✅" if pct == 100 else "⚠️"
+                    messages.append(f"{icon} {col_name}: {len(filled)}/{total} ({pct:.0f}%)")
+
+    elif step_num == 9:
+        # 校验：日报 MD 文件存在
+        daily_reports = sorted(REPORT_DIR.glob("daily_report_*.md"), reverse=True)
+        if daily_reports:
+            messages.append(f"✅ 日报存在: {daily_reports[0].name}")
+        else:
+            messages.append("⚠️ 未找到日报文件")
+
+    return passed, messages
+
 def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, source="all", push=False):
     """运行端到端流水线（v2 自动化版）"""
     from datetime import timedelta as _td
@@ -593,7 +774,8 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
             results[step_num] = "SKIPPED"
             continue
 
-        log_header(step_num, step_name, step["description"])
+        log_progress(step_num, len(STEPS), step_name)
+        log(step["description"], "STEP")
 
         if dry_run:
             if step_num == 2:
@@ -683,6 +865,18 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
 
         results[step_num] = "SUCCESS" if success else "FAILED"
 
+        # ── 步骤校验 ──
+        if success and not dry_run:
+            verify_passed, verify_messages = verify_step(step_num, since_int, until_int)
+            if verify_messages:
+                print(f"  {'─'*40}")
+                print(f"  📋 步骤 {step_num} 校验结果:")
+                for msg in verify_messages:
+                    print(f"     {msg}")
+            if not verify_passed:
+                log(f"步骤 {step_num} 校验未通过（产出不符合预期）", "WARN")
+                log("流水线继续执行，但请注意校验警告", "WARN")
+
         if not success:
             log(f"步骤 {step_num} 失败，流水线中断", "ERROR")
             log("提示：修复问题后，可用 --step 参数从失败步骤重新开始", "WARN")
@@ -710,8 +904,26 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
     )
     if all_success and not dry_run:
         print(f"\n{'='*60}")
-        print(f"  🎉 流水线执行完成！")
+        print(f"  🎉 流水线执行完成！ {progress_bar(len(STEPS), len(STEPS))}")
         print(f"{'='*60}")
+
+        # 最终数据质量汇总
+        try:
+            import pandas as pd
+            if UPDATED_FILE.exists():
+                df = pd.read_excel(UPDATED_FILE, engine="openpyxl")
+                total = len(df)
+                print(f"\n  📊 数据质量汇总（{total} 个模型）:")
+                for col_name in ["公司", "备注", "模型发布时间"]:
+                    if col_name in df.columns:
+                        filled = df[col_name].dropna().astype(str)
+                        filled = filled[(filled.str.len() > 0) & (filled != "nan")]
+                        pct = len(filled) / total * 100 if total > 0 else 0
+                        icon = "✅" if pct == 100 else ("⚠️" if pct >= 80 else "❌")
+                        bar = progress_bar(len(filled), total, width=20)
+                        print(f"     {icon} {col_name}: {bar}")
+        except Exception:
+            pass
         if UPDATED_FILE.exists():
             print(f"  📊 更新表格: {UPDATED_FILE}")
         if MEDIUM_FILE.exists():
