@@ -6,8 +6,8 @@ import pandas as pd
 from collections import Counter
 from datetime import date
 
-UPDATED_PATH = r"D:\yuwang\action\Object-Models-Updated.xlsx"
-OLD_PATH = r"D:\yuwang\action\Object-Models-Old.xlsx"
+UPDATED_PATH = r"D:\yuwang\action\data\Object-Models-Updated.xlsx"
+OLD_PATH = r"D:\yuwang\action\data\Object-Models-Old.xlsx"
 REPORT_PATH = r"D:\yuwang\action\Report\update_report_20260416.md"
 
 df = pd.read_excel(UPDATED_PATH)

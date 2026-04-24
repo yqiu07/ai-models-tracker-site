@@ -4,7 +4,7 @@
 import pandas as pd
 from datetime import date
 
-OUTPUT = r"D:\yuwang\action\Object-Models-Updated.xlsx"
+OUTPUT = r"D:\yuwang\action\data\Object-Models-Updated.xlsx"
 existing_df = pd.read_excel(OUTPUT)
 print(f"当前模型数量: {len(existing_df)}")
 

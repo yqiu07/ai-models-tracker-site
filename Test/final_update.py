@@ -7,8 +7,8 @@
 import pandas as pd
 from datetime import date
 
-UPDATED_PATH = r"D:\yuwang\action\Object-Models-Updated.xlsx"
-OLD_PATH = r"D:\yuwang\action\Object-Models-Old.xlsx"
+UPDATED_PATH = r"D:\yuwang\action\data\Object-Models-Updated.xlsx"
+OLD_PATH = r"D:\yuwang\action\data\Object-Models-Old.xlsx"
 TODAY = str(date.today())
 
 # 加载数据

@@ -13,7 +13,7 @@
 """
 import pandas as pd
 
-UPDATED_PATH = r"D:\yuwang\action\Object-Models-Updated.xlsx"
+UPDATED_PATH = r"D:\yuwang\action\data\Object-Models-Updated.xlsx"
 
 # ============================================================
 # 模型发布时间数据

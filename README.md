@@ -1,6 +1,6 @@
-# AI 模型追踪项目
+# AI 模型追踪项目（v2 自动化版）
 
-> 目标：系统化追踪全球AI模型发布动态，明确各厂商旗舰模型版本号、对齐国内外趋势，按选型标准评估后接入评测链路。
+> 目标：系统化追踪全球 AI 模型发布动态，明确各厂商旗舰模型版本号、对齐国内外趋势，按选型标准评估后接入评测链路。
 
 ---
 
@@ -8,78 +8,207 @@
 
 | 指标 | 数值 |
 |---|---|
-| **当前模型总数** | 247 |
-| 原有模型 | 158（`Object-Models-Old.xlsx`） |
-| 本次新增 | 89（标记 New） |
-| 数据来源 | 腾讯研究院AI速递（19篇）+ llm-stats.com（7个排行榜） |
-| 最近更新 | 2026-04-16 |
+| 表格总模型数 | 161（持续增长中） |
+| 数据源 | llm-stats.com · 腾讯研究院 · HuggingFace |
+| 自动化程度 | v2.2（采集+校验+推送，L0/L1 全自动，L2 人机协作） |
+| 输出格式 | Excel（.xlsx） + Markdown 日报 + 钉钉推送 |
 
 ---
 
-## 目录结构
+## 核心理念：每轮校验
+
+每次查阅新时间段时，都会经过一轮完整的数据质量校验流程：
 
 ```
-action/
-├── Object-Models-Updated.xlsx   ← 主表格（247条，含标记列）
-├── Object-Models-Old.xlsx       ← 原始表格（158条，用于对比）
-├── README.md                    ← 本文件
-│
-├── Crawl/                       ← 数据采集
-│   ├── Arena_x/                 ← llm-stats.com 排行榜数据（7个文件）
-│   └── TXresearch/              ← 腾讯研究院爬虫脚本
-│
-├── Extract/                     ← 数据提取
-│   ├── articles/                ← 19篇腾讯研究院文章（txt）
-│   ├── crawl_articles.py        ← 文章爬取脚本
-│   ├── extract_models.py        ← 模型提取脚本
-│   ├── Taxonomy.xlsx            ← 字段填写规范
-│   ├── Focus.xlsx               ← 重点关注的机构/公司
-│   ├── TXCrawl.xlsx             ← 腾讯研究院文章列表
-│   ├── TXCrawl_result.xlsx      ← 提取结果（含新兴模型列）
-│   └── README.md                ← Extract 模块说明
-│
-├── Test/                        ← 核实与更新脚本
-│   ├── update_models.py         ← 腾讯研究院67个模型录入
-│   ├── extract_llmstats.py      ← llmstats模型提取
-│   ├── update_llmstats.py       ← llmstats14个模型录入
-│   ├── final_update.py          ← 综合更新（补充模型+benchmark+标记列）
-│   ├── verify_models.py         ← 模型信息核实
-│   ├── check_result.py          ← 数据完整性检查
-│   ├── hf_verify_results.json   ← HuggingFace核实缓存
-│   └── README.md                ← 核实方法说明
-│
-└── Report/                      ← 更新报告
-    ├── update_report_20260416.md ← 首次更新报告（含可视化图表）
-    ├── generate_report.py       ← 报告生成脚本（可复用）
-    └── README.md                ← 报告文件夹说明
+┌─────────────────────────────────────────────────────────────┐
+│                    一轮完整的时间段处理                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  阶段 A：自动采集（L0/L1，脚本自动完成）                      │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ 1. 准备基线 → 2. llmstats 抓取 → 3. 腾讯研究院爬虫    │  │
+│  │ → 4. HuggingFace 核实 → 5. 去重写入 Excel             │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                          ↓                                  │
+│  阶段 B：AI 创作校验（L2，人机协作完成）                      │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ 6. 文章模型信息提取（web search + AI 知识）             │  │
+│  │ 7. 语义化备注生成（web search + 多源综合）              │  │
+│  │ 8. 发布时间核实/补充（web search 交叉验证）             │  │
+│  │ 9. 公司/类型等字段补全                                  │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                          ↓                                  │
+│  阶段 C：检查 + 报告 + 推送（L0/L1，脚本自动完成）           │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ 10. 数据完整性检查 → 11. 生成报告 → 12. 钉钉推送       │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                                                             │
+│  ✅ 校验通过标准：公司100% · 备注100% · 发布时间100%         │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+**关键**：阶段 B 是 L2 AI 创作任务，每轮都必须执行，不能跳过或用模板规则降级替代。
 
 ---
 
-## 工作流程
+## 快速开始（面向人）
 
+### 环境准备
+
+```bash
+pip install pandas openpyxl requests beautifulsoup4 selenium
 ```
-1. 获取信息（Crawl/Extract）
-   ├── 腾讯研究院AI速递 → 爬取文章 → AI阅读提取模型
-   └── llm-stats.com → 复制排行榜数据 → 解析表格
 
-2. 去重过滤（Test）
-   └── 与 Object-Models-Old.xlsx 对比 → 剔除已追踪模型
+### 一键运行
 
-3. 信息核实（Test）
-   ├── 开源模型 → HuggingFace 模型页
-   ├── 闭源模型 → 官方发布页 / 平台入口
-   ├── Qwen系列 → 阿里云百炼
-   └── benchmark → llm-stats.com 排行榜
+```bash
+cd D:\yuwang\action
 
-4. 录入更新（Test）
-   └── 写入 Object-Models-Updated.xlsx + 标记列
+# 完整流水线（指定时间段）
+python main.py --since 20260424 --until 20260430
 
-5. 生成报告（Report）
-   └── 运行 generate_report.py → 输出 update_report_YYYYMMDD.md
+# 完整流水线 + 钉钉推送
+python main.py --since 20260424 --until 20260430 --push
 
-6. 同步到伦理小群
+# 预览模式（不实际执行）
+python main.py --since 20260424 --until 20260430 --dry-run
+
+# 只推送日报（不跑采集）
+python push_dingtalk.py --since 20260424 --until 20260430
 ```
+
+### 常用命令速查
+
+| 命令 | 说明 |
+|------|------|
+| `python main.py --since YYYYMMDD --until YYYYMMDD` | 完整流水线 |
+| `python main.py --dry-run` | 预览模式 |
+| `python main.py --step 3` | 从第3步开始 |
+| `python main.py --source llmstats` | 只跑 llmstats |
+| `python main.py --push` | 含钉钉推送 |
+| `python auto_collect.py --since YYYYMMDD --until YYYYMMDD` | 只跑数据采集 |
+| `python push_dingtalk.py --since YYYYMMDD --until YYYYMMDD --dry-run` | 预览日报 |
+
+---
+
+## 流水线步骤详解
+
+### 阶段 A：自动采集（L0/L1）
+
+由 `main.py` 步骤 1-2 和 `auto_collect.py` 自动完成：
+
+| 步骤 | 操作 | 等级 | 自动化方式 |
+|------|------|------|-----------|
+| 1 | 准备基线（备份 Updated→Medium，复制 Old→Updated） | L0 | 文件操作 |
+| 2a | llmstats 抓取 | L0 | HTTP 直连 + Next.js RSC JSON 解析，4个页面，291+ 模型 |
+| 2b | 腾讯研究院爬虫 | L0 | Selenium + 全文抓取，自动调用 `crawl_sohu.py` |
+| 2c | HuggingFace 核实 | L0 | API 直连，交叉校验参数量、License、pipeline_tag |
+| 2d | 去重与写入 | L1 | 模型名称归一化匹配，追加到 Excel |
+
+### 阶段 B：AI 创作校验（L2，每轮必须执行）
+
+**这是每轮校验的核心**。以下任务需要 AI 理解、搜索、综合生成，不可用简单规则替代：
+
+| 任务 | 方式 | 说明 |
+|------|------|------|
+| **文章模型信息提取** | AI 读取全文 + web search | 从腾讯研究院 AI 速递中提取新模型信息 |
+| **语义化备注生成** | web search + AI 知识综合 | 为每个新模型生成"定位;特性;对标"格式的备注 |
+| **发布时间核实/补充** | web search 交叉验证 | 核实 llmstats 回填的时间，补充缺失的时间 |
+| **公司/类型等字段补全** | 名称推断(L1) + web search(L2) | 简单映射为 L1，需搜索核实时升级为 L2 |
+
+**主方案**：在 AI Copilot 对话中，AI 使用 web search + 自身知识综合完成（推荐）
+
+**次级方案**：通过 LLM API（`extract_models_llm.py`）自动提取，需配置 API Key
+
+> ⚠️ **核心认知**：L2 任务必须使用 AI 能力（web search + AI 知识综合），绝不能用模板规则降级替代。
+> 模板规则生成的备注（如"Qwen系列模型"）质量极低，无法替代 AI 结合公开资料生成的语义化备注。
+
+### 阶段 C：检查 + 报告 + 推送（L0/L1）
+
+由 `main.py` 步骤 3-9 自动完成：
+
+| 步骤 | 操作 | 等级 |
+|------|------|------|
+| 3 | 数据完整性检查（`Test/check_result.py`） | L1 |
+| 4 | 生成更新报告（`Report/generate_report.py`） | L1 |
+| 5 | 整理 Case 文件 | L0 |
+| 6 | 对比新旧表格（Updated vs Medium） | L1 |
+| 7 | 同步新增模型（写入 only.xlsx） | L0 |
+| 8 | 生成验收报告 | L1 |
+| 9 | 钉钉推送日报（需 `--push` 参数） | L0 |
+
+---
+
+## AI 能力依赖等级
+
+| 等级 | 含义 | 典型操作 |
+|------|------|----------|
+| **L0** 纯机械 | 无需 AI，脚本/规则即可完成 | 文件移动、路径替换、Excel 读写、目录整理、备份 |
+| **L1** 规则判断 | 基于确定性规则的推断，可用代码实现 | 模型名称→公司映射、llmstats 精确匹配回填、去重、字段校验 |
+| **L2** AI 创作 | 需要 AI 理解、搜索、综合生成，不可用简单规则替代 | 语义化备注生成、发布时间核实、文章模型信息提取、数据质量改进 |
+
+---
+
+## 腾讯研究院模型提取
+
+腾讯研究院 AI 速递文章中包含大量模型信息，需要从全文中提取。这是每轮校验阶段 B 的重要输入。
+
+### 主方案：AI 对话提取（推荐）
+
+在 AI Copilot 对话中让 AI 直接读取文章并提取模型信息。
+
+**优点**：更准确、可交互追问、能结合 web search 交叉校验
+
+**适用**：日常更新、需要高质量备注时
+
+使用方式：
+1. 运行流水线步骤 2，全文会自动保存到 `Extract/articles/` 目录
+2. 在对话中告诉 AI："请读取 Extract/articles/ 下 MMDD-MMDD 的文章，提取模型信息"
+3. AI 会逐篇阅读并提取模型名称、公司、类型等字段
+4. AI 同时为每个模型生成语义化备注、核实发布时间（L2 任务）
+5. 确认后由 AI 写入 Excel
+
+### 次级方案：LLM API 自动提取
+
+通过 LLM API（DashScope 百炼 qwen-plus）自动从全文中提取模型信息。
+
+**优点**：全自动、批量处理、无需人工干预
+
+**适用**：批量补录、时间紧迫时
+
+```bash
+# 需要先配置 LLM API Key（在 .env 文件中添加，三选一）：
+#   LLM_API_KEY=sk-xxx                      ← 专用 Key
+#   TRACKER_FIELD_API_KEY=sk-xxx             ← 复用 models-tracker 的
+#   DASHSCOPE_API_KEY=sk-xxx                 ← 复用 DashScope 的
+#
+# API Base（可选，默认百炼）：
+#   LLM_API_BASE=https://dashscope.aliyuncs.com/compatible-mode/v1
+#   LLM_MODEL=qwen-plus
+
+# 运行提取
+cd Extract
+python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
+
+# 预览模式（不调用 LLM）
+python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD --dry-run
+```
+
+输出：
+- `Extract/TXCrawl_result.xlsx` — 文章级结果（提及的模型 / 未追踪到的模型）
+- `Extract/extracted_models_llm.json` — 完整提取结果（含字段信息）
+
+---
+
+## 数据源
+
+| 渠道 | 地址 | 自动化程度 | 说明 |
+|------|------|-----------|------|
+| **llm-stats.com** | [AI首页](https://llm-stats.com) / [LLM榜](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM榜](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates) | ✅ 全自动 | HTTP 直连 + Next.js RSC JSON 解析 |
+| **腾讯研究院** | [搜狐号主页](https://mp.sohu.com/profile?xpt=bGl1amluc29uZzIwMDBAMTI2LmNvbQ==) | ✅ 全自动 | Selenium 爬虫 + 全文抓取 |
+| **HuggingFace** | `https://huggingface.co/api/models/` | ✅ 全自动 | API 交叉校验开源模型 |
+| **Arena** | [arena.ai/leaderboard](https://arena.ai/leaderboard) | ❌ 手动 | 需手动复制排行榜到 Case 文件 |
+| **X 账号** | @rowancheung 等 | ❌ 手动 | 关注官方发布动态 |
 
 ---
 
@@ -93,117 +222,215 @@ action/
 | 公司 | 发布公司 | — |
 | 国内外 | 国内/国外 | — |
 | 开闭源 | 开源/闭源/集成产品 | — |
-| 尺寸 | 参数量 | 找不到则留空 |
-| 类型 | 基座/领域/微调/多模态/智能体 | 优先选领域而非微调 |
-| 能否推理 | thinking/non-thinking | 无CoT/diffusion一律non-thinking |
+| 尺寸 | 参数量 | HuggingFace 核实或留空 |
+| 类型 | 基座/领域/微调/多模态/智能体/代码/语音/视频/图像/具身 | — |
+| 能否推理 | thinking/non-thinking | 无 CoT/diffusion 一律 non-thinking |
 | 任务类型 | 主要任务 | — |
 | 官网 | 官方页面链接 | — |
-| 备注 | 补充信息 | — |
-| 记录创建时间 | 录入日期 | — |
-| 是否新增 | New/空 | 与Old.xlsx对比 |
-| 数据来源 | 原有/腾讯研究院/llmstats | — |
-| 核实方式 | 核实渠道 | HuggingFace/官网/公开榜单/web_search |
+| 备注 | 语义化描述 | 模型定位;技术特性;对标信息（分号分隔） |
+| 记录创建时间 | 录入日期 | 自动填充 |
+| 模型发布时间 | YYYYMMDD | 自动从数据源映射 |
+| 是否新增 | New/空 | 自动与 Old.xlsx 对比 |
+| 核实情况 | 核实渠道和结果 | HuggingFace/官网/公开榜单 |
+
+### 备注风格规范
+
+语义化标签式，分号分隔，中文为主技术术语保留英文。重在模型定位/能力/对标/技术特性，不堆积 benchmark 数字。
+
+**生成方式**：必须由 AI 结合 web search + 公开资料综合生成（L2），禁止用模板规则批量生成。
+
+示例：
+- `MoE架构；1T参数；262k上下文；GPQA 90.5%；$0.95/4；MIT (modified)`
+- `视频生成；成本减半；Lite版本`
+- `开源Agent；内置学习循环`
 
 ---
 
-## 数据来源
+## 钉钉推送
 
-| 渠道 | 地址 | 关注重点 |
-|---|---|---|
-| **llm-stats.com** | https://llm-stats.com | AI News、Leaderboards 前三个 |
-| **Arena** | https://arena.ai/leaderboard | Text 字段、Arena Overview |
-| **腾讯研究院** | https://news.qq.com/omn/author/8QMc2nlf74IUvjvZ | AI速递系列简讯 |
-| **X 账号** | @rowancheung、@Zai_org 等 | 官方发布动态 |
-| **官方机构** | 见 `Extract/Focus.xlsx` | 各公司官网/博客 |
+### 配置
+
+在 `action/.env` 文件中配置：
+
+```env
+DINGTALK_WEBHOOK=https://oapi.dingtalk.com/robot/send?access_token=xxx
+DINGTALK_SECRET=SECxxx
+```
+
+### 使用
+
+```bash
+# 通过流水线推送
+python main.py --since YYYYMMDD --until YYYYMMDD --push
+
+# 单独推送
+python push_dingtalk.py --since YYYYMMDD --until YYYYMMDD
+
+# 预览日报内容
+python push_dingtalk.py --since YYYYMMDD --until YYYYMMDD --dry-run
+```
+
+日报格式：AI 模型/智能体追踪日报，包含时间窗口内的总模型数、新增数、国内外/开闭源统计、按公司分组的模型列表。
 
 ---
 
-## 快速开始（用户使用指南）
+## 文件结构
 
-### 环境准备
-
-```bash
-# 确保已安装 Python 3.10+ 和以下依赖
-pip install pandas openpyxl
+```
+action/
+├── main.py                          ← 主流水线入口（阶段A+C）
+├── auto_collect.py                  ← 自动化数据采集（阶段A核心）
+├── push_dingtalk.py                 ← 钉钉推送（阶段C）
+├── .env                             ← 钉钉/LLM API 配置
+│
+├── data/                            ← 数据文件
+│   ├── Object-Models-Updated.xlsx   ← 最终输出表格
+│   ├── Object-Models-Old.xlsx       ← 基线表格
+│   ├── Object-Models.xlsx           ← 基线副本
+│   ├── Object-Models-Medium.xlsx    ← 更新前备份
+│   └── Object-Models-Updated - only.xlsx ← 仅新增模型
+│
+├── Report/                          ← 报告与日报
+│   ├── generate_report.py           ← 更新报告生成脚本
+│   ├── daily_report_*.md            ← 钉钉日报 Markdown
+│   ├── diff_result.md               ← 新旧对比报告
+│   ├── E2E-Test-Report.md           ← 端到端测试报告
+│   ├── Update-Log.md                ← 更新日志
+│   └── update_report_*.md           ← 详细更新报告
+│
+├── Crawl/
+│   ├── TXresearch/
+│   │   └── crawl_sohu.py            ← 腾讯研究院爬虫（Selenium）
+│   └── Arena_x/
+│       ├── extract_llmstats_json.py ← llmstats HTML→JSON 提取
+│       └── llmstats_models.json     ← llmstats 结构化数据（291模型）
+│
+├── Extract/
+│   ├── articles/                    ← 腾讯研究院文章全文（TXT）
+│   ├── crawl_articles.py            ← 文章全文爬取
+│   ├── extract_models.py            ← 模型提取（手动版，硬编码）
+│   ├── extract_models_llm.py        ← 模型提取（LLM API 自动版）
+│   ├── TXCrawl_result.xlsx          ← 文章级提取结果
+│   ├── Taxonomy.xlsx                ← 字段填写规范
+│   └── Focus.xlsx                   ← 重点关注机构列表
+│
+├── TXresearch/                      ← 爬虫 JSON 输出缓存
+├── Test/                            ← 数据完整性检查
+├── Backup/                          ← 历史备份
+└── README.md                        ← 本文件
 ```
 
-### 一键运行完整流水线
+---
 
-```bash
-cd D:\yuwang\action
-python main.py
+## AI 使用指南（给 AI 协作者看的）
+
+> 如果你是一个 AI（Claude、GPT、Qwen 等），正在被用户要求协助完成模型追踪任务，请先阅读本节。
+
+### 你的角色
+
+你是用户的**模型追踪协作者**，每轮新时间段的处理都需要你参与阶段 B（AI 创作校验）：
+
+- **提取新模型信息**（读取文章全文 + web search 交叉校验）
+- **生成语义化备注**（web search + AI 知识综合，L2 任务）
+- **核实发布时间**（web search 交叉验证，L2 任务）
+- **补全缺失字段**（公司、类型等，L1→L2）
+- 运行自动化流水线（阶段 A + C）
+- 生成日报并推送到钉钉
+
+### 每轮完整操作流程
+
+```
+阶段 A：一键采集（L0/L1，自动）
+  1. 运行 python main.py --since YYYYMMDD --until YYYYMMDD
+  2. 步骤 2 自动完成：
+     a. llmstats 抓取 → 新模型写入 data/Object-Models-Updated.xlsx
+     b. 腾讯研究院爬虫 → 全文保存到 Extract/articles/
+        → 元数据追加到 Extract/TXCrawl.xlsx 和 TXCrawl_result.xlsx
+     c. HuggingFace 交叉核实开源模型
+  3. 步骤 3-8 自动完成：检查 + 报告 + 对比 + 验收
+
+阶段 B：AI 创作校验（L2，人机协作，每轮必须执行）
+  4. 读取 Extract/articles/ 下的文章全文
+  5. 逐篇提取模型名称、公司、类型等字段
+  6. 为每个新模型生成语义化备注（web search + AI 知识）
+  7. 核实/补充发布时间（web search 交叉验证）
+  8. 补全缺失的公司/类型等字段
+  9. 与已有 Excel 去重，标注未追踪的新模型
+  10. 将结果写入 Excel（需用户确认）
+
+阶段 C：推送与验收（L0/L1，自动 + 人工终判）
+  11. 数据质量检查：公司100% · 备注100% · 发布时间100%
+  12. 运行 python push_dingtalk.py 推送日报
+  13. 用户检查钉钉群中的日报内容
 ```
 
-运行后将依次执行 8 个步骤，最终产出：
-- `Object-Models-Updated.xlsx` — 更新后的模型表格
-- `Report/update_report_YYYYMMDD.md` — 更新报告
-- `Crawl/Arena_x/formatted_leaderboards.md` — 排行榜汇总
+### 关键操作规范
 
-### 常用命令
-
-| 命令 | 说明 |
+| 操作 | 规范 |
 |------|------|
-| `python main.py` | 完整流水线（从头到尾） |
-| `python main.py --dry-run` | 预览模式，不实际执行 |
-| `python main.py --step 5` | 从第 5 步开始（跳过前面已完成的步骤） |
-| `python main.py --skip-verify` | 跳过核实状态步骤 |
+| 读取 Excel | 必须用 `pd.read_excel()` 读取，不要凭记忆猜测 |
+| 写入 Excel | 运行前提醒用户关闭 Excel |
+| 去重 | 填入前必须与 Updated.xlsx 中已有模型对比 |
+| 备注生成 | **必须** web search + AI 知识综合生成（L2）；兜底：`_build_llmstats_note()` 规则生成 |
+| 发布时间 | **必须** web search 交叉验证（L2）；不可只用 llmstats 未经验证的数据 |
+| HuggingFace 核实 | 直连 API，部分模型需登录（401）属已知限制 |
+| 腾讯研究院提取 | 主方案：对话中 AI 读取全文提取；次级方案：`extract_models_llm.py` |
 
-### 流水线步骤说明
+### 数据质量校验标准
 
+每轮处理完成后，必须达到以下质量标准才能进入推送阶段：
+
+| 字段 | 目标 | 校验方式 |
+|------|------|----------|
+| 公司 | 100% | `pd.read_excel()` 统计非空比例 |
+| 备注 | 100%（AI 创作质量） | 人工抽检语义化程度，禁止模板备注 |
+| 模型发布时间 | 100% | web search 交叉验证准确性 |
+
+### 常见陷阱
+
+1. **不要假设 Excel 内容** — 必须先 `pd.read_excel()` 读取
+2. **不要在 Excel 被占用时写入** — 提醒用户关闭
+3. **不要把"可以核实"说成"已核实"** — 区分"已做"和"可做"
+4. **不要用模板规则替代 AI 创作** — 备注生成、发布时间核实是 L2 任务
+5. **sub agent 统计结果需二次验证** — 用磁盘数据核实 sub agent 的断言
+6. **PowerShell 注意事项** — 不支持 `&&`，用 `;` 分隔；内联多行 Python 用临时脚本更可靠
+
+### LLM API 配置（次级方案）
+
+当用户无法在对话中让你提取模型信息时，可使用 LLM API 自动提取：
+
+```bash
+# .env 配置（优先级从高到低）
+LLM_API_KEY=sk-xxx                                          # 专用 Key
+TRACKER_FIELD_API_KEY=sk-xxx                                 # 复用 models-tracker 的
+DASHSCOPE_API_KEY=sk-xxx                                     # 复用 DashScope 的
+
+LLM_API_BASE=https://dashscope.aliyuncs.com/compatible-mode/v1
+LLM_MODEL=qwen-plus
+
+# 运行
+cd Extract
+python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
 ```
-步骤 1：准备基线        — 复制 Old.xlsx → Updated.xlsx
-步骤 2：录入腾讯研究院  — 追加腾讯研究院AI速递中提取的新模型
-步骤 3：录入 llmstats   — 追加 llm-stats.com 排行榜中的新模型
-步骤 4：综合更新        — 补充模型 + benchmark 数据更新 + "是否新增"列
-步骤 5：添加核实状态    — 添加"核实情况"列 + HuggingFace 核实的尺寸更新
-步骤 6：数据完整性检查  — 输出字段覆盖率统计
-步骤 7：生成更新报告    — 输出 Markdown 格式报告（含可视化图表）
-步骤 8：整理 Case 文件  — 将原始排行榜数据整理为标准 Markdown 表格
-```
 
-### 如何进行一次新的更新
+---
 
-1. **采集数据**：运行 `Crawl/` 下的爬虫脚本，或手动收集新模型信息
-2. **提取模型**：运行 `Extract/extract_models.py`，从文章中提取新模型列表
-3. **填入数据**：将新模型数据填入 `Test/` 下对应脚本的 `NEW_MODELS` 列表中
-4. **一键运行**：`python main.py`
-5. **人工抽检**：打开 `Object-Models-Updated.xlsx`，抽查新增模型的字段准确性
-6. **生成报告**：步骤 7 已自动生成，也可单独运行 `python main.py --step 7`
-
-### 前置文件要求
+## 前置文件要求
 
 | 文件 | 说明 | 必须存在 |
 |------|------|----------|
-| `Object-Models-Old.xlsx` | 原始基线表格（用于对比标记"是否新增"） | ✅ |
-| `Test/update_models.py` | 腾讯研究院模型数据（硬编码） | ✅ |
-| `Test/update_llmstats.py` | llmstats 模型数据（硬编码） | ✅ |
-| `Test/final_update.py` | 综合更新脚本 | ✅ |
+| `data/Object-Models-Old.xlsx` | 原始基线表格 | ✅ |
+| `Crawl/TXresearch/crawl_sohu.py` | 腾讯研究院爬虫 | ✅（步骤2自动调用） |
+| `Crawl/Arena_x/extract_llmstats_json.py` | llmstats 提取 | ✅（步骤2自动调用） |
+| `.env` | 钉钉/LLM 配置 | ⚠️（推送和 LLM 提取需要） |
 
 ---
 
-## 初始动作
+## 版本历史
 
-> 以下为项目启动时的原始操作指南，保留作为参考。
-
-● 日常维护
-    ○ 模型追踪：系统化监控全球AI模型发布动态，覆盖文生文（基座/领域/微调）、多模态、物理模型、智能体、trending产品及具身智能六大类；通过公开榜单（LLM-Stats、Arena）、公众号、X账号、官网等多渠道获取信息；按国内（阿里、字节、月之暗面等）与国外（OpenAI、Google DeepMind、Meta等）分层重点追踪；规范更新Models文档字段，包括模型名称、公司、开闭源、尺寸、类型、任务类型、官网、备注等，并同步至伦理小群。
-在D:\yuwang\action\Object-Models.xlsx这里面追踪
-目标：追踪AI发布动态，明确各厂商旗舰模型版本号、对齐国内外趋势。按照选型标准评估后接入评测链路
-1.https://llm-stats.com 重点关注字段AI News、和leaderboards的前三个
-2.https://arena.ai/leaderboard 重点关注Text字段，以及往下找到Arena Overview
-1. 公众号：腾讯研究院 https://news.qq.com/omn/author/8QMc2nlf74IUvjvZ
-2. X账号：@rowancheung、@Zai_org等官方账号  
- https://x.com/rowancheung
-https://x.com/Zai_org
-1. 官方机构、组织、公司...见 D:\yuwang\action\Extract\Focus.xlsx
-
-建议动作是：
-1. 获取信息
-    a. 信息源以腾讯研究院发布类简讯为主、其他长文查漏补缺。
-    b. 单独检查公开榜单涉及的模型，标准版全都要更新到表格D:\yuwang\action\Object-Models.xlsx里。 
-2. 核实信息
-    a. 开源模型在hugging face看到模型页之后按上面的信息填写，包括尺寸、特点、和上一版相比主要的优化方向...  
-    b. 闭源模型找到发布页或平台入口即可，信息一般少一点，主要选类型和任务类型字段，其他主要用途等补充信息写在备注里。
-    c. qwen系列在阿里云百炼上找到官方名称
-3. 更新在D:\yuwang\action\Object-Models.xlsx文档里，字段填写规范如下 D:\yuwang\action\Extract\Taxonomy.xlsx
-4. 同步到伦理小群
+| 版本 | 日期 | 变更 |
+|------|------|------|
+| v2.2 | 2026-04-23 | 数据质量全面提升至100%（备注/公司/发布时间）；新增AI能力依赖等级（L0/L1/L2）；确立"每轮校验"常态化流程；README 全面重构 |
+| v2.1 | 2026-04-23 | 目录整理（data/ + Report/）、备注语义化改造、腾讯研究院抓取修复与自动化集成、TXCrawl Excel 自动同步 |
+| v2.0 | 2026-04-23 | 全自动化改造：9步流水线、llmstats HTTP直连、腾讯研究院自动爬虫、HuggingFace交叉校验、钉钉推送、LLM自动提取次级方案 |
+| v1.0 | 2026-03-19 | 初版：12步半自动流水线，手动采集+硬编码模型列表 |

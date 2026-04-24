@@ -7,8 +7,8 @@ import pandas as pd
 import shutil
 from datetime import date
 
-SOURCE = r"D:\yuwang\action\Object-Models.xlsx"
-OUTPUT = r"D:\yuwang\action\Object-Models-Updated.xlsx"
+SOURCE = r"D:\yuwang\action\data\Object-Models.xlsx"
+OUTPUT = r"D:\yuwang\action\data\Object-Models-Updated.xlsx"
 
 # 先复制原文件
 shutil.copy2(SOURCE, OUTPUT)

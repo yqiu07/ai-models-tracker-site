@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_excel(r"D:\yuwang\action\Object-Models-Updated.xlsx")
+df = pd.read_excel(r"D:\yuwang\action\data\Object-Models-Updated.xlsx")
 print(f"总行数: {len(df)}")
 print(f"原有: 158, 新增: {len(df)-158}")
 print()
