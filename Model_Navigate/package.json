@@ -1,0 +1,21 @@
+{
+  "name": "model-navigate",
+  "version": "1.0.0",
+  "description": "AI 模型导航与追踪系统 — 全自动化采集→提取→校验→审核→推送流水线",
+  "author": "余网 (qiuyubo.qyb)",
+  "license": "MIT",
+  "skills": {
+    "model-navigate": {
+      "description": "AI 模型导航与追踪系统。全自动化 AI 模型追踪流水线，覆盖采集→提取→校验→审核→推送全链路。当用户需要追踪最新 AI 模型发布动态、自动采集 llmstats.com / 腾讯研究院 / HuggingFace 的模型信息、用 LLM 从文章中提取模型数据、用 GPT-5.5 审核模型质量和重要性评级、生成钉钉日报并推送、批量补全模型字段时使用。",
+      "entry": "SKILL.md"
+    }
+  },
+  "dependencies": {
+    "python": ">=3.13",
+    "pandas": ">=2.0",
+    "openpyxl": ">=3.1",
+    "requests": ">=2.31",
+    "selenium": ">=4.15",
+    "python-dotenv": ">=1.0"
+  }
+}
