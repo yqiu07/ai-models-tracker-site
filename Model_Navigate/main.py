@@ -177,21 +177,108 @@ def log_progress(step_num, total_steps, step_name):
     print(f"  {bar}  步骤 {step_num}: {step_name}")
     print(f"{'─'*60}")
 
-def run_script(script_path):
-    """运行 Python 脚本，实时输出到终端"""
+def run_subprocess_heartbeat(args, cwd=None, timeout_minutes=30, heartbeat_seconds=60,
+                            silent_limit=300, label=None, capture=False):
+    """通用心跳探测子进程运行器。
+
+    30 分钟上限，每 60 秒探测子进程是否存活且有输出。
+    如果超过 silent_limit 秒无任何输出，判定为不健康并终止。
+
+    Args:
+        args: 命令行参数列表
+        cwd: 工作目录
+        timeout_minutes: 最大运行时间（分钟），默认 30
+        heartbeat_seconds: 心跳间隔（秒），默认 60
+        silent_limit: 无输出多久判定为不健康（秒），默认 300
+        label: 日志标签（如 "auto_collect.py"）
+        capture: 是否捕获输出（True=不打印到终端，返回 stdout）
+
+    Returns:
+        (returncode: int, stdout: str)。stdout 仅 capture=True 时有内容。
+    """
+    import time as _time
+
+    tag = label or str(args[0]) if args else "subprocess"
+    max_wait = timeout_minutes * 60
+
+    proc = subprocess.Popen(
+        args,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        encoding="utf-8", errors="replace",
+        cwd=cwd,
+    )
+
+    elapsed = 0
+    last_output_time = _time.time()
+    collected_output = []
+
+    while elapsed < max_wait:
+        try:
+            proc.wait(timeout=heartbeat_seconds)
+            # 进程已结束，读取剩余输出
+            remaining = proc.stdout.read() if proc.stdout else ""
+            if remaining:
+                collected_output.append(remaining)
+                if not capture:
+                    for line in remaining.strip().split('\n'):
+                        if line.strip():
+                            print(f"    {line.rstrip()}")
+            break
+        except subprocess.TimeoutExpired:
+            elapsed += heartbeat_seconds
+            # 读取所有可用输出
+            try:
+                while True:
+                    line = proc.stdout.readline()
+                    if not line:
+                        break
+                    collected_output.append(line)
+                    if not capture:
+                        print(f"    {line.rstrip()}")
+                    last_output_time = _time.time()
+            except Exception:
+                pass
+            # 检查进程是否还在运行
+            if proc.poll() is not None:
+                break
+            # 健康探测：如果超过 silent_limit 无输出，判定不健康
+            silent_seconds = _time.time() - last_output_time
+            if silent_seconds > silent_limit:
+                log(f"{tag} 已 {int(silent_seconds)}s 无输出，判定为不健康，终止", "ERROR")
+                proc.kill()
+                proc.wait()
+                return (-1, "".join(collected_output))
+            minutes_elapsed = elapsed // 60
+            log(f"💓 心跳 [{minutes_elapsed}min/{timeout_minutes}min] {tag} 运行中...", "INFO")
+
+    returncode = proc.returncode if proc.returncode is not None else -1
+
+    if elapsed >= max_wait and proc.poll() is None:
+        log(f"{tag} 超时（{timeout_minutes}分钟），终止", "ERROR")
+        proc.kill()
+        proc.wait()
+        return (-1, "".join(collected_output))
+
+    return (returncode, "".join(collected_output))
+
+
+def run_script(script_path, timeout_minutes=30, heartbeat_seconds=60, silent_limit=300):
+    """运行 Python 脚本，心跳探测模式。"""
     if not script_path.exists():
         log(f"脚本不存在: {script_path}", "ERROR")
         return False
 
-    result = subprocess.run(
+    returncode, _ = run_subprocess_heartbeat(
         [sys.executable, "-X", "utf8", str(script_path)],
-        encoding="utf-8",
-        errors="replace",
         cwd=str(script_path.parent),
+        timeout_minutes=timeout_minutes,
+        heartbeat_seconds=heartbeat_seconds,
+        silent_limit=silent_limit,
+        label=script_path.name,
     )
 
-    if result.returncode != 0:
-        log(f"脚本执行失败（退出码 {result.returncode}）", "ERROR")
+    if returncode != 0:
+        log(f"脚本执行失败（退出码 {returncode}）", "ERROR")
         return False
 
     return True
@@ -904,7 +991,7 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
         if step_num == 1:
             success = step_prepare_baseline()
         elif step_num == 2:
-            # 自动化数据采集（调用 auto_collect.py，传入时间窗口参数）
+            # 自动化数据采集（调用 auto_collect.py，心跳探测模式）
             auto_collect_script = ACTION_DIR / "auto_collect.py"
             auto_collect_args = [
                 sys.executable, "-X", "utf8", str(auto_collect_script),
@@ -913,26 +1000,23 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
                 "--source", source,
             ]
             log(f"运行: auto_collect.py --since {since_int} --until {until_int} --source {source}", "STEP")
-            result = subprocess.run(
+            returncode, _ = run_subprocess_heartbeat(
                 auto_collect_args,
-                encoding="utf-8",
-                errors="replace",
                 cwd=str(ACTION_DIR),
+                timeout_minutes=30,
+                label="auto_collect.py",
             )
-            if result.returncode != 0:
-                log(f"auto_collect.py 失败（退出码 {result.returncode}）", "ERROR")
+            if returncode != 0:
+                log(f"auto_collect.py 失败（退出码 {returncode}）", "ERROR")
                 success = False
             else:
                 success = True
 
             # 步骤 2.5：LLM 自动提取腾讯研究院文章中的模型信息并回写主表格
-            #   化整为零：先 --list 获取文章数量，再逐篇 --index N 调用，
-            #   确保每步都有实时进度输出，不会因长时间阻塞而"看起来卡住"。
             if success:
                 extract_llm_script = ACTION_DIR / "Extract" / "extract_models_llm.py"
                 llm_json_cache = ACTION_DIR / "Extract" / "extracted_models_llm.json"
                 if extract_llm_script.exists():
-                    # Checkpoint：检查 LLM 提取结果是否今天已生成
                     if not force and _file_modified_today(llm_json_cache):
                         log("LLM 提取结果今天已生成（使用 --force 可强制重新执行）", "SKIP")
                         import json as _json
@@ -941,22 +1025,23 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
                         log(f"  缓存中有 {len(_cached)} 条提取结果")
                     else:
                         log("运行: extract_models_llm.py（LLM 自动提取腾讯研究院模型 → 回写主表格）", "STEP")
-                        # 先列出文章数量
+                        # 先列出文章数量（快速操作，用 capture 模式）
                         list_args = [
                             sys.executable, "-X", "utf8", str(extract_llm_script),
                             "--since", str(since_int),
                             "--until", str(until_int),
                             "--list",
                         ]
-                        list_result = subprocess.run(
+                        list_rc, list_stdout = run_subprocess_heartbeat(
                             list_args,
-                            capture_output=True, text=True,
-                            encoding="utf-8", errors="replace",
                             cwd=str(extract_llm_script.parent),
+                            timeout_minutes=2,
+                            label="extract_models_llm --list",
+                            capture=True,
                         )
-                        # 从 --list 输出中解析文章数量（找 [N] 行的最大 N）
+                        # 从 --list 输出中解析文章数量
                         import re as _re
-                        article_indices = _re.findall(r'\[(\d+)\]', list_result.stdout or "")
+                        article_indices = _re.findall(r'\[(\d+)\]', list_stdout or "")
                         article_count = max((int(i) for i in article_indices), default=0)
 
                         if article_count == 0:
@@ -972,12 +1057,13 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
                                     "--index", str(article_idx),
                                     "--write-excel",
                                 ]
-                                idx_result = subprocess.run(
+                                idx_rc, _ = run_subprocess_heartbeat(
                                     idx_args,
-                                    encoding="utf-8", errors="replace",
                                     cwd=str(extract_llm_script.parent),
+                                    timeout_minutes=10,
+                                    label=f"extract_models_llm [{article_idx}/{article_count}]",
                                 )
-                                if idx_result.returncode != 0:
+                                if idx_rc != 0:
                                     llm_failed += 1
                             if llm_failed > 0:
                                 log(f"LLM 提取完成（{llm_failed}/{article_count} 篇失败，不影响流水线）", "WARN")
@@ -995,15 +1081,13 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
                         log("GPT-5.5 审核报告今天已生成（使用 --force 可强制重新执行）", "SKIP")
                     else:
                         log("运行: review_models.py（GPT-5.5 审核 + 补全 + 置信度）", "STEP")
-                        review_args = [
-                            sys.executable, "-X", "utf8", str(review_script),
-                        ]
-                        review_result = subprocess.run(
-                            review_args,
-                            encoding="utf-8", errors="replace",
+                        review_rc, _ = run_subprocess_heartbeat(
+                            [sys.executable, "-X", "utf8", str(review_script)],
                             cwd=str(ACTION_DIR),
+                            timeout_minutes=10,
+                            label="review_models.py",
                         )
-                        if review_result.returncode != 0:
+                        if review_rc != 0:
                             log("review_models.py 失败（不影响流水线继续）", "WARN")
                         else:
                             log("GPT-5.5 审核完成", "INFO")
@@ -1030,12 +1114,13 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
                     "--save-md",
                 ]
                 log(f"运行: push_dingtalk.py --since {since_int} --until {until_int}", "STEP")
-                result = subprocess.run(
+                push_rc, _ = run_subprocess_heartbeat(
                     push_args,
-                    encoding="utf-8", errors="replace",
                     cwd=str(ACTION_DIR),
+                    timeout_minutes=5,
+                    label="push_dingtalk.py",
                 )
-                success = result.returncode == 0
+                success = push_rc == 0
                 if not success:
                     log("push_dingtalk.py 失败", "ERROR")
             else:
@@ -1187,8 +1272,32 @@ def main():
         action="store_true",
         help="强制重新执行所有步骤，忽略 checkpoint 缓存",
     )
+    parser.add_argument(
+        "--log", type=str, default=None,
+        help="将所有输出同时写入指定日志文件（适用于后台运行时轮询监控）",
+    )
 
     args = parser.parse_args()
+
+    # 如果指定了 --log，设置 tee 输出（同时写终端 + 日志文件）
+    if args.log:
+        import io
+
+        class TeeWriter:
+            """同时写入多个流的包装器。"""
+            def __init__(self, *streams):
+                self.streams = streams
+            def write(self, data):
+                for s in self.streams:
+                    s.write(data)
+                    s.flush()
+            def flush(self):
+                for s in self.streams:
+                    s.flush()
+
+        log_file = open(args.log, "w", encoding="utf-8")
+        sys.stdout = TeeWriter(sys.stdout, log_file)
+        sys.stderr = TeeWriter(sys.stderr, log_file)
 
     since_int = int(args.since) if args.since else None
     until_int = int(args.until) if args.until else None
@@ -1202,6 +1311,9 @@ def main():
         push=args.push,
         force=args.force,
     )
+
+    if args.log:
+        log_file.close()
 
     sys.exit(0 if success else 1)
 

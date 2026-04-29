@@ -490,15 +490,69 @@ def collect_txresearch(since_int: int, until_int: int) -> list[dict]:
         # 自动调用 crawl_sohu.py（需要 Chrome + Selenium）
         print(f"  🚀 自动启动爬虫: crawl_sohu.py --since {since_int} --until {until_int}")
         import subprocess
+        import time as _time
         try:
-            result = subprocess.run(
+            # 心跳探测模式：30 分钟上限，每 60 秒检查子进程是否存活
+            MAX_WAIT_SECONDS = 1800  # 30 分钟
+            HEARTBEAT_INTERVAL = 60  # 每 60 秒探测一次
+            proc = subprocess.Popen(
                 [sys.executable, "-X", "utf8", str(crawl_script),
                  "--since", str(since_int), "--until", str(until_int)],
                 cwd=str(crawl_script.parent),
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 encoding="utf-8", errors="replace",
-                timeout=600,
             )
-            if result.returncode == 0:
+            elapsed = 0
+            last_output_time = _time.time()
+            output_lines = []
+            while elapsed < MAX_WAIT_SECONDS:
+                # 非阻塞读取输出（探测活跃性）
+                import select
+                try:
+                    # Windows 不支持 select on pipes，用 readline with timeout
+                    proc.stdout.flush() if proc.stdout else None
+                except Exception:
+                    pass
+                # 等待 HEARTBEAT_INTERVAL 秒或进程结束
+                try:
+                    proc.wait(timeout=HEARTBEAT_INTERVAL)
+                    # 进程已结束
+                    remaining = proc.stdout.read() if proc.stdout else ""
+                    if remaining:
+                        output_lines.append(remaining)
+                        for line in remaining.strip().split('\n'):
+                            if line.strip():
+                                print(f"    {line.strip()}")
+                    break
+                except subprocess.TimeoutExpired:
+                    elapsed += HEARTBEAT_INTERVAL
+                    # 读取所有可用输出
+                    import io
+                    try:
+                        while True:
+                            line = proc.stdout.readline()
+                            if not line:
+                                break
+                            output_lines.append(line)
+                            print(f"    {line.rstrip()}")
+                            last_output_time = _time.time()
+                    except Exception:
+                        pass
+                    # 心跳：检查进程是否还在运行
+                    if proc.poll() is not None:
+                        break
+                    # 健康探测：如果 5 分钟无任何输出，认为不健康
+                    silent_seconds = _time.time() - last_output_time
+                    if silent_seconds > 300:
+                        print(f"  ⚠️ 爬虫已 {int(silent_seconds)}s 无输出，判定为不健康，终止")
+                        proc.kill()
+                        proc.wait()
+                        break
+                    minutes_elapsed = elapsed // 60
+                    print(f"  💓 心跳 [{minutes_elapsed}min/{MAX_WAIT_SECONDS//60}min] 爬虫运行中...")
+
+            returncode = proc.returncode if proc.returncode is not None else -1
+            if returncode == 0:
                 print(f"  ✅ 爬虫完成")
                 # 爬虫输出到 TXresearch/ 目录，检查 JSON
                 if json_path.exists():
@@ -519,14 +573,15 @@ def collect_txresearch(since_int: int, until_int: int) -> list[dict]:
                     else:
                         print(f"  ⚠️ 爬虫运行成功但未找到输出 JSON")
                         articles = []
-            else:
-                print(f"  ⚠️ 爬虫失败（退出码 {result.returncode}），尝试使用已有文章缓存")
-                print(f"  💡 手动运行：cd Crawl\\TXresearch && python crawl_sohu.py --since {since_int} --until {until_int}")
-                # Graceful fallback：检查 articles 目录是否已有文章
+            elif elapsed >= MAX_WAIT_SECONDS:
+                print(f"  ⏰ 爬虫超时（{MAX_WAIT_SECONDS//60}分钟），尝试使用已有文章缓存")
+                proc.kill()
+                proc.wait()
                 articles = []
-        except subprocess.TimeoutExpired:
-            print(f"  ⏰ 爬虫超时（600秒），尝试使用已有文章缓存")
-            articles = []
+            else:
+                print(f"  ⚠️ 爬虫失败（退出码 {returncode}），尝试使用已有文章缓存")
+                print(f"  💡 手动运行：cd Crawl\\TXresearch && python crawl_sohu.py --since {since_int} --until {until_int}")
+                articles = []
         except Exception as exc:
             print(f"  ⚠️ 爬虫启动失败: {exc}，尝试使用已有文章缓存")
             articles = []
