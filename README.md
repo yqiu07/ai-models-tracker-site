@@ -52,7 +52,16 @@ cp Model_Navigate/.env.example Model_Navigate/.env
 
 详细配置说明见 `Model_Navigate/.env.example`。
 
-> ⚠️ **阿里内网用户**：如果使用外网 API（如 `api.kuai.host`），可能被云壳安全策略拦截。请在 **云壳 → 防护记录 → 域名拦截** 中将 API 域名加白。症状：`SSLError: self-signed certificate` 或 403 "网站不在安全策略允许范围内"。
+> ⚠️ **阿里内网用户**：以下外网域名可能被云壳安全策略拦截，需在 **云壳 → 防护记录 → 域名拦截** 中加白：
+>
+> | 域名 | 用途 | 必需？ |
+> |------|------|--------|
+> | `api.kuai.host` | 主 LLM API（GPT-5.5 审核 + LLM 提取） | 推荐 |
+> | `llm-stats.com` | llmstats 数据源（模型排行榜抓取） | 推荐 |
+> | `dashscope.aliyuncs.com` | 备选 LLM API（DashScope / Qwen） | 通常已加白 |
+> | `huggingface.co` | HuggingFace 开源模型校验 | 可选 |
+>
+> 症状：`SSLError: self-signed certificate` 或 403 "网站不在安全策略允许范围内"，或抓取到的文件内容是"域名拦截"页面。
 
 ### 4. 首次运行（冷启动）
 
