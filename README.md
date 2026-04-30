@@ -10,7 +10,7 @@
 
 ## 功能亮点
 
-- **多源自动采集**：llmstats.com HTTP 直连 + 腾讯研究院 Selenium 爬虫 + HuggingFace API 交叉校验
+- **多源自动采集**：llm-stats.com 4 页面（[首页](https://llm-stats.com) / [LLM 详情](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates)）+ 腾讯研究院 Selenium 爬虫 + HuggingFace API 交叉校验
 - **LLM 智能提取**：从文章全文中自动提取模型名称、公司、类型等字段
 - **GPT-5.5 审核**：模型名称规范性审核 + 旧模型检测 + 字段补全 + 重要性评级（高/中/低）
 - **钉钉日报推送**：自动生成日报并推送到钉钉群
