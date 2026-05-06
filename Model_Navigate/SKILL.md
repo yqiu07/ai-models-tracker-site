@@ -33,7 +33,25 @@ Skill 工作目录为本文件所在目录。核心入口是 `main.py`，运行�
 ### 两套表格体系
 
 - **流水线表** `data/Object-Models-*.xlsx`：`main.py` 自动更新，每轮从 `Old.xlsx` 复制基线、采集写入 `Updated.xlsx`
-- **总表** `data/Models.xlsx`（如有）：全量模型信息，由 AI 在对话中手动维护
+- **总表** `data/Object-Models.xlsx`（推荐）：从最早到现在的全量模型/智能体记录，流水线步骤 7 自动增量合并
+
+### 总表说明
+
+`data/Object-Models.xlsx` 是全量模型总表，记录所有历次追踪到的模型/智能体信息。
+
+**行为**：每次流水线运行（步骤 7）时，自动将新增模型增量合并到总表。去重标准：`name.strip().lower().replace('-','').replace('_','').replace(' ','')`。
+
+**冷启动建议**：首次使用时，可将已有的模型数据（如历史 Excel、手工记录等）直接复制粘贴到 `data/Object-Models.xlsx` 中作为初始数据。总表列顺序必须与流水线表一致（参见下方字段定义）。
+
+**不放 Object-Models.xlsx** = 不启用总表功能，不影响流水线正常运行。
+
+### Trace 机制
+
+每次流水线执行完毕后，自动在 `Trace/` 目录下生成一份结构化运行记录：
+
+- **路径**：`Trace/trace_{since}-{until}_{timestamp}.md`
+- **内容**：执行参数、每步结果（SUCCESS/FAILED/SKIPPED）、数据质量填充率、产出文件清单、问题与不足
+- **用途**：复盘流水线是否按 SKILL 规范跑通、定位失败步骤、追踪历史运行情况
 
 ### 表格字段（14 列）
 
@@ -62,66 +80,20 @@ AI 能力等级：**L0** 纯机械 / **L1** 规则判断 / **L2** 需 AI 创作�
 
 ### 首次运行（冷启动）
 
-本 Skill 支持**从零冷启动**——无需提前准备基线文件或工作目录。
+本 Skill 支持**从零冷启动**——无需提前准备 `Object-Models-Old.xlsx` 基线文件。
 
-1. 创建 `.env` 文件（参考 `.env.example`），填入 API Key、Webhook 等脱敏参数
-2. 运行 `python main.py --since YYYYMMDD --until YYYYMMDD`
+1. 将本目录（或从 Skill 源复制）作为工作目录
+2. 创建 `.env` 文件（参考 `.env.example`），填入 API Key、Webhook 等脱敏参数
+3. 运行 `python main.py --since YYYYMMDD --until YYYYMMDD`
 
 冷启动时 `main.py` 会自动创建空基线 Excel（含正确表头），无需手动准备。
 
-**所有过程性数据**（爬虫结果、文章全文、JSON 缓存、报告等）都在 Skill 自身目录内生成（`data/`、`TXresearch/`、`Extract/articles/`、`Report/`、`Crawl/` 等），**不会额外创建工作目录**，对用户零负担。
-
-### ⚠️ 网络环境要求
-
-如果你在**阿里巴巴内网**（办公电脑 + 阿里郎）环境中使用，以下外网域名可能被**云壳安全策略**拦截，需要在云壳后台加白。
-
-**需要加白的域名**：
-
-| 域名 | 用途 | 必需？ |
-|------|------|--------|
-| `api.kuai.host` | 主 LLM API（GPT-5.5 审核 + LLM 提取） | 推荐 |
-| `llm-stats.com` | llmstats 数据源（模型排行榜抓取） | 推荐 |
-| `dashscope.aliyuncs.com` | 备选 LLM API（DashScope / Qwen） | 通常已加白 |
-| `huggingface.co` | HuggingFace 开源模型校验 | 可选 |
-
-**加白步骤**：
-1. 打开 **云壳 → 防护记录 → 域名拦截**
-2. 找到被拦截的域名，点击右侧按钮申请加白
-3. 加白后重新运行即可
-
-**症状**：`SSLError: certificate verify failed: self-signed certificate in certificate chain`，或 403 返回"网站不在安全策略默认允许的范围内"。抓取到的文件内容是"域名拦截"HTML 页面而非真实数据。
-
-> 如果主 API（kuai）不可用，`extract_models_llm.py` 会自动 fallback 到备选 API（DashScope）。但 `review_models.py`（GPT-5.5 审核）目前没有 fallback，需确保主 API 可达。
-
-### 总表功能
-
-在 `data/` 下放置 `Models.xlsx`（全量模型总表）即可启用总表功能。
-
-**行为**：每次流水线运行（步骤 7）时，自动将新增模型增量合并到总表。去重标准：`name.strip().lower().replace('-','').replace('_','').replace(' ','')`。
-
-**不放 Models.xlsx** = 不启用总表功能，不影响流水线正常运行。
-
 ### 阶段 A：自动采集
-
-**数据源 1：llm-stats.com**（排行榜抓取，4 个页面）
-
-| 页面 | URL | 说明 |
-|------|-----|------|
-| AI Leaderboard 首页 | `https://llm-stats.com` | LLM / Image / Video / TTS / STT / Embeddings 全量排行 |
-| LLM Leaderboard | `https://llm-stats.com/leaderboards/llm-leaderboard` | LLM 详情（参数量 / benchmark / index） |
-| Open LLM Leaderboard | `https://llm-stats.com/leaderboards/open-llm-leaderboard` | 仅开源模型 |
-| LLM Updates | `https://llm-stats.com/llm-updates` | 模型更新时间线 |
-
-抓取后由 `Crawl/Arena_x/extract_llmstats_json.py` 解析 Next.js RSC 数据，输出 `llmstats_models.json`。
-
-**数据源 2：腾讯研究院 AI 速递**（Selenium 爬虫 → LLM 提取模型）
-
-**数据源 3：HuggingFace API**（交叉校验开源模型）
 
 运行 `python main.py --since YYYYMMDD --until YYYYMMDD`，自动完成：
 
 1. 从 `Object-Models-Old.xlsx` 复制基线（冷启动时自动创建空基线）
-2. `auto_collect.py`：llmstats HTTP 直连（4 页面）+ 腾讯研究院 Selenium 爬虫 + HuggingFace API 校验
+2. `auto_collect.py`：llmstats HTTP 直连 + 腾讯研究院 Selenium 爬虫 + HuggingFace API 校验
 3. `Extract/extract_models_llm.py`（可选）：LLM 从文章全文提取模型
 4. `review_models.py`：GPT-5.5 审核（名称规范性 + 旧模型检测 + 字段补全 + 重要性评级）
 5. `Test/check_result.py`：数据检查

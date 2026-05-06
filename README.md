@@ -69,11 +69,14 @@ cp Model_Navigate/.env.example Model_Navigate/.env
 
 所有过程性数据（爬虫结果、文章全文、JSON 缓存、报告等）都在 `Model_Navigate/` 目录内自动生成，不会额外创建工作目录。
 
-### 5. 总表功能（可选）
+### 5. 总表功能（推荐）
 
-在 `Model_Navigate/data/` 下放置 `Models.xlsx`（全量模型总表）即可启用总表功能。
+在 `Model_Navigate/data/` 下放置 `Object-Models.xlsx`（全量模型总表）即可启用总表功能。
 
-每次流水线运行后，新增模型会自动增量合并到总表（标准化去重）。不放 `Models.xlsx` = 不启用，不影响流水线运行。
+- **自动合并**：每次流水线运行（步骤 7）后，新增模型自动增量合并到总表（标准化去重）
+- **冷启动建议**：首次使用时，可将已有的模型数据（历史 Excel、手工记录等）直接复制粘贴到总表作为初始数据
+- **去重标准**：`name.strip().lower().replace('-','').replace('_','').replace(' ','')`
+- 不放 `Object-Models.xlsx` = 不启用总表功能，不影响流水线运行
 
 ---
 
@@ -158,13 +161,15 @@ model-navigate-skill/               ← 项目根目录（GitHub 仓库）
     ├── package.json                 ← Skill 元数据
     ├── requirements.txt             ← Python 依赖
     ├── .env.example                 ← API Key 配置模板
+    ├── config.py                    ← 全局配置（列定义、超时、黑名单等）
     │
-    ├── main.py                      ← 流水线入口（9步）
+    ├── main.py                      ← 流水线入口（9步 + Trace 记录）
     ├── auto_collect.py              ← 自动化数据采集
     ├── review_models.py             ← GPT-5.5 模型审核 + 重要性评级
     ├── push_dingtalk.py             ← 钉钉日报生成与推送
     │
-    ├── data/                        ← 运行时数据（用户自备）
+    ├── data/                        ← 运行时数据（总表 Object-Models.xlsx 放这里）
+    ├── Trace/                       ← 流水线运行记录（自动生成）
     │
     ├── Crawl/
     │   ├── TXresearch/crawl_sohu.py ← 腾讯研究院爬虫（Selenium）

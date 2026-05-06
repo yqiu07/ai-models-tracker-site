@@ -81,6 +81,7 @@ UPDATE_LOG_FILE = REPORT_DIR / "Update-Log.md"
 
 TODAY = date.today().isoformat()
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
+TRACE_DIR = ACTION_DIR / "Trace"
 
 # ============================================================
 # 步骤定义
@@ -126,7 +127,7 @@ STEPS = [
     {
         "number": 7,
         "name": "同步新增模型",
-        "description": "将本次新增的模型同步到 Object-Models-Updated - only.xlsx",
+        "description": "将本次新增的模型同步到 Object-Models-Updated - only.xlsx，并同步到总表",
         "script": None,
     },
     {
@@ -536,63 +537,39 @@ def step_sync_only():
     df_result.to_excel(ONLY_FILE, index=False)
     log(f"已同步到: {ONLY_FILE.name}")
 
-    # ── 总表合并：如果 data/Models.xlsx 存在，将新增模型增量合并 ──
-    _sync_master_table(df_added)
+    # ------ 增量合并到总表 Object-Models.xlsx ------
+    master_file = DATA_DIR / "Object-Models.xlsx"
+    if master_file.exists() and not df_added.empty:
+        df_master = pd.read_excel(master_file)
+
+        def _normalize_name(name):
+            return str(name).strip().lower().replace("-", "").replace("_", "").replace(" ", "")
+
+        master_normalized = set(
+            df_master[name_col].dropna().apply(_normalize_name)
+        )
+        df_master_new = df_added[
+            ~df_added[name_col].apply(_normalize_name).isin(master_normalized)
+        ].copy()
+
+        if df_master_new.empty:
+            log("新增模型已全部存在于总表中，无需合并")
+        else:
+            # 对齐列结构：以总表已有列顺序为准
+            master_columns = list(df_master.columns)
+            for col in df_master_new.columns:
+                if col not in master_columns:
+                    master_columns.append(col)
+            df_master = df_master.reindex(columns=master_columns)
+            df_master_new = df_master_new.reindex(columns=master_columns)
+
+            df_merged = pd.concat([df_master, df_master_new], ignore_index=True)
+            df_merged.to_excel(master_file, index=False)
+            log(f"已合并 {len(df_master_new)} 个新模型到总表（原有 {len(df_master)}，现有 {len(df_merged)}）")
+    elif not master_file.exists():
+        log("总表 Object-Models.xlsx 不存在，跳过总表合并", "WARN")
 
     return True
-
-
-def _normalize_model_name(name: str) -> str:
-    """标准化模型名称用于去重比对。"""
-    return str(name).strip().lower().replace("-", "").replace("_", "").replace(" ", "")
-
-
-def _sync_master_table(df_new_models):
-    """将新增模型增量合并到总表 data/Models.xlsx（如果存在）。
-
-    总表是跨轮次的全量模型汇总。每次流水线运行后，自动将新增模型追加到总表。
-    如果总表不存在，则跳过（不自动创建——由用户决定是否启用总表功能）。
-    """
-    import pandas as pd
-
-    master_file = DATA_DIR / "Models.xlsx"
-    if not master_file.exists():
-        log("总表 Models.xlsx 不存在，跳过总表合并（如需启用，请在 data/ 下放置 Models.xlsx）", "INFO")
-        return
-
-    if df_new_models is None or df_new_models.empty:
-        log("无新增模型，跳过总表合并", "INFO")
-        return
-
-    name_col = "模型名称"
-    if name_col not in df_new_models.columns:
-        log(f"新增模型数据中缺少\'{name_col}\'列，跳过总表合并", "WARN")
-        return
-
-    df_master = pd.read_excel(master_file, engine="openpyxl")
-    master_names_normalized = set(
-        _normalize_model_name(n) for n in df_master[name_col].dropna().astype(str)
-    )
-
-    # 筛选总表中不存在的模型
-    new_normalized = df_new_models[name_col].astype(str).apply(_normalize_model_name)
-    mask_truly_new = ~new_normalized.isin(master_names_normalized)
-    df_to_add = df_new_models[mask_truly_new].copy()
-
-    if df_to_add.empty:
-        log("新增模型已全部存在于总表中，无需合并", "INFO")
-        return
-
-    # 对齐列：总表可能有额外列，新增模型数据可能缺少某些列
-    for col in df_master.columns:
-        if col not in df_to_add.columns:
-            df_to_add[col] = pd.NA
-    df_to_add = df_to_add[df_master.columns]
-
-    df_merged = pd.concat([df_master, df_to_add], ignore_index=True)
-    df_merged.to_excel(master_file, index=False)
-    log(f"总表合并完成：新增 {len(df_to_add)} 个模型（总表 {len(df_master)} -> {len(df_merged)}）")
-
 
 
 # ============================================================
@@ -1166,32 +1143,52 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
         elif step_num == 8:
             success = step_generate_acceptance_report()
         elif step_num == 9:
-            # 钉钉推送日报（需要 --push 参数启用，或设置了 DINGTALK_WEBHOOK）
+            # 钉钉推送日报（必须显式传 --push 才真正推送，否则仅 dry-run 预览）
+            # 这是不可撤回操作，防止流水线自动执行时误推送
             push_script = ACTION_DIR / "push_dingtalk.py"
-            has_webhook = bool(os.environ.get("DINGTALK_WEBHOOK", ""))
-            if not push and not has_webhook:
-                log("跳过钉钉推送（未指定 --push 且未设置 DINGTALK_WEBHOOK）", "SKIP")
-                success = True
-            elif push_script.exists():
-                push_args = [
+            if not push_script.exists():
+                log(f"推送脚本不存在: {push_script}", "ERROR")
+                success = False
+            elif not push:
+                # 未传 --push：仅 dry-run 预览，生成日报文件但不推送
+                log("未指定 --push，仅预览日报（dry-run）", "INFO")
+                log("💡 确认数据无误后，请手动执行: python push_dingtalk.py --since ... --until ...", "INFO")
+                preview_args = [
                     sys.executable, "-X", "utf8", str(push_script),
                     "--since", str(since_int),
                     "--until", str(until_int),
-                    "--save-md",
+                    "--dry-run",
                 ]
-                log(f"运行: push_dingtalk.py --since {since_int} --until {until_int}", "STEP")
-                push_rc, _ = run_subprocess_heartbeat(
-                    push_args,
+                preview_rc, _ = run_subprocess_heartbeat(
+                    preview_args,
                     cwd=str(ACTION_DIR),
                     timeout_minutes=5,
-                    label="push_dingtalk.py",
+                    label="push_dingtalk.py (dry-run)",
                 )
-                success = push_rc == 0
-                if not success:
-                    log("push_dingtalk.py 失败", "ERROR")
+                success = preview_rc == 0
             else:
-                log(f"推送脚本不存在: {push_script}", "ERROR")
-                success = False
+                # 显式传了 --push：真正推送
+                has_webhook = bool(os.environ.get("DINGTALK_WEBHOOK", ""))
+                if not has_webhook:
+                    log("推送失败：未设置 DINGTALK_WEBHOOK 环境变量（检查 .env）", "ERROR")
+                    success = False
+                else:
+                    push_args = [
+                        sys.executable, "-X", "utf8", str(push_script),
+                        "--since", str(since_int),
+                        "--until", str(until_int),
+                        "--save-md",
+                    ]
+                    log(f"运行: push_dingtalk.py --since {since_int} --until {until_int}", "STEP")
+                    push_rc, _ = run_subprocess_heartbeat(
+                        push_args,
+                        cwd=str(ACTION_DIR),
+                        timeout_minutes=5,
+                        label="push_dingtalk.py",
+                    )
+                    success = push_rc == 0
+                    if not success:
+                        log("push_dingtalk.py 失败", "ERROR")
         elif step["script"]:
             success = run_script(step["script"])
         else:
@@ -1280,6 +1277,109 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
         formatted_path = ACTION_DIR / "Crawl" / "Arena_x" / "formatted_leaderboards.md"
         if formatted_path.exists():
             print(f"  📋 排行榜汇总: {formatted_path}")
+
+    # ── Trace 记录 ──
+    try:
+        TRACE_DIR.mkdir(parents=True, exist_ok=True)
+        trace_filename = f"trace_{since_int}-{until_int}_{TIMESTAMP}.md"
+        trace_path = TRACE_DIR / trace_filename
+
+        trace_lines = [
+            f"# Trace: {since_int}-{until_int}",
+            "",
+            f"**执行时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            "",
+            "## 参数",
+            "",
+            f"| 参数 | 值 |",
+            f"|------|-----|",
+            f"| since | {since_int} |",
+            f"| until | {until_int} |",
+            f"| source | {source} |",
+            f"| push | {push} |",
+            f"| force | {force} |",
+            f"| start_step | {start_step} |",
+            "",
+            "## 步骤结果",
+            "",
+            "| 步骤 | 名称 | 状态 |",
+            "|------|------|------|",
+        ]
+        for step in STEPS:
+            step_num = step["number"]
+            status = results.get(step_num, "NOT_RUN")
+            trace_lines.append(f"| {step_num} | {step['name']} | {status} |")
+
+        # 数据质量
+        trace_lines.extend(["", "## 数据质量", ""])
+        try:
+            import pandas as pd
+            if UPDATED_FILE.exists():
+                df_trace = pd.read_excel(UPDATED_FILE, engine="openpyxl")
+                total_trace = len(df_trace)
+                trace_lines.append(f"模型总数: {total_trace}")
+                trace_lines.append("")
+                trace_lines.append("| 字段 | 已填 | 总数 | 填充率 |")
+                trace_lines.append("|------|------|------|--------|")
+                for col_name in ["公司", "备注", "模型发布时间"]:
+                    if col_name in df_trace.columns:
+                        filled = df_trace[col_name].dropna().astype(str)
+                        filled = filled[(filled.str.len() > 0) & (filled != "nan")]
+                        filled_count = len(filled)
+                        pct = filled_count / total_trace * 100 if total_trace > 0 else 0
+                        trace_lines.append(f"| {col_name} | {filled_count} | {total_trace} | {pct:.1f}% |")
+        except Exception:
+            trace_lines.append("（无法读取数据质量信息）")
+
+        # 产出文件列表
+        trace_lines.extend(["", "## 产出文件", ""])
+        output_files = [
+            ("更新表格", UPDATED_FILE),
+            ("更新前备份", MEDIUM_FILE),
+            ("仅新增模型", ONLY_FILE),
+            ("对比报告", REPORT_DIR / "diff_result.md"),
+            ("测试报告", TEST_REPORT_FILE),
+            ("更新日志", UPDATE_LOG_FILE),
+        ]
+        report_files_trace = sorted((ACTION_DIR / "Report").glob("update_report_*.md"), reverse=True)
+        if report_files_trace:
+            output_files.append(("详细报告", report_files_trace[0]))
+        formatted_path_trace = ACTION_DIR / "Crawl" / "Arena_x" / "formatted_leaderboards.md"
+        output_files.append(("排行榜汇总", formatted_path_trace))
+        for label, fpath in output_files:
+            exists_icon = "✅" if fpath.exists() else "❌"
+            trace_lines.append(f"- {exists_icon} **{label}**: `{fpath.name}`")
+
+        # 问题与不足
+        trace_lines.extend(["", "## 问题与不足", ""])
+        failed_steps = [
+            f"步骤 {s['number']} ({s['name']})"
+            for s in STEPS if results.get(s["number"]) == "FAILED"
+        ]
+        if failed_steps:
+            trace_lines.append(f"### 失败步骤")
+            for fs in failed_steps:
+                trace_lines.append(f"- ❌ {fs}")
+        else:
+            trace_lines.append("无失败步骤。")
+
+        diff_path_trace = REPORT_DIR / "diff_result.md"
+        if diff_path_trace.exists():
+            try:
+                diff_content = diff_path_trace.read_text(encoding="utf-8")
+                import re
+                missing_match = re.search(r"遗漏模型[^\d]*(\d+)", diff_content)
+                if missing_match:
+                    missing_count = missing_match.group(1)
+                    trace_lines.append(f"\n### 遗漏模型")
+                    trace_lines.append(f"- 遗漏模型数: **{missing_count}**")
+            except Exception:
+                pass
+
+        trace_path.write_text("\n".join(trace_lines), encoding="utf-8")
+        log(f"Trace 记录已生成: {trace_path}")
+    except Exception as trace_err:
+        log(f"Trace 记录生成失败: {trace_err}", "WARN")
 
     return all_success
 

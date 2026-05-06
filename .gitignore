@@ -35,3 +35,13 @@ Crawl/Arena_x/llmstats_multimodal.json
 Crawl/Arena_x/*.network-response
 Crawl/Arena_x/*.png
 Crawl/Arena_x/llm-stats-*.com
+Crawl/Arena_x/formatted_leaderboards.md
+
+# Trace 运行记录（数据文件，不入库）
+Trace/*.md
+!Trace/.gitkeep
+
+# 其他运行产出
+Report/E2E-Test-Report.md
+Report/Update-Log.md
+.checkpoints/
