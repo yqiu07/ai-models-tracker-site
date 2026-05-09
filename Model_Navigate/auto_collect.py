@@ -871,6 +871,7 @@ DOMESTIC_COMPANIES = frozenset({
     "阿里", "深度求索", "智谱", "月之暗面", "MiniMax", "百度", "腾讯",
     "字节跳动", "百川", "零一万物", "昆仑万维", "商汤", "讯飞", "阶跃星辰",
     "面壁智能", "稀宇科技", "幻方量化", "硅基流动",
+    "蚂蚁", "美团", "小米", "快手", "小红书", "宇树", "智源",
 })
 
 # ── 平台注册表 ──
@@ -979,6 +980,70 @@ PLATFORM_REGISTRY = [
         "note": "百度千帆平台",
         "fetch_fn": "_fetch_qianfan_models",
     },
+    # ── 官方平台（补全 Focus.xlsx 重点厂商）──
+    {
+        "name": "MiniMax",
+        "type": "openai",
+        "api_base_env": "MINIMAX_API_BASE",
+        "api_key_env": "MINIMAX_API_KEY",
+        "default_company": "MiniMax",
+        "owner_map": {},
+        "skip_patterns": [],
+        "doc_url": "https://platform.minimaxi.com/docs",
+        "note": "MiniMax 开放平台",
+    },
+    {
+        "name": "腾讯混元 Hunyuan",
+        "type": "openai",
+        "api_base_env": "HUNYUAN_API_BASE",
+        "api_key_env": "HUNYUAN_API_KEY",
+        "default_company": "腾讯",
+        "owner_map": {"deepseek": "深度求索", "qwen": "阿里"},
+        "skip_patterns": [],
+        "doc_url": "https://cloud.tencent.com/document/product/1729/111007",
+        "note": "腾讯混元平台",
+    },
+    {
+        "name": "阶跃星辰 StepFun",
+        "type": "openai",
+        "api_base_env": "STEPFUN_API_BASE",
+        "api_key_env": "STEPFUN_API_KEY",
+        "default_company": "阶跃星辰",
+        "owner_map": {"deepseek": "深度求索"},
+        "skip_patterns": [],
+        "doc_url": "https://platform.stepfun.com/docs",
+        "note": "阶跃星辰 StepFun",
+    },
+    # ── 聚合平台（兜底补充源）──
+    {
+        "name": "OpenRouter",
+        "type": "custom",
+        "api_base_env": "OPENROUTER_API_BASE",
+        "api_key_env": "OPENROUTER_API_KEY",
+        "default_company": "未知",
+        "owner_map": {},
+        "skip_patterns": [],
+        "doc_url": "https://openrouter.ai/docs",
+        "note": "OpenRouter 聚合平台",
+        "fetch_fn": "_fetch_openrouter_models",
+    },
+    {
+        "name": "酷爱 Kuai",
+        "type": "openai",
+        "api_base_env": "KUAI_API_BASE",
+        "api_key_env": "KUAI_API_KEY",
+        "default_company": "未知",
+        "owner_map": {
+            "qwen": "阿里", "deepseek": "深度求索", "glm": "智谱",
+            "gpt": "OpenAI", "claude": "Anthropic", "gemini": "Google",
+            "llama": "Meta", "mistral": "Mistral", "doubao": "字节跳动",
+            "ernie": "百度", "hunyuan": "腾讯", "kimi": "月之暗面",
+            "minimax": "MiniMax", "step": "阶跃星辰",
+        },
+        "skip_patterns": [],
+        "doc_url": "https://doc.kuai.host",
+        "note": "酷爱 Kuai 聚合平台",
+    },
 ]
 
 
@@ -1031,9 +1096,64 @@ def _fetch_qianfan_models(config: dict) -> list[dict]:
     return unified
 
 
+# ── OpenRouter org slug → 公司名映射 ──
+_OPENROUTER_ORG_MAP = {
+    "openai": "OpenAI", "anthropic": "Anthropic", "google": "Google",
+    "meta-llama": "Meta", "mistralai": "Mistral", "nvidia": "NVIDIA",
+    "x-ai": "xAI", "cohere": "Cohere", "amazon": "Amazon",
+    "qwen": "阿里", "deepseek": "深度求索", "thudm": "智谱",
+    "01-ai": "零一万物", "baichuan-inc": "百川",
+    "minimax": "MiniMax", "moonshot": "月之暗面",
+    "stepfun": "阶跃星辰", "bytedance": "字节跳动",
+    "microsoft": "Microsoft", "databricks": "Databricks",
+    "ai21": "AI21 Labs", "perplexity": "Perplexity",
+    "inflection": "Inflection", "nousresearch": "Nous Research",
+}
+
+
+def _fetch_openrouter_models(config: dict) -> list[dict]:
+    """通过 OpenRouter /api/v1/models 获取全球模型聚合列表。
+
+    OpenRouter 返回额外字段（pricing, architecture, top_provider 等），
+    模型 ID 格式为 org/model-name，可直接从 org 推断公司归属。
+    返回统一的 [{id, created, _owner}] 格式，_owner 用于覆盖默认公司推断。
+    """
+    api_base = os.environ.get(config["api_base_env"], "")
+    api_key = os.environ.get(config["api_key_env"], "")
+    url = f"{api_base.rstrip('/')}/models"
+    headers = {"Authorization": f"Bearer {api_key}"}
+
+    resp = requests.get(url, headers=headers, timeout=60)
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text[:200]}")
+
+    data = resp.json()
+    raw_models = data.get("data", [])
+
+    unified = []
+    for model in raw_models:
+        model_id = model.get("id", "")
+        created = model.get("created", 0)
+
+        # 从 org/model-name 格式提取 org 并映射到公司名
+        org_slug = model_id.split("/")[0] if "/" in model_id else ""
+        owner = _OPENROUTER_ORG_MAP.get(org_slug, "")
+
+        # 用模型名部分（去掉 org 前缀）作为 display name
+        display_name = model_id.split("/", 1)[1] if "/" in model_id else model_id
+
+        unified.append({
+            "id": display_name,
+            "created": created,
+            "_owner": owner,  # 额外字段，供 _model_to_row 使用
+        })
+    return unified
+
+
 # ── 自定义 fetch 函数注册表（通过函数名字符串映射到实际函数）──
 _CUSTOM_FETCH_FNS = {
     "_fetch_qianfan_models": _fetch_qianfan_models,
+    "_fetch_openrouter_models": _fetch_openrouter_models,
 }
 
 
@@ -1047,10 +1167,14 @@ def _resolve_company(model_id_lower: str, config: dict) -> str:
     return config.get("default_company", "未知")
 
 
-def _model_to_row(model_id: str, created_ts: int, config: dict) -> dict:
-    """将平台返回的单个模型信息转换为标准行格式。"""
+def _model_to_row(model_id: str, created_ts: int, config: dict,
+                   owner_override: str = "") -> dict:
+    """将平台返回的单个模型信息转换为标准行格式。
+
+    owner_override: 由自定义适配器预解析的公司名（如 OpenRouter 从 org slug 解析）。
+    """
     display_name = model_id.split("/")[-1] if "/" in model_id else model_id
-    company = _resolve_company(model_id.lower(), config)
+    company = owner_override or _resolve_company(model_id.lower(), config)
     domestic = "国内" if company in DOMESTIC_COMPANIES else "国外"
 
     # 推断开闭源：带参数量后缀的通常是开源模型的部署版
@@ -1116,7 +1240,9 @@ def _collect_single_platform(config: dict) -> list[dict]:
             skipped += 1
             continue
 
-        rows.append(_model_to_row(model_id, created_ts, config))
+        # 自定义适配器可能预解析了 _owner 字段（如 OpenRouter）
+        owner_override = model.get("_owner", "")
+        rows.append(_model_to_row(model_id, created_ts, config, owner_override))
 
     if skipped:
         print(f"    ⏭️ 跳过: {skipped} 个（旧版模型）")

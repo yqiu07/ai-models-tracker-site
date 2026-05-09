@@ -183,17 +183,29 @@ AI 会自动加载 `Model_Navigate/SKILL.md` 并按规范执行。
 
 第四数据源是一个**通用的平台模型目录采集子 pipeline**，通过适配器模式支持多个 AI 平台的模型目录 API：
 
+**官方平台**（数据最准确，优先使用）：
+
 | 平台 | API 类型 | 环境变量 | 状态 |
 |------|---------|---------|------|
-| DashScope 百炼 | OpenAI 兼容 `/models` | `LLM_API_BASE` + `LLM_API_KEY` | ✅ 已验证 |
-| 硅基流动 SiliconFlow | OpenAI 兼容 `/models` | `SILICONFLOW_API_BASE` + `SILICONFLOW_API_KEY` | 🔧 待配置 |
-| DeepSeek | OpenAI 兼容 `/models` | `DEEPSEEK_API_BASE` + `DEEPSEEK_API_KEY` | 🔧 待配置 |
-| 火山引擎 | OpenAI 兼容 `/models` | `VOLCENGINE_API_BASE` + `VOLCENGINE_API_KEY` | 🔧 待配置 |
-| Moonshot 月之暗面 | OpenAI 兼容 `/models` | `MOONSHOT_API_BASE` + `MOONSHOT_API_KEY` | 🔧 待配置 |
-| 智谱 Zhipu | OpenAI 兼容 `/models` | `ZHIPU_API_BASE` + `ZHIPU_API_KEY` | 🔧 待配置 |
-| 百度千帆 | 自定义 REST `/v2/models` | `QIANFAN_API_BASE` + `QIANFAN_API_KEY` | 🔧 待配置 |
+| DashScope 百炼（阿里） | OpenAI 兼容 | `LLM_API_BASE` + `LLM_API_KEY` | ✅ 已验证 |
+| 硅基流动 SiliconFlow | OpenAI 兼容 | `SILICONFLOW_API_BASE` + `SILICONFLOW_API_KEY` | 🔧 待配置 |
+| DeepSeek（深度求索） | OpenAI 兼容 | `DEEPSEEK_API_BASE` + `DEEPSEEK_API_KEY` | 🔧 待配置 |
+| 火山引擎（字节/豆包） | OpenAI 兼容 | `VOLCENGINE_API_BASE` + `VOLCENGINE_API_KEY` | 🔧 待配置 |
+| MiniMax | OpenAI 兼容 | `MINIMAX_API_BASE` + `MINIMAX_API_KEY` | 🔧 待配置 |
+| 腾讯混元 | OpenAI 兼容 | `HUNYUAN_API_BASE` + `HUNYUAN_API_KEY` | 🔧 待配置 |
+| 阶跃星辰 StepFun | OpenAI 兼容 | `STEPFUN_API_BASE` + `STEPFUN_API_KEY` | 🔧 待配置 |
+| Moonshot 月之暗面 | OpenAI 兼容 | `MOONSHOT_API_BASE` + `MOONSHOT_API_KEY` | 🔧 待配置 |
+| 智谱 Zhipu（GLM） | OpenAI 兼容 | `ZHIPU_API_BASE` + `ZHIPU_API_KEY` | 🔧 待配置 |
+| 百度千帆（ERNIE） | 自定义 REST | `QIANFAN_API_BASE` + `QIANFAN_API_KEY` | 🔧 待配置 |
 
-**设计理念**：配置驱动，零代码扩展——新增平台只需在 `PLATFORM_REGISTRY` 注册表中添加一个配置项并在 `.env` 中填入 API Key 即可启用，无需编写新代码。对于非标准 API（如百度千帆），通过自定义适配器函数处理响应格式转换。
+**聚合平台**（兜底补充源，覆盖遗漏）：
+
+| 平台 | API 类型 | 环境变量 | 状态 |
+|------|---------|---------|------|
+| OpenRouter（全球 500+ 模型） | 自定义适配器 | `OPENROUTER_API_BASE` + `OPENROUTER_API_KEY` | 🔧 待配置 |
+| 酷爱 Kuai（国内外聚合） | OpenAI 兼容 | `KUAI_API_BASE` + `KUAI_API_KEY` | 🔧 待配置 |
+
+**设计理念**：配置驱动，零代码扩展——新增平台只需在 `PLATFORM_REGISTRY` 注册表中添加一个配置项并在 `.env` 中填入 API Key 即可启用，无需编写新代码。对于非标准 API（如百度千帆、OpenRouter），通过自定义适配器函数处理响应格式转换和 owner 解析。
 
 > **关于 HuggingFace（第三源）**：HuggingFace API 主要用于交叉校验已采集模型的参数量、发布日期等字段，并补全开源模型变体。它显著提升字段准确率和数据完整度。
 
