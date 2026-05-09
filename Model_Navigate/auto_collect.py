@@ -1229,7 +1229,12 @@ def _collect_single_platform(config: dict) -> list[dict]:
 
     skip_patterns = config.get("skip_patterns", [])
     rows = []
-    skipped = 0
+    skipped_pattern = 0
+    skipped_old = 0
+
+    # 2026-01-01 00:00:00 UTC 的 Unix 时间戳
+    # 平台目录只追踪 2026 年及之后的模型，旧版模型不纳入增量追踪
+    cutoff_ts = 1735689600  # 2026-01-01T00:00:00Z
 
     for model in raw_models:
         model_id = model.get("id", "")
@@ -1237,16 +1242,23 @@ def _collect_single_platform(config: dict) -> list[dict]:
         model_id_lower = model_id.lower()
 
         if any(pat in model_id_lower for pat in skip_patterns):
-            skipped += 1
+            skipped_pattern += 1
+            continue
+
+        # 时效性过滤：只保留 2026 年及之后上架的模型
+        if created_ts and created_ts < cutoff_ts:
+            skipped_old += 1
             continue
 
         # 自定义适配器可能预解析了 _owner 字段（如 OpenRouter）
         owner_override = model.get("_owner", "")
         rows.append(_model_to_row(model_id, created_ts, config, owner_override))
 
-    if skipped:
-        print(f"    ⏭️ 跳过: {skipped} 个（旧版模型）")
-    print(f"    📊 可用: {len(rows)} 个")
+    if skipped_pattern:
+        print(f"    ⏭️ 跳过: {skipped_pattern} 个（模式匹配）")
+    if skipped_old:
+        print(f"    ⏭️ 跳过: {skipped_old} 个（2026 年以前的旧模型）")
+    print(f"    📊 可用: {len(rows)} 个（2026+）")
     return rows
 
 
@@ -1254,7 +1266,8 @@ def collect_platform_catalogs(since_int: int, until_int: int) -> list[dict]:
     """遍历所有已配置的平台，采集模型目录并合并去重。
 
     只有环境变量中配置了 API Key 的平台才会被采集。
-    不做时间窗口过滤——平台时间戳 ≠ 模型发布时间，由外层去重决定是否新增。
+    时效性过滤：平台 created 时间戳早于 2026 年的旧模型会被跳过，
+    只追踪 2026 年及之后的新模型（增量追踪原则）。
     """
     configured = [
         cfg for cfg in PLATFORM_REGISTRY
