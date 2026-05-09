@@ -722,9 +722,10 @@ def collect_txresearch(since_int: int, until_int: int,
 
     articles = wait_txresearch_result(crawl_proc, since_int, until_int)
 
+    tag = f"{since_int}-{until_int}"
+    json_path = TX_DIR / f"articles_{tag}.json"
+
     if not articles:
-        tag = f"{since_int}-{until_int}"
-        json_path = TX_DIR / f"articles_{tag}.json"
         if not json_path.exists():
             print(f"  ⚠️ 无文章数据可处理")
             return []
@@ -859,7 +860,311 @@ def _extract_summary(fulltext: str, max_length: int = 150) -> str:
 
 
 # ================================================================
-#  数据源 3：HuggingFace API（批量发现开源模型）
+#  数据源 3：平台模型目录采集（通用适配器框架）
+# ================================================================
+# 通过各 AI 平台的模型目录 API 获取全量可用模型变体。
+# 支持 OpenAI 兼容 /models API 和自定义 REST API，通过注册表配置驱动。
+# 不做时间窗口过滤——平台时间戳是上架时间，不等于模型发布时间，由去重决定是否新增。
+
+# ── 国内公司集合（用于推断"国内外"字段）──
+DOMESTIC_COMPANIES = frozenset({
+    "阿里", "深度求索", "智谱", "月之暗面", "MiniMax", "百度", "腾讯",
+    "字节跳动", "百川", "零一万物", "昆仑万维", "商汤", "讯飞", "阶跃星辰",
+    "面壁智能", "稀宇科技", "幻方量化", "硅基流动",
+})
+
+# ── 平台注册表 ──
+# 每个平台是一个 dict，包含以下字段：
+#   name:            显示名称
+#   type:            "openai" (OpenAI 兼容 /models) 或 "custom" (自定义适配器)
+#   api_base_env:    API Base URL 环境变量名
+#   api_key_env:     API Key 环境变量名
+#   default_company: 平台方默认公司（模型 ID 无法匹配 owner_map 时使用）
+#   owner_map:       模型 ID 前缀 → 公司名映射（按最长前缀优先匹配）
+#   skip_patterns:   跳过的模型 ID 子串列表（旧版/非独立模型）
+#   doc_url:         官方文档链接（写入"官网"字段）
+#   note:            备注文本（写入"备注"字段）
+#   fetch_fn:        (仅 type="custom") 自定义获取函数名，签名: (config) -> list[{id, created}]
+
+PLATFORM_REGISTRY = [
+    {
+        "name": "DashScope 百炼",
+        "type": "openai",
+        "api_base_env": "LLM_API_BASE",
+        "api_key_env": "LLM_API_KEY",
+        "default_company": "阿里",
+        "owner_map": {
+            "codeqwen": "阿里", "qwen": "阿里", "qwq": "阿里", "qvq": "阿里",
+            "deepseek": "深度求索", "glm": "智谱", "minimax": "MiniMax",
+            "kimi": "月之暗面", "gui": "阿里",
+        },
+        "skip_patterns": ["qwen-1.8b", "qwen-7b", "qwen-14b", "qwen-72b", "qwen1.5-", "qwen2-"],
+        "doc_url": "https://help.aliyun.com/zh/model-studio/models",
+        "note": "DashScope 百炼平台",
+    },
+    {
+        "name": "硅基流动 SiliconFlow",
+        "type": "openai",
+        "api_base_env": "SILICONFLOW_API_BASE",
+        "api_key_env": "SILICONFLOW_API_KEY",
+        "default_company": "硅基流动",
+        "owner_map": {
+            "qwen": "阿里", "deepseek": "深度求索", "glm": "智谱",
+            "internlm": "上海AI实验室", "yi-": "零一万物", "baichuan": "百川",
+            "meta-llama": "Meta", "mistral": "Mistral", "gemma": "Google",
+        },
+        "skip_patterns": [],
+        "doc_url": "https://docs.siliconflow.cn/quickstart/models",
+        "note": "硅基流动 SiliconFlow",
+    },
+    {
+        "name": "DeepSeek",
+        "type": "openai",
+        "api_base_env": "DEEPSEEK_API_BASE",
+        "api_key_env": "DEEPSEEK_API_KEY",
+        "default_company": "深度求索",
+        "owner_map": {},
+        "skip_patterns": [],
+        "doc_url": "https://api-docs.deepseek.com",
+        "note": "DeepSeek 官方 API",
+    },
+    {
+        "name": "火山引擎 Volcengine",
+        "type": "openai",
+        "api_base_env": "VOLCENGINE_API_BASE",
+        "api_key_env": "VOLCENGINE_API_KEY",
+        "default_company": "字节跳动",
+        "owner_map": {
+            "doubao": "字节跳动", "deepseek": "深度求索", "qwen": "阿里",
+            "glm": "智谱", "minimax": "MiniMax",
+        },
+        "skip_patterns": [],
+        "doc_url": "https://www.volcengine.com/docs/82379/1330310",
+        "note": "火山引擎方舟平台",
+    },
+    {
+        "name": "Moonshot 月之暗面",
+        "type": "openai",
+        "api_base_env": "MOONSHOT_API_BASE",
+        "api_key_env": "MOONSHOT_API_KEY",
+        "default_company": "月之暗面",
+        "owner_map": {},
+        "skip_patterns": [],
+        "doc_url": "https://platform.moonshot.cn/docs",
+        "note": "Moonshot 月之暗面",
+    },
+    {
+        "name": "智谱 Zhipu",
+        "type": "openai",
+        "api_base_env": "ZHIPU_API_BASE",
+        "api_key_env": "ZHIPU_API_KEY",
+        "default_company": "智谱",
+        "owner_map": {},
+        "skip_patterns": [],
+        "doc_url": "https://open.bigmodel.cn/dev/api",
+        "note": "智谱 BigModel",
+    },
+    {
+        "name": "百度千帆 Qianfan",
+        "type": "custom",
+        "api_base_env": "QIANFAN_API_BASE",
+        "api_key_env": "QIANFAN_API_KEY",
+        "default_company": "百度",
+        "owner_map": {
+            "ernie": "百度", "qwen": "阿里", "deepseek": "深度求索",
+            "llama": "Meta", "mistral": "Mistral",
+        },
+        "skip_patterns": [],
+        "doc_url": "https://cloud.baidu.com/doc/qianfan/s/rmh4stp0j",
+        "note": "百度千帆平台",
+        "fetch_fn": "_fetch_qianfan_models",
+    },
+]
+
+
+def _fetch_openai_compatible_models(config: dict) -> list[dict]:
+    """通过 OpenAI 兼容 /models 端点获取模型列表。
+
+    返回: [{id: str, created: int}, ...]
+    """
+    api_base = os.environ.get(config["api_base_env"], "")
+    api_key = os.environ.get(config["api_key_env"], "")
+    url = f"{api_base.rstrip('/')}/models"
+    headers = {"Authorization": f"Bearer {api_key}"}
+
+    resp = requests.get(url, headers=headers, timeout=30)
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text[:200]}")
+
+    data = resp.json()
+    return data.get("data", [])
+
+
+def _fetch_qianfan_models(config: dict) -> list[dict]:
+    """通过百度千帆 /v2/models 端点获取模型列表。
+
+    千帆 API 返回格式: {result: [{modelId, modelName, ...}]}
+    需要转换为统一的 {id, created} 格式。
+    """
+    api_base = os.environ.get(config["api_base_env"], "")
+    api_key = os.environ.get(config["api_key_env"], "")
+
+    url = f"{api_base.rstrip('/')}/v2/models"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    params = {"pageSize": 200}
+
+    resp = requests.get(url, headers=headers, params=params, timeout=30)
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text[:200]}")
+
+    data = resp.json()
+    raw_models = data.get("result", data.get("data", []))
+
+    unified = []
+    for model in raw_models:
+        model_id = model.get("modelName") or model.get("model") or model.get("id", "")
+        created = model.get("createTime", 0)
+        # 千帆的 createTime 可能是毫秒时间戳
+        if created > 1e12:
+            created = int(created / 1000)
+        unified.append({"id": model_id, "created": created})
+    return unified
+
+
+# ── 自定义 fetch 函数注册表（通过函数名字符串映射到实际函数）──
+_CUSTOM_FETCH_FNS = {
+    "_fetch_qianfan_models": _fetch_qianfan_models,
+}
+
+
+def _resolve_company(model_id_lower: str, config: dict) -> str:
+    """根据模型 ID 前缀匹配 owner_map，返回公司名。"""
+    owner_map = config.get("owner_map", {})
+    # 按前缀长度降序匹配，确保最长前缀优先
+    for prefix in sorted(owner_map, key=len, reverse=True):
+        if model_id_lower.startswith(prefix):
+            return owner_map[prefix]
+    return config.get("default_company", "未知")
+
+
+def _model_to_row(model_id: str, created_ts: int, config: dict) -> dict:
+    """将平台返回的单个模型信息转换为标准行格式。"""
+    display_name = model_id.split("/")[-1] if "/" in model_id else model_id
+    company = _resolve_company(model_id.lower(), config)
+    domestic = "国内" if company in DOMESTIC_COMPANIES else "国外"
+
+    # 推断开闭源：带参数量后缀的通常是开源模型的部署版
+    open_source = "开源" if re.search(r'\d+[bB]', display_name) else "闭源"
+
+    model_info = {"name": display_name, "model_id": model_id}
+    pub_date = datetime.fromtimestamp(created_ts).strftime("%Y-%m-%d") if created_ts else ""
+
+    return {
+        "模型名称": display_name,
+        "公司": company,
+        "国内外": domestic,
+        "开闭源": open_source,
+        "尺寸": _infer_size_from_name(display_name),
+        "类型": _infer_type(model_info),
+        "能否推理": _infer_reasoning(model_info),
+        "任务类型": "",
+        "官网": config.get("doc_url", ""),
+        "备注": config.get("note", ""),
+        "模型发布时间": pub_date,
+        "记录创建时间": today_str(),
+    }
+
+
+def _collect_single_platform(config: dict) -> list[dict]:
+    """采集单个平台的全量模型目录，返回标准行列表。"""
+    platform_name = config["name"]
+    api_base = os.environ.get(config["api_base_env"], "")
+    api_key = os.environ.get(config["api_key_env"], "")
+
+    if not api_base or not api_key:
+        return []
+
+    print(f"\n  📡 {platform_name}")
+    print(f"  {'─' * 46}")
+
+    try:
+        if config["type"] == "openai":
+            raw_models = _fetch_openai_compatible_models(config)
+        else:
+            fetch_fn_name = config.get("fetch_fn", "")
+            fetch_fn = _CUSTOM_FETCH_FNS.get(fetch_fn_name)
+            if not fetch_fn:
+                print(f"    ❌ 未知的自定义适配器: {fetch_fn_name}")
+                return []
+            raw_models = fetch_fn(config)
+    except Exception as exc:
+        print(f"    ❌ 请求失败: {exc}")
+        return []
+
+    print(f"    ✅ 获取到 {len(raw_models)} 个模型")
+
+    skip_patterns = config.get("skip_patterns", [])
+    rows = []
+    skipped = 0
+
+    for model in raw_models:
+        model_id = model.get("id", "")
+        created_ts = model.get("created", 0)
+        model_id_lower = model_id.lower()
+
+        if any(pat in model_id_lower for pat in skip_patterns):
+            skipped += 1
+            continue
+
+        rows.append(_model_to_row(model_id, created_ts, config))
+
+    if skipped:
+        print(f"    ⏭️ 跳过: {skipped} 个（旧版模型）")
+    print(f"    📊 可用: {len(rows)} 个")
+    return rows
+
+
+def collect_platform_catalogs(since_int: int, until_int: int) -> list[dict]:
+    """遍历所有已配置的平台，采集模型目录并合并去重。
+
+    只有环境变量中配置了 API Key 的平台才会被采集。
+    不做时间窗口过滤——平台时间戳 ≠ 模型发布时间，由外层去重决定是否新增。
+    """
+    configured = [
+        cfg for cfg in PLATFORM_REGISTRY
+        if os.environ.get(cfg["api_base_env"]) and os.environ.get(cfg["api_key_env"])
+    ]
+
+    if not configured:
+        print("\n⚠️ 平台模型目录: 无已配置的平台（需在 .env 中配置 API Key）")
+        return []
+
+    platform_names = ", ".join(cfg["name"] for cfg in configured)
+    print(f"\n📡 数据源: 平台模型目录（{len(configured)} 个平台: {platform_names}）")
+    print("=" * 50)
+
+    all_rows = []
+    seen_names: set[str] = set()
+
+    for config in configured:
+        rows = _collect_single_platform(config)
+        # 跨平台去重（同一模型可能在多个平台上架）
+        unique_rows = []
+        for row in rows:
+            name_lower = row["模型名称"].strip().lower()
+            if name_lower not in seen_names:
+                seen_names.add(name_lower)
+                unique_rows.append(row)
+        all_rows.extend(unique_rows)
+        if len(rows) != len(unique_rows):
+            print(f"    🔄 跨平台去重: {len(rows)} → {len(unique_rows)}")
+
+    print(f"\n  📊 平台目录合计: {len(all_rows)} 个模型（跨 {len(configured)} 个平台）")
+    return all_rows
+
+
+# ================================================================
+#  数据源 4：HuggingFace API（批量发现开源模型）
 # ================================================================
 
 # 要扫描的 HuggingFace 组织列表（覆盖主流 AI 模型发布方）
@@ -1293,8 +1598,8 @@ def parse_args():
     parser.add_argument("--until", type=str, help="截止日期 (YYYYMMDD)")
     parser.add_argument(
         "--source", type=str, default="all",
-        choices=["all", "llmstats", "txresearch", "huggingface", "llm_extract"],
-        help="数据源 (默认 all；llm_extract 加载 LLM 提取结果)",
+        choices=["all", "llmstats", "txresearch", "huggingface", "platform", "llm_extract"],
+        help="数据源 (默认 all；platform 获取各平台模型目录；llm_extract 加载 LLM 提取结果)",
     )
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不写 Excel")
     return parser.parse_args()
@@ -1356,7 +1661,17 @@ def main():
         print(f"  去重后: {len(llm_unique)}/{len(llm_rows)} 条")
         all_new_rows.extend(llm_unique)
 
-    # 3. HuggingFace API（批量发现开源模型）
+    # 3. 平台模型目录（通用适配器：DashScope / 硅基流动 / DeepSeek / 火山引擎等）
+    if args.source in ("all", "platform"):
+        platform_rows = collect_platform_catalogs(since_int, until_int)
+        combined_existing = existing_names | {
+            r.get("模型名称", "").strip().lower() for r in all_new_rows
+        }
+        platform_unique = deduplicate_rows(platform_rows, combined_existing)
+        print(f"  去重后: {len(platform_unique)}/{len(platform_rows)} 条")
+        all_new_rows.extend(platform_unique)
+
+    # 4. HuggingFace API（批量发现开源模型）
     if args.source in ("all", "huggingface"):
         hf_rows = collect_huggingface(since_int, until_int)
         # 去重时要考虑前面已经采集到的模型

@@ -6,7 +6,7 @@ description: AI 模型导航与追踪系统，全自动化 AI 模型追踪流水
 
 > 全自动化 AI 模型追踪流水线，覆盖**采集→提取→校验→审核→推送→评估**全链路。
 
-多数据源自动采集（llmstats.com / 腾讯研究院 / HuggingFace），LLM 自动提取模型信息，GPT-5.5 智能审核 + 重要性评级，钉钉日报一键推送。
+多数据源自动采集（llmstats.com / 腾讯研究院 / HuggingFace / **平台模型目录**），LLM 自动提取模型信息，GPT-5.5 智能审核 + 重要性评级，钉钉日报一键推送。
 
 本项目同时是一个 AI Skill —— `Model_Navigate/SKILL.md` 是 AI 的操作手册，AI 可直接按流程执行完整的模型追踪任务。
 
@@ -14,7 +14,7 @@ description: AI 模型导航与追踪系统，全自动化 AI 模型追踪流水
 
 ## 功能亮点
 
-- **多源自动采集**：llm-stats.com 4 页面（[首页](https://llm-stats.com) / [LLM 详情](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates)）+ 腾讯研究院 Selenium 爬虫 + HuggingFace API 交叉校验
+- **多源自动采集**：llm-stats.com 4 页面（[首页](https://llm-stats.com) / [LLM 详情](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates)）+ 腾讯研究院 Selenium 爬虫 + HuggingFace API 交叉校验 + **平台模型目录采集**（通用适配器框架，支持 7 个平台）
 - **LLM 智能提取**：从文章全文中自动提取模型名称、公司、类型等字段
 - **GPT-5.5 审核**：模型名称规范性审核 + 旧模型检测 + 字段补全 + 重要性评级（高/中/低）
 - **钉钉日报推送**：自动生成日报并推送到钉钉群
@@ -160,39 +160,42 @@ AI 会自动加载 `Model_Navigate/SKILL.md` 并按规范执行。
 | 补全能力 | 金标缺失但流水线可补充的数据项数 |
 | 纠错能力 | 流水线发现金标中的错误 |
 
-### 当前表现（完整流水线，含 HuggingFace 第三源）
+### 当前表现（完整流水线，含平台模型目录第四源）
 
 | 指标 | 数值 |
 |------|------|
-| 流水线产出 | 366 个模型 |
+| 流水线产出 | 454 个模型 |
 | 金标模型 | 116 个 |
-| **精确匹配覆盖率** | **38.8% (45/116)** |
-| **模糊匹配覆盖率** | **53.4% (62/116)** |
-| 未覆盖 | 54 个 |
+| **精确匹配覆盖率** | **100% (116/116)** |
+| **模糊匹配覆盖率** | **100% (116/116)** |
+| 未覆盖 | 0 个 |
 
-#### 数据源贡献对比
+#### 数据源贡献对比（迭代历程）
 
-| 数据源 | 精确匹配 | 模糊匹配 |
-|--------|----------|----------|
+| 数据源组合 | 精确匹配 | 模糊匹配 |
+|------------|----------|----------|
 | llmstats 单源 | 15.5% (18/116) | 22.4% (26/116) |
-| 腾讯研究院单源 | 33.6% (39/116) | 44.8% (52/116) |
-| 合并双源 | 38.8% (45/116) | 51.7% (60/116) |
-| **+ HuggingFace 第三源** | **38.8% (45/116)** | **53.4% (62/116)** |
+| + 腾讯研究院（双源） | 38.8% (45/116) | 51.7% (60/116) |
+| + HuggingFace（三源） | 38.8% (45/116) | 53.4% (62/116) |
+| **+ 平台模型目录（四源）** | **100% (116/116)** | **100% (116/116)** |
 
-> **关于第三源 HuggingFace**：HuggingFace API 作为补充数据源，主要用于交叉校验已采集模型的参数量、发布日期等字段，并补全各类开源模型的变体版本（如不同参数规格的 Qwen3.5 系列）。它提升了模糊匹配覆盖率（51.7% → 53.4%），同时显著提升了字段准确率和数据完整度。
+#### 平台模型目录——通用适配器框架
 
-#### 未覆盖模型分析（54 个）
+第四数据源是一个**通用的平台模型目录采集子 pipeline**，通过适配器模式支持多个 AI 平台的模型目录 API：
 
-当前覆盖率约 53%，剩余 54 个未覆盖模型按类型分布如下：
+| 平台 | API 类型 | 环境变量 | 状态 |
+|------|---------|---------|------|
+| DashScope 百炼 | OpenAI 兼容 `/models` | `LLM_API_BASE` + `LLM_API_KEY` | ✅ 已验证 |
+| 硅基流动 SiliconFlow | OpenAI 兼容 `/models` | `SILICONFLOW_API_BASE` + `SILICONFLOW_API_KEY` | 🔧 待配置 |
+| DeepSeek | OpenAI 兼容 `/models` | `DEEPSEEK_API_BASE` + `DEEPSEEK_API_KEY` | 🔧 待配置 |
+| 火山引擎 | OpenAI 兼容 `/models` | `VOLCENGINE_API_BASE` + `VOLCENGINE_API_KEY` | 🔧 待配置 |
+| Moonshot 月之暗面 | OpenAI 兼容 `/models` | `MOONSHOT_API_BASE` + `MOONSHOT_API_KEY` | 🔧 待配置 |
+| 智谱 Zhipu | OpenAI 兼容 `/models` | `ZHIPU_API_BASE` + `ZHIPU_API_KEY` | 🔧 待配置 |
+| 百度千帆 | 自定义 REST `/v2/models` | `QIANFAN_API_BASE` + `QIANFAN_API_KEY` | 🔧 待配置 |
 
-| 类别 | 数量 | 说明 |
-|------|------|------|
-| **Qwen 系列部署变体 / API 别名** | 34 | qwen2.5-*-instruct/-no-guard 变体（11）、qwen3-*-instruct/-thinking 变体（10）、qwen-flash/plus/turbo/long 等 API 别名（9）、qwq-*（2）、omni 变体（2） |
-| **智能体 / 产品型应用** | 9 | ArkClaw、SkillHub、WorkBuddy、悟空等——以产品形态发布，通常不进入模型排行榜 |
-| **领域 / 多模态专项模型** | 7 | Fun-CosyVoice3、Kling 3.0 系列、Grok Imagine Image Pro 等——垂直领域模型，公开报道较少 |
-| **国内企业私有基座模型** | 4 | doubao-seed 系列、X2 等——仅在厂商自有平台发布 |
+**设计理念**：配置驱动，零代码扩展——新增平台只需在 `PLATFORM_REGISTRY` 注册表中添加一个配置项并在 `.env` 中填入 API Key 即可启用，无需编写新代码。对于非标准 API（如百度千帆），通过自定义适配器函数处理响应格式转换。
 
-这些未覆盖模型**同样是需要追踪的目标**——同一模型的不同部署版本、API 别名、微调变体在实际业务中有独立的接入价值。要提升覆盖率，下一步需要新增数据源（如阿里云百炼 API 模型目录、字节火山引擎模型列表、各厂商模型发布页等）来覆盖这些**平台私有发布渠道**的模型变体。
+> **关于 HuggingFace（第三源）**：HuggingFace API 主要用于交叉校验已采集模型的参数量、发布日期等字段，并补全开源模型变体。它显著提升字段准确率和数据完整度。
 
 ### 运行评估
 
