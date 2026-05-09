@@ -882,6 +882,27 @@ def verify_step(step_num, since_int=None, until_int=None):
         else:
             messages.append("⚠️ TXCrawl_result.xlsx 不存在")
 
+        # ── 数据链路断裂检测 ──
+        # 如果 llmstats 有数据但腾讯研究院 JSON 缓存为空，说明数据链路可能断裂
+        has_llmstats = llmstats_json.exists()
+        has_tx_json = False
+        if since_int and until_int:
+            tag = f"{since_int}-{until_int}"
+            tx_json = tx_dir / f"articles_{tag}.json"
+            has_tx_json = tx_json.exists()
+        has_articles = articles_dir.exists() and len(list(articles_dir.glob("*.txt"))) > 0
+
+        if has_llmstats and not has_tx_json and not has_articles:
+            messages.append("")
+            messages.append("🚨 ══════════════════════════════════════════")
+            messages.append("🚨 数据链路断裂警告：腾讯研究院数据为空！")
+            messages.append("🚨 llmstats 有数据但腾讯研究院无 JSON 缓存也无文章 TXT")
+            messages.append("🚨 可能原因：爬虫路径错误 / Selenium 未安装 / 超时")
+            messages.append("🚨 影响：后续 LLM 提取和 GPT 审核将形同虚设")
+            messages.append("🚨 建议：手动检查 TXresearch/ 目录，或从对话中补录")
+            messages.append("🚨 ══════════════════════════════════════════")
+            messages.append("")
+
     elif step_num == 3:
         # 校验：check_result.py 的输出（通过文件存在性判断）
         check_files = list((ACTION_DIR / "Test").glob("DataForCheck*.md"))

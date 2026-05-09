@@ -25,6 +25,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -114,6 +115,25 @@ def format_params(params) -> str:
     if params >= 1_000_000:
         return f"{params / 1_000_000:.0f}M"
     return str(params)
+
+
+def _infer_size_from_name(name: str) -> str:
+    """从模型名称中正则提取参数量（如 Qwen3-8B → 8B, 35B-A3B → 35B(A3B)）。"""
+    if not name:
+        return ""
+    # 匹配 MoE 格式: 122B-A10B, 35B-A3B
+    moe_match = re.search(r'(\d+\.?\d*)[Bb]-[Aa](\d+\.?\d*)[Bb]', name)
+    if moe_match:
+        return f"{moe_match.group(1)}B(A{moe_match.group(2)}B)"
+    # 匹配常规参数量: 8B, 0.5B, 72B, 1.5B, 14b
+    size_match = re.search(r'(\d+\.?\d*)\s*[Bb]\b', name)
+    if size_match:
+        return f"{size_match.group(1)}B"
+    # 匹配 M 级别: 500M, 125M
+    m_match = re.search(r'(\d+\.?\d*)\s*[Mm]\b', name)
+    if m_match:
+        return f"{m_match.group(1)}M"
+    return ""
 
 
 def is_domestic(org_id: str, org_country: str = "") -> bool:
@@ -315,7 +335,7 @@ def collect_llmstats(since_int: int, until_int: int) -> list[dict]:
             "类型": _infer_type(model),
             "能否推理": _infer_reasoning(model),
             "任务类型": "通用对话",
-            "官网": f"https://llm-stats.com/models/{model_id}" if model_id else "",
+            "官网": _pick_website(model, model_id),
             "备注": _build_llmstats_note(model),
             "记录创建时间": today_str(),
             "模型发布时间": date_str,
@@ -327,41 +347,118 @@ def collect_llmstats(since_int: int, until_int: int) -> list[dict]:
     print(f"  📊 时间窗口 {since_int}~{until_int} 内: {len(rows)} 个模型")
     return rows
 
+def _pick_website(model: dict, model_id: str) -> str:
+    """优先使用模型自身的官方链接，无官方链接时回退到 llmstats 页面。"""
+    for key in ("website", "url", "homepage", "link"):
+        value = model.get(key)
+        if value and isinstance(value, str) and value.startswith("http"):
+            return value
+    if model_id:
+        return f"https://llm-stats.com/models/{model_id}"
+    return ""
+
+
 def _infer_type(model: dict) -> str:
-    """从模型字段推断类型（对齐项目已有分类）。"""
+    """从模型字段推断类型（对齐项目已有分类）。
+
+    推断顺序：关键词匹配 → 多模态字段 → 知名基座模型名称 → 参数量 → 未知。
+    """
     multimodal = model.get("multimodal")
     name_lower = (model.get("name") or "").lower()
     model_id = (model.get("model_id") or "").lower()
+    combined = name_lower + " " + model_id
 
     # 代码类
-    if any(kw in name_lower or kw in model_id for kw in ("code", "codex", "coder")):
+    if any(kw in combined for kw in ("code", "codex", "coder")):
         return "代码"
     # 语音类
-    if any(kw in name_lower or kw in model_id for kw in ("whisper", "tts", "stt", "speech", "audio", "voice", "vox")):
+    if any(kw in combined for kw in ("whisper", "tts", "stt", "speech", "audio", "voice", "vox")):
         return "语音"
+    # 图像生成类
+    if any(kw in combined for kw in ("dall-e", "midjourney", "stable-diffusion", "flux", "imagen", "seedream", "ideogram", "firefly")):
+        return "图像"
+    # 视频生成类
+    if any(kw in combined for kw in ("sora", "runway", "pika", "luma", "kling", "veo", "wan")):
+        return "视频"
     # 多模态
     if isinstance(multimodal, list) and len(multimodal) > 0:
         return "多模态"
     if multimodal is True:
         return "多模态"
-    # 基座 vs 领域（按参数量区分）
+    # 知名基座模型系列（无论参数量是否可知，都应归为基座）
+    foundation_patterns = (
+        "gpt", "grok", "claude", "gemini", "llama", "mistral", "qwen",
+        "deepseek", "phi", "command", "jamba", "dbrx", "yi-", "glm",
+        "baichuan", "internlm", "minimax", "step", "hunyuan", "ernie",
+        "palm", "gemma", "olmo", "falcon", "vicuna", "solar", "arctic",
+        "mercury", "nemotron", "longcat", "mimo", "sarvam", "minicpm",
+    )
+    if any(kw in combined for kw in foundation_patterns):
+        return "基座"
+    # 按参数量区分
     is_moe = model.get("is_moe")
     params = model.get("params") or 0
-    if params >= 50_000_000_000 or is_moe:
+    if params >= 1_000_000_000 or is_moe:
         return "基座"
-    if params >= 1_000_000_000:
-        return "基座"
-    return "领域"
+    # 无法确定时标为"未知"而非默认"领域"
+    return "未知"
 
 
 def _infer_reasoning(model: dict) -> str:
-    """推断模型是否支持推理（thinking）。"""
+    """推断模型是否支持推理（thinking）。
+
+    判定顺序：
+    1. 名称中含 lite/mini/nano/flash-lite 等轻量后缀 → 排除 thinking
+    2. 名称中含 thinking/reason/o1/o3/o4/r1/r2 → thinking
+    3. 已知默认支持 thinking 的系列 → thinking
+    4. index_reasoning > 40 → thinking
+    5. 其他 → non-thinking
+    """
     name_lower = (model.get("name") or "").lower()
     model_id = (model.get("model_id") or "").lower()
     combined = name_lower + " " + model_id
 
+    # 显式否定关键词优先（non-reasoning 等明确标记为不支持推理）
+    if "non-reasoning" in combined or "non-thinking" in combined:
+        return "non-thinking"
+
+    # 轻量模型排除（flash-lite、nano 等通常不支持推理）
+    lite_patterns = ("flash-lite", "flashlite", "nano", "-lite")
+    if any(kw in combined for kw in lite_patterns):
+        return "non-thinking"
+
+    # 显式推理关键词
     if any(kw in combined for kw in ("thinking", "reason", "o1", "o3", "o4", "r1", "r2")):
         return "thinking"
+
+    # 已知默认支持 thinking 的模型系列
+    # GLM-4.7+ 系列支持 thinking
+    # Mercury 系列是推理优化模型
+    # Nemotron 3+ Super 支持推理
+    # Kimi-k2+ 系列支持 thinking
+    thinking_series_unconditional = (
+        "qwq", "glm-4.7", "glm-5", "glm4.7", "glm5",
+        "mercury", "nemotron", "kimi-k2", "kimi-k3",
+        "deepseek-r", "deepseek-v3", "deepseek-v4",
+        "gemini-3.1-pro", "gemini-3.1-flash",
+        "grok-4", "grok4",
+    )
+    if any(kw in combined for kw in thinking_series_unconditional):
+        return "thinking"
+
+    # Qwen3/3.5 系列：参数量 ≥ 27B 才视为 thinking（小模型推理能力有限）
+    if "qwen3" in combined:
+        params = model.get("params") or 0
+        if params >= 27_000_000_000:
+            return "thinking"
+        # 尝试从名称中提取参数量（如 qwen3.5-27b → 27B）
+        param_match = re.search(r"(\d+(?:\.\d+)?)\s*b", combined)
+        if param_match:
+            param_val = float(param_match.group(1))
+            if param_val >= 27:
+                return "thinking"
+        return "non-thinking"
+
     idx_reasoning = model.get("index_reasoning")
     if idx_reasoning is not None and idx_reasoning > 40:
         return "thinking"
@@ -460,135 +557,177 @@ def _build_llmstats_note(model: dict) -> str:
 #  数据源 2：腾讯研究院（搜狐号）
 # ================================================================
 
-def collect_txresearch(since_int: int, until_int: int) -> list[dict]:
-    """自动爬取腾讯研究院文章全文并保存到本地。
+def start_txresearch_crawl(since_int: int, until_int: int) -> subprocess.Popen | None:
+    """非阻塞启动腾讯研究院爬虫（后台 Selenium 进程）。
 
-    流程：
-      1. 自动调用 crawl_sohu.py 爬取文章列表 + 全文（需要 Chrome + Selenium）
-      2. 将全文保存到 Extract/articles/ 目录（TXT 文件）
-      3. 保存 JSON 到 TXresearch/ 目录
-      4. 模型信息的提取由用户在对话中让 AI 从全文中人工提取
+    爬虫本身是纯工具（Selenium + requests + BeautifulSoup），不依赖任何 AI 能力，
+    因此可以在后台异步运行，主流水线同时处理其他数据源（如 llmstats）。
 
-    注意：本函数不返回 Excel 行数据（不内置 LLM 提取）。
-    返回空列表，但会打印抓取状态供用户确认后手动触发 AI 提取。
+    Returns:
+        subprocess.Popen 进程对象（供后续 wait_txresearch_result 等待），
+        如果已有缓存或爬虫脚本不存在则返回 None。
     """
-    print("\n📡 数据源: 腾讯研究院（搜狐号）")
-    print("=" * 50)
+    tag = f"{since_int}-{until_int}"
+    json_path = TX_DIR / f"articles_{tag}.json"
+    crawl_script = ROOT / "Crawl" / "TXresearch" / "crawl_sohu.py"
+
+    if json_path.exists():
+        print(f"  📂 腾讯研究院: 已有抓取缓存 {json_path.name}，跳过爬虫")
+        return None
+
+    if not crawl_script.exists():
+        print(f"  ⚠️ 腾讯研究院: 爬虫脚本不存在 {crawl_script}")
+        return None
+
+    print(f"  🚀 腾讯研究院: 后台启动爬虫 crawl_sohu.py --since {since_int} --until {until_int}")
+    proc = subprocess.Popen(
+        [sys.executable, "-X", "utf8", str(crawl_script),
+         "--since", str(since_int), "--until", str(until_int)],
+        cwd=str(crawl_script.parent),
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        encoding="utf-8", errors="replace",
+    )
+    print(f"  🔄 爬虫已在后台运行 (PID={proc.pid})，主流水线继续处理其他数据源...")
+    return proc
+
+
+def wait_txresearch_result(
+    proc: subprocess.Popen | None,
+    since_int: int,
+    until_int: int,
+    timeout_minutes: int = 30,
+    heartbeat_seconds: int = 60,
+    silent_limit: int = 300,
+) -> list[dict]:
+    """等待后台爬虫完成并收集文章数据。
+
+    如果 proc 为 None（已有缓存或未启动），直接从缓存加载。
+    否则用心跳探测模式等待爬虫进程结束。
+
+    Returns:
+        文章列表（JSON 中的 dict 数组），失败返回空列表。
+    """
+    import time as _time
 
     tag = f"{since_int}-{until_int}"
     json_path = TX_DIR / f"articles_{tag}.json"
     crawl_script = ROOT / "Crawl" / "TXresearch" / "crawl_sohu.py"
-    articles_dir = ROOT / "Extract" / "articles"
 
-    # ── 第一步：获取文章（自动爬取 or 已有缓存）──
+    # 已有缓存，直接加载
+    if proc is None:
+        if json_path.exists():
+            with open(json_path, "r", encoding="utf-8") as f:
+                articles = json.load(f)
+            print(f"  📄 腾讯研究院: 从缓存加载 {len(articles)} 篇文章")
+            return articles
+        return []
+
+    # 等待后台爬虫完成（心跳探测模式）
+    print(f"\n  ⏳ 等待腾讯研究院爬虫完成 (PID={proc.pid})...")
+    max_wait = timeout_minutes * 60
+    elapsed = 0
+    last_output_time = _time.time()
+
+    while elapsed < max_wait:
+        try:
+            proc.wait(timeout=heartbeat_seconds)
+            # 进程已结束，读取剩余输出
+            remaining = proc.stdout.read() if proc.stdout else ""
+            if remaining:
+                for line in remaining.strip().split('\n'):
+                    if line.strip():
+                        print(f"    {line.strip()}")
+            break
+        except subprocess.TimeoutExpired:
+            elapsed += heartbeat_seconds
+            # 读取所有可用输出
+            try:
+                while True:
+                    line = proc.stdout.readline()
+                    if not line:
+                        break
+                    print(f"    {line.rstrip()}")
+                    last_output_time = _time.time()
+            except Exception:
+                pass
+            # 检查进程是否还在运行
+            if proc.poll() is not None:
+                break
+            # 健康探测：超过 silent_limit 无输出则判定不健康
+            silent_seconds = _time.time() - last_output_time
+            if silent_seconds > silent_limit:
+                print(f"  ⚠️ 爬虫已 {int(silent_seconds)}s 无输出，判定为不健康，终止")
+                proc.kill()
+                proc.wait()
+                return []
+            minutes_elapsed = elapsed // 60
+            print(f"  💓 心跳 [{minutes_elapsed}min/{timeout_minutes}min] 爬虫运行中...")
+
+    # 超时处理
+    if elapsed >= max_wait and proc.poll() is None:
+        print(f"  ⏰ 爬虫超时（{timeout_minutes}分钟），终止")
+        proc.kill()
+        proc.wait()
+        return []
+
+    returncode = proc.returncode if proc.returncode is not None else -1
+    if returncode != 0:
+        print(f"  ⚠️ 爬虫失败（退出码 {returncode}）")
+        print(f"  💡 手动运行：cd Crawl\\TXresearch && python crawl_sohu.py --since {since_int} --until {until_int}")
+        return []
+
+    print(f"  ✅ 爬虫完成")
+
+    # 查找输出 JSON
     if json_path.exists():
-        print(f"  📂 已有抓取缓存: {json_path}")
         with open(json_path, "r", encoding="utf-8") as f:
             articles = json.load(f)
         print(f"  📄 共 {len(articles)} 篇文章")
-    elif crawl_script.exists():
-        # 自动调用 crawl_sohu.py（需要 Chrome + Selenium）
-        print(f"  🚀 自动启动爬虫: crawl_sohu.py --since {since_int} --until {until_int}")
-        import subprocess
-        import time as _time
-        try:
-            # 心跳探测模式：30 分钟上限，每 60 秒检查子进程是否存活
-            MAX_WAIT_SECONDS = 1800  # 30 分钟
-            HEARTBEAT_INTERVAL = 60  # 每 60 秒探测一次
-            proc = subprocess.Popen(
-                [sys.executable, "-X", "utf8", str(crawl_script),
-                 "--since", str(since_int), "--until", str(until_int)],
-                cwd=str(crawl_script.parent),
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                encoding="utf-8", errors="replace",
-            )
-            elapsed = 0
-            last_output_time = _time.time()
-            output_lines = []
-            while elapsed < MAX_WAIT_SECONDS:
-                # 非阻塞读取输出（探测活跃性）
-                import select
-                try:
-                    # Windows 不支持 select on pipes，用 readline with timeout
-                    proc.stdout.flush() if proc.stdout else None
-                except Exception:
-                    pass
-                # 等待 HEARTBEAT_INTERVAL 秒或进程结束
-                try:
-                    proc.wait(timeout=HEARTBEAT_INTERVAL)
-                    # 进程已结束
-                    remaining = proc.stdout.read() if proc.stdout else ""
-                    if remaining:
-                        output_lines.append(remaining)
-                        for line in remaining.strip().split('\n'):
-                            if line.strip():
-                                print(f"    {line.strip()}")
-                    break
-                except subprocess.TimeoutExpired:
-                    elapsed += HEARTBEAT_INTERVAL
-                    # 读取所有可用输出
-                    import io
-                    try:
-                        while True:
-                            line = proc.stdout.readline()
-                            if not line:
-                                break
-                            output_lines.append(line)
-                            print(f"    {line.rstrip()}")
-                            last_output_time = _time.time()
-                    except Exception:
-                        pass
-                    # 心跳：检查进程是否还在运行
-                    if proc.poll() is not None:
-                        break
-                    # 健康探测：如果 5 分钟无任何输出，认为不健康
-                    silent_seconds = _time.time() - last_output_time
-                    if silent_seconds > 300:
-                        print(f"  ⚠️ 爬虫已 {int(silent_seconds)}s 无输出，判定为不健康，终止")
-                        proc.kill()
-                        proc.wait()
-                        break
-                    minutes_elapsed = elapsed // 60
-                    print(f"  💓 心跳 [{minutes_elapsed}min/{MAX_WAIT_SECONDS//60}min] 爬虫运行中...")
+        return articles
 
-            returncode = proc.returncode if proc.returncode is not None else -1
-            if returncode == 0:
-                print(f"  ✅ 爬虫完成")
-                # 爬虫输出到 TXresearch/ 目录，检查 JSON
-                if json_path.exists():
-                    with open(json_path, "r", encoding="utf-8") as f:
-                        articles = json.load(f)
-                    print(f"  📄 共 {len(articles)} 篇文章")
-                else:
-                    # 爬虫可能输出到 crawl_script.parent 目录
-                    alt_json = crawl_script.parent / f"articles_{tag}.json"
-                    if alt_json.exists():
-                        # 复制到标准位置
-                        TX_DIR.mkdir(parents=True, exist_ok=True)
-                        import shutil
-                        shutil.copy2(alt_json, json_path)
-                        with open(json_path, "r", encoding="utf-8") as f:
-                            articles = json.load(f)
-                        print(f"  📄 共 {len(articles)} 篇文章（从爬虫输出目录复制）")
-                    else:
-                        print(f"  ⚠️ 爬虫运行成功但未找到输出 JSON")
-                        articles = []
-            elif elapsed >= MAX_WAIT_SECONDS:
-                print(f"  ⏰ 爬虫超时（{MAX_WAIT_SECONDS//60}分钟），尝试使用已有文章缓存")
-                proc.kill()
-                proc.wait()
-                articles = []
-            else:
-                print(f"  ⚠️ 爬虫失败（退出码 {returncode}），尝试使用已有文章缓存")
-                print(f"  💡 手动运行：cd Crawl\\TXresearch && python crawl_sohu.py --since {since_int} --until {until_int}")
-                articles = []
-        except Exception as exc:
-            print(f"  ⚠️ 爬虫启动失败: {exc}，尝试使用已有文章缓存")
-            articles = []
-    else:
-        print(f"  ⚠️ 未找到爬虫脚本: {crawl_script}")
-        print(f"  ⚠️ 也未找到缓存: {json_path}")
-        return []
+    # 爬虫可能输出到 crawl_script.parent 目录
+    alt_json = crawl_script.parent / f"articles_{tag}.json"
+    if alt_json.exists():
+        import shutil
+        TX_DIR.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(alt_json, json_path)
+        with open(json_path, "r", encoding="utf-8") as f:
+            articles = json.load(f)
+        print(f"  📄 共 {len(articles)} 篇文章（从爬虫输出目录复制）")
+        return articles
+
+    print(f"  ⚠️ 爬虫运行成功但未找到输出 JSON")
+    return []
+
+
+def collect_txresearch(since_int: int, until_int: int,
+                       crawl_proc: subprocess.Popen | None = None) -> list[dict]:
+    """采集腾讯研究院数据：等待爬虫 → 保存全文 → 同步 Excel。
+
+    支持两种调用模式：
+      - 异步模式：先调 start_txresearch_crawl() 拿到 proc，传入 crawl_proc
+      - 同步模式（兼容旧逻辑）：crawl_proc=None 时自动启动并等待
+
+    注意：爬虫本身不依赖 AI，是纯 Selenium 工具。
+    本函数不返回 Excel 行数据（模型提取由 LLM 在后续步骤处理）。
+    """
+    print("\n📡 数据源: 腾讯研究院（搜狐号）")
+    print("=" * 50)
+
+    articles_dir = ROOT / "Extract" / "articles"
+
+    # 如果没有预先启动爬虫，走同步模式（兼容旧调用方式）
+    if crawl_proc is None:
+        crawl_proc = start_txresearch_crawl(since_int, until_int)
+
+    articles = wait_txresearch_result(crawl_proc, since_int, until_int)
+
+    if not articles:
+        tag = f"{since_int}-{until_int}"
+        json_path = TX_DIR / f"articles_{tag}.json"
+        if not json_path.exists():
+            print(f"  ⚠️ 无文章数据可处理")
+            return []
 
     # ── 第二步：保存全文到 Extract/articles/ 目录（TXT 文件）──
     articles_dir.mkdir(parents=True, exist_ok=True)
@@ -717,6 +856,150 @@ def _extract_summary(fulltext: str, max_length: int = 150) -> str:
     if len(summary) > max_length:
         summary = summary[:max_length] + "…"
     return summary
+
+
+# ================================================================
+#  数据源 3：HuggingFace API（批量发现开源模型）
+# ================================================================
+
+# 要扫描的 HuggingFace 组织列表（覆盖主流 AI 模型发布方）
+HF_ORGS_TO_SCAN = [
+    "Qwen", "deepseek-ai", "THUDM", "meta-llama", "google",
+    "mistralai", "microsoft", "nvidia", "01-ai", "LGAI-EXAONE",
+    "FunAudioLLM", "stepfun", "MiniMaxAI",
+]
+
+
+def collect_huggingface(since_int: int, until_int: int,
+                        orgs: list[str] | None = None) -> list[dict]:
+    """通过 HuggingFace API 批量发现开源模型。
+
+    用 GET /api/models?author={org} 获取各组织的模型列表，
+    筛选出在时间窗口内创建/更新的模型，映射为流水线标准行格式。
+
+    Args:
+        since_int: 起始日期 YYYYMMDD
+        until_int: 截止日期 YYYYMMDD
+        orgs: 要扫描的组织列表，默认用 HF_ORGS_TO_SCAN
+    """
+    scan_orgs = orgs or HF_ORGS_TO_SCAN
+    print(f"\n🔍 数据源: HuggingFace API（{len(scan_orgs)} 个组织）")
+    print("=" * 50)
+
+    proxy = detect_proxy()
+    proxies = {"http": proxy, "https": proxy} if proxy else None
+    hf_headers = dict(HTTP_HEADERS)
+    hf_token = os.environ.get("HF_TOKEN", "")
+    if hf_token:
+        hf_headers["Authorization"] = f"Bearer {hf_token}"
+
+    all_rows = []
+    since_iso = f"{str(since_int)[:4]}-{str(since_int)[4:6]}-{str(since_int)[6:]}"
+    until_iso = f"{str(until_int)[:4]}-{str(until_int)[4:6]}-{str(until_int)[6:]}"
+
+    for org in scan_orgs:
+        try:
+            # 使用 hf-mirror.com 镜像站（huggingface.co 在国内被墙）
+            api_url = f"https://hf-mirror.com/api/models?author={org}&sort=createdAt&direction=-1&limit=200"
+            resp = None
+            for attempt in range(3):
+                try:
+                    resp = requests.get(api_url, headers=hf_headers, proxies=proxies,
+                                        timeout=60, verify=False)
+                    if resp.status_code == 200:
+                        break
+                    if resp.status_code in (429, 500, 502, 503, 521):
+                        import time as _time
+                        _time.sleep(3 * (attempt + 1))
+                        continue
+                except requests.exceptions.Timeout:
+                    if attempt < 2:
+                        continue
+                    raise
+            if resp is None or resp.status_code != 200:
+                status = resp.status_code if resp else "no response"
+                print(f"  ⚠️ {org}: HTTP {status}（重试3次仍失败）")
+                continue
+
+            models_data = resp.json()
+            org_count = 0
+
+            for model in models_data:
+                model_id = model.get("modelId", "")  # e.g. "Qwen/Qwen3-8B"
+                created = model.get("createdAt", "")[:10]  # "2026-01-15"
+                last_modified = model.get("lastModified", "")[:10]
+
+                # 时间窗口过滤：createdAt 在 since~until 内
+                if created and created >= since_iso and created <= until_iso:
+                    pass  # 在窗口内
+                elif last_modified and last_modified >= since_iso and last_modified <= until_iso:
+                    pass  # 最近更新的也纳入
+                else:
+                    continue
+
+                # 提取模型名称（去掉组织前缀）
+                short_name = model_id.split("/", 1)[-1] if "/" in model_id else model_id
+
+                # 跳过非模型 repo（datasets、spaces、GGUF 量化等）
+                tags = model.get("tags", [])
+                if any(skip in short_name.lower() for skip in
+                       ("gguf", "gptq", "awq", "bnb", "demo", "chat-template")):
+                    continue
+
+                # 提取参数量（列表 API 通常不含 safetensors，fallback 到名称推断）
+                safetensors = model.get("safetensors") or {}
+                params = safetensors.get("total", 0)
+                size_str = format_params(params) if params else _infer_size_from_name(short_name)
+
+                # 推断公司
+                company = _hf_org_to_company(org)
+                domestic = "国内" if is_domestic(org.lower()) else "国外"
+
+                # 推断开闭源
+                pipeline_tag = model.get("pipeline_tag", "")
+
+                # 构造行
+                row = {
+                    "模型名称": short_name,
+                    "公司": company,
+                    "国内外": domestic,
+                    "开闭源": "开源",
+                    "尺寸": size_str,
+                    "类型": _infer_type({"name": short_name, "model_id": model_id}),
+                    "能否推理": _infer_reasoning({"name": short_name, "model_id": model_id}),
+                    "任务类型": "",
+                    "官网": f"https://huggingface.co/{model_id}",
+                    "备注": f"HuggingFace {pipeline_tag}" if pipeline_tag else "HuggingFace",
+                    "模型发布时间": created,
+                    "记录创建时间": today_str(),
+                }
+                all_rows.append(row)
+                org_count += 1
+
+            if org_count > 0:
+                print(f"  ✅ {org}: {org_count} 个模型")
+            else:
+                print(f"  📂 {org}: 时间窗口内无新模型")
+
+        except requests.exceptions.Timeout:
+            print(f"  ⏰ {org}: 超时")
+        except Exception as exc:
+            print(f"  ⚠️ {org}: {exc}")
+
+    print(f"\n  📊 HuggingFace 共发现 {len(all_rows)} 个模型")
+    return all_rows
+
+
+def _hf_org_to_company(org: str) -> str:
+    """HuggingFace 组织名 → 公司名。"""
+    mapping = {
+        "Qwen": "阿里", "deepseek-ai": "深度求索", "THUDM": "智谱",
+        "meta-llama": "Meta", "google": "Google", "mistralai": "Mistral",
+        "microsoft": "微软", "nvidia": "英伟达", "01-ai": "零一万物",
+        "LGAI-EXAONE": "LG", "FunAudioLLM": "阿里", "stepfun": "阶跃星辰",
+        "MiniMaxAI": "MiniMax",
+    }
+    return mapping.get(org, org)
 
 
 # ================================================================
@@ -877,6 +1160,74 @@ def verify_via_huggingface(rows: list[dict]) -> list[dict]:
 
 
 # ================================================================
+#  LLM 提取结果加载（腾讯研究院文章 → 结构化模型数据）
+# ================================================================
+
+def load_llm_extracted_models(since_int: int, until_int: int) -> list[dict]:
+    """加载 LLM 从腾讯研究院文章中提取的模型数据，转换为标准行格式。
+
+    读取 Extract/extracted_models_llm.json，按 source_date 过滤时间窗口，
+    将 JSON 字段映射为 Excel 列名。
+    """
+    json_path = ROOT / "Extract" / "extracted_models_llm.json"
+    if not json_path.exists():
+        print("\n  📭 LLM 提取结果不存在，跳过")
+        return []
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        records = json.load(f)
+
+    print(f"\n📡 数据源: LLM 提取（腾讯研究院文章）")
+    print("=" * 50)
+    print(f"  📄 JSON 记录总数: {len(records)}")
+
+    # 字段映射: JSON key → Excel 列名
+    field_map = {
+        "model_name": "模型名称",
+        "company": "公司",
+        "domestic": "国内外",
+        "open_source": "开闭源",
+        "size": "尺寸",
+        "model_type": "类型",
+        "can_reason": "能否推理",
+        "task_type": "任务类型",
+        "website": "官网",
+        "release_date": "模型发布时间",
+    }
+
+    rows = []
+    for record in records:
+        source_date = record.get("source_date", 0)
+        if source_date and (source_date < since_int or source_date > until_int):
+            continue
+
+        model_name = (record.get("model_name") or "").strip()
+        if not model_name:
+            continue
+
+        row = {}
+        for json_key, excel_col in field_map.items():
+            row[excel_col] = record.get(json_key, "")
+
+        # 补充元数据
+        brief = record.get("brief", "")
+        source_article = record.get("source_article", "")
+        note_parts = []
+        if brief:
+            note_parts.append(brief)
+        if source_article:
+            note_parts.append(f"来源: {source_article}")
+        row["备注"] = " | ".join(note_parts) if note_parts else ""
+        row["记录创建时间"] = today_str()
+        row["是否新增"] = "New"
+
+        rows.append(row)
+
+    print(f"  📊 时间窗口内: {len(rows)} 条模型")
+    return rows
+
+
+# ================================================================
 #  写入 Excel
 # ================================================================
 
@@ -942,8 +1293,8 @@ def parse_args():
     parser.add_argument("--until", type=str, help="截止日期 (YYYYMMDD)")
     parser.add_argument(
         "--source", type=str, default="all",
-        choices=["all", "llmstats", "txresearch"],
-        help="数据源 (默认 all)",
+        choices=["all", "llmstats", "txresearch", "huggingface", "llm_extract"],
+        help="数据源 (默认 all；llm_extract 加载 LLM 提取结果)",
     )
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不写 Excel")
     return parser.parse_args()
@@ -975,21 +1326,48 @@ def main():
 
     all_new_rows = []
 
-    # 1. llmstats
+    # ── 异步并行：先启动腾讯研究院爬虫（后台），再跑 llmstats ──
+    # 爬虫是纯 Selenium 工具，不依赖 AI，可以后台异步运行
+    crawl_proc = None
+    if args.source in ("all", "txresearch"):
+        crawl_proc = start_txresearch_crawl(since_int, until_int)
+
+    # 1. llmstats（HTTP 抓取，秒级完成，爬虫在后台同时运行）
     if args.source in ("all", "llmstats"):
         llmstats_rows = collect_llmstats(since_int, until_int)
         llmstats_unique = deduplicate_rows(llmstats_rows, existing_names)
         print(f"  去重后: {len(llmstats_unique)}/{len(llmstats_rows)} 条")
         all_new_rows.extend(llmstats_unique)
 
-    # 2. 腾讯研究院
+    # 2. 腾讯研究院（等待后台爬虫完成，处理结果）
     if args.source in ("all", "txresearch"):
-        tx_rows = collect_txresearch(since_int, until_int)
+        tx_rows = collect_txresearch(since_int, until_int, crawl_proc=crawl_proc)
         tx_unique = deduplicate_rows(tx_rows, existing_names)
         print(f"  去重后: {len(tx_unique)}/{len(tx_rows)} 条")
         all_new_rows.extend(tx_unique)
 
-    # 3. HuggingFace 核实（对开源模型自动验证）
+    # 2.5 LLM 提取结果（腾讯研究院文章 → 模型数据）
+    if args.source in ("all", "txresearch", "llm_extract"):
+        llm_rows = load_llm_extracted_models(since_int, until_int)
+        combined_existing = existing_names | {
+            r.get("模型名称", "").strip().lower() for r in all_new_rows
+        }
+        llm_unique = deduplicate_rows(llm_rows, combined_existing)
+        print(f"  去重后: {len(llm_unique)}/{len(llm_rows)} 条")
+        all_new_rows.extend(llm_unique)
+
+    # 3. HuggingFace API（批量发现开源模型）
+    if args.source in ("all", "huggingface"):
+        hf_rows = collect_huggingface(since_int, until_int)
+        # 去重时要考虑前面已经采集到的模型
+        combined_existing = existing_names | {
+            r.get("模型名称", "").strip().lower() for r in all_new_rows
+        }
+        hf_unique = deduplicate_rows(hf_rows, combined_existing)
+        print(f"  去重后: {len(hf_unique)}/{len(hf_rows)} 条")
+        all_new_rows.extend(hf_unique)
+
+    # 4. HuggingFace 核实（对开源模型自动验证）
     if all_new_rows:
         all_new_rows = verify_via_huggingface(all_new_rows)
 

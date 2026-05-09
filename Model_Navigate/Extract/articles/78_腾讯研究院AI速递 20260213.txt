@@ -1,0 +1,43 @@
+标题: 腾讯研究院AI速递 20260213
+智谱发布开源GLM-5，参数规模扩展至744B（激活40B），在ArtificialAnalysis榜单位居全球第四、开源第一，Coding与Agent能力逼近ClaudeOpus4.5；AI已能独立完成人类…
+链接: https://www.sohu.com/a/986848335_455313?scm=10001.325_13-325_13.0.0-1-0-0-0.5_1334&spm=smpc.channel_248.block3_308_NDdFbm_1_fd.103.1778306429693F3ySH1m_324
+序号: 78
+================================================================================
+
+一、智谱开源GLM-5，Agentic Engineering时代最强开源模型
+1.智谱发布开源GLM-5，参数规模扩展至744B（激活40B），在Artificial Analysis榜单位居全球第四、开源第一，Coding与Agent能力逼近Claude Opus 4.5；
+2.模型在SWE-bench-Verified和Terminal Bench 2.0分别获得77.8和56.2分刷新开源SOTA，擅长复杂系统工程与长程Agent任务；
+3.GLM-5已完成与华为昇腾、寒武纪、昆仑芯等国产芯片适配，推出Z Code全流程编程工具和AutoGLM通用Agent助手。
+二、MiniMax发布M2.5，10B激活参数达旗舰水平推理速度更快
+1.MiniMax发布M2.5模型，激活参数仅10B却达到第一梯队旗舰水平，编程和Agent能力比肩Opus 4.6，推理速度是Opus的3倍；
+2.实测9分钟搭完全栈学习网站，能独立完成物理模拟和企业级CMS系统搭建，支持PC/App/React Native跨端开发；
+3.模型采用原生Agent RL训练框架和CISPO算法，实现约40倍训练加速，兼容Claude Code、OpenClaw等主流开发工具即插即用。
+三、小红书开源图像编辑模型FireRed-Image-Edit，多榜SOTA
+1.小红书基础模型团队开源FireRed-Image-Edit，在ImgEdit、GEdit等多个权威榜单取得SOTA，代码和技术报告已开源；
+2.模型通过三阶段训练实现能力进阶，创新性提出Layout-Aware OCR-based Reward，文字编辑准确性和风格保持显著提升；
+3.支持指令遵循一致性、文字编辑、风格迁移、多图融合及老照片修复等多种复杂编辑场景，模型权重即将开源。
+四、小米开源首代机器人VLA大模型，47亿参数刷新多项SOTA
+1.小米发布开源VLA模型Xiaomi-Robotics-0，47亿参数兼具视觉语言理解与实时执行能力，在LIBERO、CALVIN、SimplerEnv等30种模型对比中均获最优；
+2.模型采用Mixture-of-Transformers架构，VLM大脑负责理解指令，Diffusion Transformer小脑生成高频平滑动作；
+3.通过异步推理模式和Λ-shape注意力掩码解决动作断层问题，可在消费级显卡实现实时推理，已开源至GitHub和HuggingFace。
+五、高德连发两个ABot系列具身基座模型，霸榜10项权威评测
+1.高德发布ABot系列具身基座模型，ABot-M0负责操作、ABot-N0负责导航，霸榜10项全球权威评测实现全面SOTA；
+2.ABot-M0通过动作语言统一整合600万条跨平台轨迹数据，提出动作流形学习算法，在Libero-Plus上成功率达80.5%超越pi0近30%；
+3.ABot-N0在单一VLA架构内统一五大核心导航任务，构建8000个高保真3D场景和1700万条专家示例，SocNav成功率提升40.5%。
+六、Rokid Glasses支持自定义智能体，可接入私有部署大模型
+1.Rokid Glasses灵珠平台上线「自定义智能体」功能，通过标准SSE接口可接入OpenClaw或私有部署的DeepSeek R1、Qwen3等任意大模型；
+2.用户可实现隐私数据本地闭环处理、一键切换模型基座，结合ClawHub技能生态调用文件系统、浏览器、IM消息等执行能力；
+3.平台将AI眼镜定义权交还用户，支持通过语音指令或快捷指令随时召唤私有Agent，打造7×24小时智能助手。
+七、谷歌发布AI数学家Aletheia，刷爆SOTA攻入博士级科研
+1.谷歌DeepMind发布基于Gemini Deep Think的「AI数学家」Aletheia，在IMO-ProofBench取得91.9%成绩刷爆SOTA，能独立撰写发表学术论文；
+2.Aletheia对Erdős猜想数据库700个开放问题进行系统评估并自主解决4个未解之谜，具备自我纠错和承认局限的能力；
+3.Gemini Deep Think联手专家攻克18个长期停滞的研究难题，终结十年子模优化猜想，一篇论文已被ICLR 2026录用。
+八、HyperWrite CEO撰文7千万阅读：AI奇点已至或自我进化
+1.HyperWrite CEO撰文《大事正在发生》24小时内被近7000万人阅读，称GPT-5.3-Codex和Claude Opus 4.6发布标志AI发生质变；
+2.AI已能独立完成人类专家5小时工作量，该能力每4-7个月翻一倍，GPT-5.3已在自身训练过程中发挥关键作用，递归自我提升循环启动；
+3.几乎所有屏幕前完成的认知工作都将被波及，建议每天花1小时实验AI，当前存在认知窗口期但不会持续太久。
+九、Anthropic发布53页报告：Opus 4.6风险逼近ASL-4级别
+1.Anthropic发布53页报告警告Claude Opus 4.6风险已逼近ASL-4级别，列出8条可能导致灾难性危害的风险路径包括自主外逃与自治运行；
+2.报告结论是当前模型不存在「持续一致的恶意目标」，灾难性破坏风险「非常低但不为零」，已进入能力评估的「灰区」；
+3.Anthropic安全研究团队负责人已辞职称「世界正处于危机之中」，xAI联创预言递归式自我提升循环可能在12个月内上线。
+👇加入AGI数据库，AI智能问答返回搜狐，查看更多

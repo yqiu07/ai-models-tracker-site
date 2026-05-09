@@ -1,0 +1,233 @@
+标题: 中美AI巨头都在描述哪种AGI叙事？
+通过YoshuaBengio提出的AGI框架（基于CHC认知理论），我们发现之前的AI存在严重的“能力偏科”：它在一般知识（K）上得分极高，但在即时推理（R）、长期记忆（MS）和视觉处理（V）上几乎是空白。因…
+链接: https://www.sohu.com/a/976014203_455313?scm=10001.325_13-325_13.0.0-1-0-0-0.5_1334&spm=smpc.channel_248.block3_308_NDdFbm_1_fd.149.1778306429693F3ySH1m_324
+序号: 124
+================================================================================
+
+博阳本文作者
+在刚刚过去的2025年，我通读了大约两百篇人工智能领域的论文。
+如果用一个词来形容这一年的技术体感，那就是“暴力美学”代的终结。单纯依靠堆砌参数摘取低垂果实的日子已经过去，2025年的技术进化回归到了基础研究。
+这篇文章，我想通过梳理这一年的技术脉络，明确三个结论：
+第一，2025年，技术进步主要集中在流体推理（Fluid Reasoning）、长期记忆（Long-term Memory）、空间智能（Spatial Intelligence）以及元学习（Meta-learning）这四个领域。原因在于Scaling Law在单纯的参数规模上遇到了边际效应递减，为了突破AGI
+的瓶颈，业界被迫寻找新的增长点，即从“把模型做大”转向把“模型做聪明”。
+第二，现在的技术瓶颈主要在模型要“不仅要博学，更要懂思考和能记住”。 通过Yoshua Bengio提出的AGI框架（基于CHC认知理论），我们发现之前的AI存在严重的“能力偏科”：它在一般知识（K）上得分极高，但在即时推理（R）、长期记忆（MS）和视觉处理（V）上几乎是空白。这种不平衡构成了通往AGI的最大阻碍。
+第三，这些瓶颈在25年其实都找了一些新的解决方向，可以说是补短板很成功的一年。其中最重要的是三个方面。
+推理能力： 通过Test-Time Compute（推理时计算）引发的革命，AI学会了慢思考，推理能力实现了从0到8的质变。
+记忆能力： Titans架构和Nested Learning的出现，打破了Transformer的无状态假设，让模型具备了内化的“海马体”，有望彻底根治金鱼记忆。
+空间智能： 视频生成不再只是像素的堆砌，而是开始掌握物理规律，迈向了真正的世界模型。
+接下来，我将根据这一年间的论文阅读，带领大家详细看看这些关键拼图是如何被一块块补齐的。
+（因为篇幅限制，各个方向上涉及的论文我只是简单做了讲述，如果有兴趣深入了解，可以看文后的相关论文参考。已分章节处理。）
+流体推理的进化，
+Test Time Compute的诞生与发展
+在2024年，AI明显的短板是即时推理(R)能力。在GPT-4的时代，AI只会依赖概率直觉，推理什么的一点不会。但在2025年，Test-Time Compute（推理时计算）通过拉长推理时间来换取智能。Test-Time Compute 的核心理念是：智能不仅是参数的函数，也是时间的函数。以OpenAI o1和DeepSeek R1为代表，AI学会了“慢思考”。 通过在推理阶段投入更多的计算资源，它开始在输出答案前，在内部进行长达数秒甚至数分钟的自我辩论和推演。
+这就是2025年最重要的范式革新，让AI从背书的鹦鹉转向思考的机器。
+因为模型的思维过程是无法在预训练期间进行引导的，因此后训练、尤其是强化学习（RL），就成了提升推理能力的最重要的手段。
+但事情并非一帆风顺，在2025年，《强化学习真的能激励LLM超越基座模型的推理能力吗？》这篇论文引发了大概半年左右的学术争论。该研究发现，在许多情况下，RLVR训练后的模型生成的正确推理路径，其实在基座模型的采样分布中原本就存在。RL的作用仅仅是锐化了分布，显著提高了采样到这些路径的概率，而并非真正“创造”了基座模型完全未知的推理能力。
+对此，在后续长达半年的论争后，现在的通行结论是基座模型可能确实包含了所有必要的原子推理步骤（如加减法、基本逻辑变换），但RL的作用在于通过数万次的试错，筛选出能够稳定维持长距离依赖的策略路径。
+另外，CMU研究指出，RL训练存在三个阶段。第一阶段是“锐化”，仅提升已知路径的概率；但随着训练深入，模型进入“链接（Chaining）”阶段，开始将基座模型中原本概率极低的不对称技能（如验证与生成）链接起来，从而解决从未见过的难题。这说明RL不光在锐化，也确实能够有效组合新的推理方法。
+但学术界的这种形而上讨论，没能阻止业界的工程优化热情。因为Benchmark的增长不会骗人。
+强化学习的本质，就是通过与环境交互获得反馈，在探索未知与利用已知之间寻找平衡，以最大化长期累积奖励为目标，从而学习出一套最优的决策策略。因此，它的工程可以拆分成核心的三个策略，探索策略（采样）、评分（包括评分标准和如何评分）和参数更新算法三个部分。
+在2025年，强化学习的方法在其中两部分中都得到了明显的发展。而采样的策略则还是集中在蒙特卡洛方法（一步一步寻找新分支）、暴力温度采样（调高模型的多样性，采出多种可能）和在23年大火的STaR 模式（就是模型对自己的结论点评后，根据点评再找别的路）这三种方法上，不过25年，因为DeepSeek R1的成功，暴力温度采样明显成了主流，因为工程简单又能出不错的结果。
+评分系统的革新
+在2025年首先发生的是基于可验证奖励的强化学习（RLVR）和稀疏奖励指标（ORM）的全面崛起。
+由于DeepSeek R1的成功，让大家发现，只要给模型一个对错结论作为奖励信号，模型就可以自发探索其中的推理过程。这导致了ORM的崛起。
+而在ORM领域，那些能够明确给出结果对错（可验证的客观真理）的领域，比如数学、代码、逻辑等方面，强化学习就很好下手，效果也很容易得到提高。基于这些客观真理形成的强化学习奖励机制，就被称为可验证奖励。在2025年前半年，RLVR（可验证结果）+GPRO（分组探索解法）的方法突飞猛进，基本成了主流方法，也带来了模型在代码、数学领域的能力大幅提升。
+另一个问题就是RLVR是挺好用的，但不是所有领域都有可验证的真假，比如在文学、乃至医疗这种更偏统计性的领域，目前就没有完全的真假科研，那怎么办呢？因此我们可能需要一个更宏大的Universal Verifier（通用验证器），去解决这个问题。
+目前已经有的两个思路，一个外求法：既然标准不唯一，那就人工或者靠模型制定复杂的评分细则（Rubic），然后让模型根据Rubic去进行奖励。而另一个，是相信模型自己的直觉（内求法），利用模型自己的确信度去影响无明确奖励的领域训练。
+比如Kimi K2的joint RL stage策略，就是把RLVR 和 self-critique rubric reward 结合起来做 RL。
+参数更新算法的革新
+DeepSeek R1带来的第二个RL震荡就是GPRO算法的流行。在过去，RL的主流方法是PPO，在这个框架里，有两个角色，一个是Actor Model，负责写答案。还有一个是Critic Model，来给演员的每一步打分。这个方法特别适合PRM，给每步都评分，但它非常贵，因为它得一直在线训练，让模型尝试完了再在线打分。
+但GPRO不一样，它直接把Critic模型切掉了，让模型生成一组答案，算平均分来代替 Critic，来看谁做的好，谁做的坏。一下子省下来50%的显存，搭配ORM，更是极简中的极简。非常省成本，而且效果也不差。
+因此，基本上国内各家都是在GPRO的框架上延展，在2025年这一年发展出了各种变体。比如Qwen的GSPO的优化引入了分值加权，不只看你是否高于平均分，还看你的绝对得分是多少，让GPRO能够从对的里选出更好的，把全错的都排除出梯度，让训练更稳。Minimax的CISPO，则是发现传统GPRO / PPO训练的时候，会暴力截断过长的COT上下文，导致核心思考没办法用起来，所以做了个重要性采样，保留下更重的部分去更新。
+除了这些特别具体的更新外，业界同时试图找到强化学习的Chichila规律。
+比如Meta的ScaleRL，就在多种消融实验中发现RL的增长曲线其实有天花板。他们证明了RL性能与计算量之间不符合幂律（就是Scaling Laws那种算力越大，能力越大的模式），而是符合 Sigmoid 曲线的（起步难，中间猛，最后死活涨不动）。
+这不是什么好消息，说明RL是有天花板的。我们不能指望靠 RL 无限提升模型的智力上限。 它只能把模型已有的（预训练赋予的）潜能“逼”出来，一旦逼到了 100%，RL 就失效了。想再突破，还得回去革新底座模型或者算法架构。
+但好消息是，我们离天花板还远着呢，还差着一堆工程创新。另外，基础模型的能力提升也不是完全停滞的。
+ScaleRL还提出了一套最佳工程实践，包括使用长思维链（Long CoT）作为关键驱动力，以及使用大Batch Size（如2048 prompts）来触达更高的性能天花板。这一研究将RL从“炼金术”转变为一门精确的工程科学，使得研究者可以通过小规模实验精准预测大规模训练的效果。
+所有这些对RL工程的探索，使得今年的模型，能够在不增加参数的情况下，依然在整体能力上稳步上升。一次次打破ARC和Humans Last Exam的标尺，同时带动了数学和代码能力的大幅上升。
+记忆与学习,
+治愈模型的健忘症
+如果说Test Time Compute是前半年最重要的模型变革，那后半年最重要的模型变革，就是记忆能力的提升。毕竟，这是唯一一个在GPT-5时代，在AGI得分里还是0的分支能力，属于短板中短板，漏水的大户。
+模型没有记忆有啥问题？第一，没有记忆能力的模型不可能在现实中自我学习，必须得在算力工厂里通过再训练学习。这种再训练昂贵，且训练源可能与日常使用完全脱节，因此持续学习成了一个无比困难的事项。第二，想有个能记住你是谁，你的偏好的AI，就变得很费劲。比如我的Gemini 3，现在只依靠系统级的Prompt积累一点点关于我的记忆，但大半还是错的。
+在24年大火的RAG（检索增强生成）虽然作为一种外挂式的“海马体”缓解了这一问题，但它当时的形态只是资料库和搜索机制，还很不好用。在25年，记忆问题的研究其实得到了很多发展，只是大多数出现在后半年，尚未真正被融合进工程。
+记忆可以分为三种方式，上下文作为记忆、RAG处理过的上下文作为记忆以及将上下文融合到参数里，内化的进行记忆。难度层层递进。
+今年RAG和参数调整的记忆方式都发生了很大的科研进步，但其中最耀眼的是Google Research发布的 Titans 架构以及Nested Learning，是2025年记忆领域的最大突破，属于架构级提升。从根本上挑战了Transformer的无状态假设。
+我们现在一个个看。
+模型，获得活着的记忆
+Titans 是一个深度的神经长期记忆模块，能够在测试时（即推理过程中）实时更新自身的参数。这和传统的Transformer层，训练完就冻结完全不一样。Titans在一开始就是个空容器，就一个初始权重，将历史信息学习进神经记忆中。和传统的压缩模式（Mamba）比，这种学习是无损的。
+那怎么决定什么东西记忆，什么不记？靠惊奇度（Surprise Metric），模型会根据输入信息的意外程度（梯度大小）来决定是否将其存入长期记忆。这和人差不多，越新鲜有冲击的东西越记得住。
+Titans是随时更新权重的，这意味着还要做反向传播和梯度更新，岂不是很贵吗？确实，单看是很费GPU算力，但它一般是和普通Transformer层混用，只占一小部分，所以虽然但并不很重，而且可以省去巨量的上下文开支。
+而且，它还可以将记忆作为额外的上下文输入给注意力机制，如同一个高级助手，提供背景信息。通过门控机制融合短期注意力与长期记忆，处理更灵活，并行处理短时与长时依赖。这也可以提升模型本身的效率。
+同时，Titans还引入了遗忘机制（Weight Decay），自动清理不再重要的信息。
+如果说这是在不会记新东西的Transformer上加了一些记忆模块补丁，那Nested Learning就是一个更宏大的架构改变。
+在Nested Learning中，谷歌做了一个分层，把模型的架构分成了低、中、高三个更新频率的神经网络层。把整个模型的参数冻结都解放了，这个模型都是活的，可以随时调整参数。低频参数的调整很慢，大概需要16M token的前向更新才会调整一次。它保证了知识的延续性，避免了灾难性遗忘。而快速的反馈则交给高频的神经网络层处理，这样可以快速反应，做短期记忆。
+于是我们就有了一个持续更新的，非冻结的神经网络，它可以抱有长期记忆，并持续学习。而且因为更新频率不高，且更新比较局部，其成本比一般的SFT、RL达成同等效果的成本还要低。
+谷歌甚至还提出了一个更大的体系MIRAS，它把序列模型看成一个会边读边写的联想记忆模块。每来一个 token，你把它投影成 key 和 value；模型用当前记忆去“检索/回忆”一个 value；然后用一个内部目标函数（attentional bias）和一个保留/遗忘约束（retention gate），通过某种在线优化/更新算法（memory learning algorithm）去更新记忆。Titans和Nested Learning，都属于在不同层面上对MIRAS的尝试。
+这一调整，使得模型具备了持续学习和更新长期记忆的基础。不过考虑到它对模型架构的改变，在工业大规模应用上可能还需要一定时间。
+RAG模型化
+之前，RAG曾被讥讽为图书管理员，只增不减，照单全收。但2025年，它发生了质的飞跃，演变为具备反思与进化能力的系统，甚至可以在一定程度上产生如同参数般的效果。
+这一波RAG改造浪潮中，比较有代表性的还是DeepMind 提出的 ReMem 和 Evo-Memory。
+ReMem让RAG不再是简单的资料库式的“检索-生成”，而是通过一个Agent 引入了 Action-Think-Memory Refine 的全链路处理方法。在新上下文被存入记忆前，会有个Agent对其进行“内省”（Think），标记出哪些是无效步骤，哪些是关键策略。记忆过程中，模型还会对进来的上下文进行修剪（Pruning）和重组（Reorganizing），让它更容易被检索，保留最重要的信息。同时，模型会定期清理无用的记忆，甚至将失败的尝试作为“负面教材”存入，其效果等同于RLHF（人类反馈强化学习）的负向惩罚。
+这一机制使得记忆不再是静止的录像，而是经过压缩和提纯的智慧。它存储的更多是策略，使得模型在处理类似任务时能够调用过往的成功经验，实现了真正的经验复用。
+微调与蒸馏让遗忘性灾难不再存在
+在2025年之前，灾难性遗忘是参数记忆更新的最大敌人。模型用微调的方式做更新，很容易学了新的忘了旧的，通用能力受损；用强化学习做更新，不容易遗忘，但成本又太高。但在2025年，学术界提出了多种解决方案，让模型在学习新知的同时不丢失旧能力。
+比如 Meta 提出的Sparse Memory Finetuning(稀疏记忆微调)。它在Tansformer里加了一个百万个独立槽位的空白内存层。当新知识进入时，系统筛选出更不重要的、和核心旧知识相关性不高的槽位进行更新。这种稀疏更新策略，确保了在注入新知识的同时，绝大部分旧参数保持不变，从而完美保留了原有能力。实验表明，在TriviaQA事实注入任务中，该方法仅导致11%的旧知识遗忘，远优于全量微调的89%。
+再如Thinking Machines 提出的在策略蒸馏（On-Policy Distillation, OPD），结合了 RL 的采样方式和 SFT 的监督信号。训练数据不再是老师的录像，而是学生模型自己实时生成的轨迹。学生要在自己真实的“犯错分布”中学习，这是RL的采样方法。但它评估用的是SFT的密集反馈，老师模型会全程陪跑，在学生生成的每一个 Token 上都计算 KL 散度（即直接告诉学生你和我的差距在哪里），提供密集的即时反馈，而不是像 RL 那样最后才给一个标量分数。这种方法创造了一种既不会导致灾难性遗忘，同时也极大压缩成本的参数更新方式。
+两条路径，最终都导向了通过微调更新模型参数更稳定的路径，这样的话模型就可以更快捷、便宜的进行线下更新。梦想中的白天模型陪你说话， 晚上你睡觉更新你的神经元连接，它微调更新它的参数，也许会变成可能。
+走出“柏拉图洞穴”，
+迎来空间智能 (Gv) 与世界模型
+另一个在Bengio AGI定义2024年得分还是0的一项，就是视觉处理。在今年，这一能力在Sora 2、 Veo 3等生成视频的爆发之下，得到了有效的提升。在Veo 3等模型能够有效保持物体位置一致性的情况下，模型似乎开始有了对物理规律更深的掌握，进入到了空间智能和世界模型（World Models）的范畴。
+虽然今年主要是李飞飞在大力宣扬空间智能的概念。但实际在这条路上，一共有三个主流派系和玩家，在今年也都各有研究进展。
+自监督生成模型的Scaling Law
+第一派就是Sora 2、Veo 3这些采用了DiT架构的自监督模型，也就是我们常见的视频生成模型。
+不过要论空间智能，2025年8月，Google DeepMind发布的Genie 3更明显。Genie 3，是个生成的、可交互的、持续演变的3D环境。
+与其前代相对破碎的呈现不同，Genie 3具有了实时性和一致性。它能以24fps的帧率和720p的分辨率实时渲染环境，且能维持数分钟的场景一致性。
+如果你在虚拟世界中打破了一个花瓶，当你转身离开再回来时，花瓶碎片依然在地上，而不是像早期生成视频那样莫名消失或复原。
+除此之外，Genie 3非常好的展现了自监督模型的物理学习能力。它完全没有参考物理引擎，只是通过观看海量视频数据，自发学会了流体流动、光影反射甚至风吹树叶的物理规律。
+之所以视频生成模型能够获得如此大的进步，主要是因为学术界发现了视觉自回归（Visual Autoregressive, VAR）和扩散Transformer（DiT）的Scaling Law。
+2024年，字节的Visual Autoregressive(VAR)模型的提出，排除了Diffusion部分，通过改变token的建模，从行变成图，让自回归独挑大梁。因为是纯自回归，它的性能严格遵循Scaling Law。
+但这个路子毕竟还是有点野。在25年的论文《Towards Precise Scaling Laws for Video Diffusion Transformers》，更主流的DiT也被发现符合Scaling Law，不过这个Law与LLM不太一样。与LLM相对稳定的特性不一样，视频扩散模型对批量大小（Batch Size）和学习率（Learning Rate）表现出极高的敏感性。直接套用LLM的缩放定律会导致预测失效。
+但用上特制的Scaling Law，DiT模型就可以大力出奇迹了。在对Veo 3成员的采访中，Deepmind的员工就表示，训练这么好，主要是打通了视频生成的Scaling Law。
+除此之外，今年视频生成的另一个新变化就是加上声音了。这主要归功于谷歌一直坚持的原生多模态能力。
+而且2025年4月，Apple Machine Learning Research发布了《Scaling Laws for Native Multimodal Models》发现，晚期融合架构（后台多模态）相对于早期融合架构（原生多模态）可能存在一定上限上的劣势。过去晚期融合模型通常表现出较高的样本效率，就是我后面加一个图像编码器，就可以直接让语言模型变成视频模型，变化贼快。这意味着费力去训原生多模态，得不偿失。
+但晚期融合模型在参数利用率上存在瓶颈，为了达到特定的性能水平，晚期融合架构得需要更大的模型尺寸来补偿那个新加视觉编码器带来的表征限制，因此同等规模，上限更低。
+另一个特别值得注意的动向，是VAE的消失。VAE你可以理解成视频的压缩器。一个视频包含的信息过多，直接给模型，它就会崩溃，所以需要一个压缩器去压缩成模型可接受的信息密度。
+但这么一压缩，重构必然会导致高频细节丢失，而且VAE是个独立的模型，其生成的 Latent Space 与大语言模型（LLM）或多模态模型（VLM）的语义空间不对齐，训练上非常麻烦。
+2025 年 10 月快手的《Latent Diffusion Model without Variational Autoencoder》 论文提出了 SVG 模型，通过直接用图像理解模型代替VAE，统一语义空间，这个模式极大地提升了训练效率（号称提升 6200%）和生成速度。而且它的效果不仅没有因为“快”而缩水，反而在多项核心指标上击败了现在的霸主 DiT（Diffusion Transformer）和 SDXL。
+因为这个模式，有大一统的美，又有benchmark的美，应该很快就会成为主流。
+符号主义的World Labs：基于3D CV生成的世界
+第二派就是斯坦福教授李飞飞领导的World Labs 派。这一派的特色就是，生成好，但要在一个固定的物理框架下生成。纯粹自监督，太不可靠了。
+他们在2025年11月推出了其首个商业产品Marble平台。这是一个“大型世界模型”（LWM），旨在从多模态输入中生成可探索的 3D 环境。与 Sora 输出像素流（视频）不同，Marble 输出的是空间表示。
+根据媒体分析，Marble 大概率是依赖 3D 高斯泼溅（3DGS）作为其渲染基元，并可能结合了神经辐射场（NeRF）的结构估计原则。当用户输入单张图像或文本提示时，Marble 会估计场景的深度、光照和被遮挡的几何结构。然后，它将这些 2D 信息“提升”为由数百万个高斯“泼溅”（具有颜色、不透明度和缩放属性的椭球体）组成的 3D 体积。
+始终是放不下CV多年来世界构建的努力。
+这种对传统CV的应用，也体现在World Labs 提供的创作工具Chisel 上。它引入了 神经符号（Neuro-symbolic）工作流。用户可以使用粗略的几何基元（盒子、平面）定义世界的“骨架”，以建立布局约束（例如，“我需要这里有一扇门，那里有一堵墙”）。生成模型随后根据文本提示对这一结构进行“绘制”和细节填充。
+比起Sora 生成的黑盒，Marble虽然不是很性感，但确实更稳定，更可控。也许World Labs这条路能是最早走通工业落地的方向。
+预测即理解：V-JEPA 2与物理直觉
+另外一派代表是Yann Lecun，他的特色就是极端的深度学习表征派。对于他，大家可能都或多或少听说过，Lecun的观点一直是：自回归的生成式模型根本不可能掌握物理规则，只是鹦鹉而已。
+那怎么掌握规则呢？靠预测。只有预测，能学习到物理规则的表征，而不是那些像素的关系表征。Meta推出的V-JEPA 2，训练机制就是随机遮住图像的一部分（Masking），然后要求模型根据之前看到的画面，预测被遮挡部分的内容，只练预测。然后，一个教师编码器看到完整的视频，根据这个帮学生，生成目标特征向量。
+这种设计使得V-JEPA 2具备了极高的语义抽象能力。模型被迫学习场景中那些“可预测”的规律（如重力下落、刚体碰撞），而自动忽略那些“不可预测”的随机噪声（如光斑的闪烁、背景的纹理噪点）。在Yann Lecun的考虑中，这提取了因果本质。
+这套理念其实并不新，和他2024年初发布的V-JEPA 1完全一致。但当时，V-JEPA 1 只用了100M左右的数据集做训练，其效果只能是理解视频，并不能展现出反事实预测的能力。但在V-JEPA 2里，Lecun优化了训练过程，用了100万+ 小时的视频训练集，结果模型确实涌现出了“推演”的能力。在V-JEPA 2-AC（动作条件化）变体中，JEPA模型确实做到了可以预测“如果我执行这个动作，世界会变成什么样”。
+这毫无疑问，是对这个路径的一剂强心针。说明预测，掌握物理规则这个训练模式是有效的。不过到了JEPA 2，它能够处理的时间跨度也不过64帧（根据采样规律，约10秒），分辨率只有384x384。和人家生成路线高清2k、20s生成比起来，还是差太多。想要真正实用，还得在工程上做不少事。
+重要的是学习
+从深度学习肇始，核心问题就只有一个，即什么是学习。到2024年为止，大模型早已经具有了很多学习能力，能够从海量数据中寻找到数据的链接方式，进而达成一种与人不同的学习模式。然而，在2025年，强化学习之父 Richard Sutton 依然批评当前的大语言模型（LLM）只是“被冻结的过去知识”，缺乏在与环境交互中实时学习的能力。这是说模型缺乏持续学习的能力，这个问题在上面记忆部分有可能会得到解决。
+Sutton的另一个批评就是模型并不会元学习，即学习怎么去学习，学什么东西。他所谓的元方法（Meta-methods），指的就是“在这个时刻不要把知识写死，而是把‘获取知识的能力’写进代码里”的方法。只有这样，模型才能利用无限的算力和数据，去适应无限变化的世界。
+只有有元学习的能力的模型，才能在遇到新问题时， 通过很少几个样本，调动脑子里的“通用解题逻辑”（元知识），立刻做出解答，做到真正的低成本、快速适应。并通过“如何观察特征、如何归纳特征”的能力，迅速归纳出规则达成完整的动态泛化。
+没有元学习，模型就不可能应对未知。 因为你无法预知未来会遇到什么任务，所以你不能预先训练它，只能赋予它现场学习的能力。
+元学习与中训练
+在2024年之前，学术界一直有关于当时模型是否具有隐式元学习能力的讨论。很多人都认为是有的，因为存在着 上下文学习（In-Context Learning）的现象。因为我们不改动参数，只是给 GPT 看了几个例子（Prompt），它就像学过了一样能够举一反三。
+对此，包括Anthropic在内的研究机构，都提出Transformer中的注意力机制在数学形式上，与模型学习时梯度下降（Gradient Descent）的更新步骤非常类似。Deepmind的论文，更是证明对于线性注意力模型，Transformer 的前向传播过程可以被严格推导为“在大规模预训练学到的权重上执行梯度下降”的过程。
+但同样，也有很多研究，证明上下文学习其实没在新学习例子中给出的映射关系，只是在自身的概念空间里，利用格式（Format）激活了预训练期间早就记住的知识。就是说激活了相关性而已，不是真在学，而是在套模版。
+这和我们所提到的元学习的理念大相径庭。
+不过，在2025年12月份，苏黎世理工还发表了一篇Meta RL的论文，设计了更好的上下文框架，更有效的利用ICL来作为一种元学习的方式。让模型通过上下文自我反思和历史回溯，来形成新策略。在下一次尝试中，Agent 实际上是在执行一个新的 Policy ，因为上下文变了。它看起来和上面提到的谷歌的ReMeM很像，但更关注策略更新，而非上下文管理。也许他们结合起来，才是最好的上下文作为权重的方法。
+但最大的改变，是TTC的到来，为隐式元学习提供了其他的可能。在推理革命初期，大家都发现可能模型思考了很长时间，输出了很长的思维链，但要么没用，要么都是错的。所以不是思维链越长模型就越强。我们得引导它的思维过程，让它在最短的思维中，达成最优解。这其实本质上就是一种训练模型如何思维的元学习。
+卡耐基梅隆的研究《Optimizing Test-Time Compute via Meta Reinforcement Fine-Tuning》就是在这个方向上的尝试。
+它先证明了，模型在推理时生成的长 CoT，本质上是一个 Agent 在思维空间里探索最优路径。那如果这种探索可以做到更有效，其实就是一种元学习的能力。这种元学习，就是引导模型在推理过程中，能够有效寻找最佳路径，合理分配算力。他们使用的策略是累积遗憾最小化（Cumulative Regret）。如果模型多思考了很多步，但答案的置信度没有提升，这就是个遗憾，需要在后续规避。我们在做强化学习的时候，应该引导模型去尽可能减小遗憾发生的可能，让模型知道遇到这种难度的题，我应该调用多少算力、尝试几条路径。这就是学习的方法。
+但这些方法，虽然比单纯的上下文学习走的远，但仍然局限在优化已有的探索路径这个层面，向外探索的能力仍然不足。我们可能仍然需要在单纯的梯度之外，搭建一套显式的系统，去引导模型学会学习。
+比如DeepMind 今年发表DiscoRL，它包含两个核心闭环：内部循环由Agent在Atari等游戏环境中试错，外部循环则由“老师”通过反向传播观察学生的表现，不断修正教学策略（即更新学习算法的参数）。这一过程让AI自主发现了想要得到最好的结果，得从“奖励最大化”转向“未来预测”，而且这些预测往往集中在重大事件（如Ahamoment和改变方向）发生之前。在这一过程中，教师独立“重新发现”了RL中的自举法，证明了AI可以通过这种递归的抽象从纯粹经验中真的学习到应该如何去探索。
+实验结果显示，由该系统自主发现的算法（Disco57）不仅在雅达利基准上击败了包括MuZero在内的人类设计顶级算法，更展现了惊人的泛化能力。即便是在未见过的ProcGen和NetHack等复杂环境中，它依然表现出色，证明其学到的不是单一游戏的技巧，而是普适通用的学习法则。
+Meta在《Agent Learning via Early Experience》 的中训练尝试，其实也殊途同归的走向了一样的路径。预训练是让AI死记硬背专家的正确操作，RL是直接扔到现实世界里依靠稀缺的奖励摸爬滚打。而中训练，就是在这之间让Agent自己瞎折腾产生后果，并且反思。
+具体到操作层面，在专家演示的每一步，会强制AI尝试几种不同的“备选动作”，然后记录下这些动作会让环境变成什么样。同时，还要对为什么专家做得好，我做的不好进行反思。这其实就是训练AI不仅仅知道“怎么做是对的”，而是建立起“如果我这样做，世界会那样变”的因果模型。
+在一种探索和尝试，以及对尝试经验的递归中，模型也许确实学会了如何去学习这个世界的规律。它能显著提升其在WebShop、ALFWorld等复杂环境中的成功率（平均提升9.6%），并大幅增强了泛化能力。
+这几种方法有一个共性，即他们都掌握了“想有效探索，必须建立起一个对世界的预测”的想法。这和谷歌《General Agents Need World Models》一文的结论不谋而合。
+神经科学的投影
+2025年的神经科学研究，让我们可能能更理解人类是如何进行学习的。过去我们认为神经网络是一个混杂的“黑盒”，但在 《Building compositional tasks with shared neural subspaces》这篇论文证明了大脑内部存在着结构化、正交化的神经子空间。这些子空间就像是物理层面的“符号”，它们将“颜色”、“形状”、“动作”等概念从混沌的电信号中剥离出来，形成了独立的、可复用的模块。
+研究发现，大脑执行新任务不是靠修改神经元的连接（长出新脑细胞），而是靠一种“动态路由”机制。前额叶皮层根据当前的“任务信念”，像接线员一样将不同的神经子空间重新连线。其实人类在学习过程中，是将简单模块拼装成新任务来去行动的。
+今年哈佛的论文《WHAT DOES IT MEAN TO UNDERSTAND LANGUAGE?》则认为大脑的“语言区域”其实并不负责真正深刻的理解，它只是做了一些表层的处理，然后必须把信息“外派”给大脑的其他专门区域（比如负责视觉、社交、物理推理的区域），才能实现真正的“深度理解”。
+在这种理解之上，2025年涌现出了很多对模型进行分区的尝试，包括上面提到的记忆分区，或者把模型的参数分成专门处理快、慢反应的两个组别的尝试。
+读写速度、注意力
+和Scaling Law的基础
+以上四个部分，可以说是2025年最引人注目的四个进步。因为它们在AGI的量表中，都是一步步覆盖到原来完全为0的新领域上。从零奠基，范式革新。
+然而在这之外，2025年也有其他一些重要改变，有效的补齐了过去模型并不擅长的领域（比如上下文和处理速度），并且可能隐含着一些训练范式上的大规模修正可能。以下我们就通过一章，快速覆盖一下这些领域。
+对抗“Scaling Law的消失”
+就像文章开头所写，在2024年末时，GPT 4.5已经遇到了互联网数据枯竭的问题。而且在训练超大型稠密模型的工程难度也几何增加，问题不断。
+Scaling Law眼看难以为继之时，OpenAI 在 GPT-5.2 中并未继续盲目扩大参数，而是靠稀疏性（Sparsity），即MoE、合成数据（Synthetic Data）与 RL加强三方结合，突破瓶颈。
+MoE，是DeepSeek 一直采用的方法，在V3成功之前， 业内很少有人使用。但它确实具有训练资源消耗少的特征（一次训整个模型 vs 一次只训部分专家），因此，大规模稠密模型带来的工程问题在一定程度上被解决。
+而强化学习和测试时时间，让模型可以绕开参数的Scaling Law，用上面说到的RL的Scaling Law继续提升能力。
+但数据怎么办？
+在2025年，随着推理能力的进步，模型现在已经可以自主生成长思维链（COT）文本了。DeepSeek R1的论文表明，利用DeepSeek-R1生成的长思维链对小模型进行微调，其效果远超使用人类专家编写的CoT数据。因此，到此时合成数据的问题已经被解决了一半。
+另外，2025年也有很多证据证明，数据在精，不在多。而且质量最好的就是长COT数据。
+芝加哥大学团队的实验数据表明，当数据量达到一定规模后，信息大多是重复冗余的，训练效果反而不好。与其盲目追求P数据量，不如通过去重和多样性筛选来降低数据密度，加强单位数据的“惊奇度”（Surprisal）。
+而且最有惊奇度的在现阶段正是长COT。在他们的实验Select2Reason中，仅仅筛选出前 10% 推理路径最长、最复杂的样本进行训练，其效果就匹配甚至超越了全量数据集。
+因此，长COT文本合成数据，已经成了翻越数据墙的一种最有希望的方式。
+但2025年10月的一篇热点研究发现，模型在大规模使用合成数据，包括互联网上流行的AI生成数据后，会发生“脑损伤”，也就是递归（持续用自己推导自己）导致的模型崩溃（Model Collapse）。一方面模型的长尾泛化能力下降，另一方面，模型会持续放大过去生成的错误，盲目自信。
+不过该研究并没有单独拎出来长COT文本数据做范例。
+好在这并非必然。南洋科技大在NeurIPS 2025的论文中，就建立了一种利用自我验证机制过滤数据的方法。在生成合成数据后，模型会计算其内部置信度分数。如果分数低于某个阈值，说明模型对该生成内容存疑，那这些数据就要被丢弃。
+他们的数据证明，只要模型的校准误差在一定界限内，仅凭自我验证就可以在完全合成（Fully Synthetic）的数据体制下，让模型一直训练下去，而不会崩溃。
+在2025年，科研界也发明出了更复杂的方法做清洗。比如利用另一个模型作为裁判（LLM-as-a-Judge）去搭建一个数据清洗流，保证其可验证性和效果。甚至有意识的让Agent去生产模型知识空间中的空白（Missing Nodes），以解决递归带来的多样性丧失。
+感谢蒸馏，我们也许不必再承担推理慢的代价了
+Gemini 3 Flash在年底的横空出世，让人对小模型的能力提升有了非常直观的感受。
+在Gemini 3 Flash之前，虽然Nvidia一直鼓吹小模型时代，微软的Phi 4、谷歌的Gemma 3等小模型也表现不俗，但没有任何一家的小模型能够真正替代自家主流模型成为日常主力模型。
+所以2025年这一年到底发生了什么，让小模型突飞猛进？主要是蒸馏方法的两大主要的进步：MoE的蒸馏，以及对COT的蒸馏上。
+先说MoE蒸馏。在DeepSeek的带领下，现在主流的模型都是用MoE的架构了。但之前的传统的蒸馏方法往往忽略了那些未被路由选中的专家（Non-activated Experts）所蕴含的“暗知识”。
+2025年2月的论文《Every Expert Matters》就提出了针对 MoE 的特化蒸馏方案。该方法在蒸馏过程中，通过多次采样或强制激活策略，让学生模型接触到教师模型中不同专家的组合输出。这样学生模型（通常是更小的稠密模型）不仅学习到了“最优解”，还学习到了不同专家对同一问题的不同视角。这类研究，给出了MoE蒸馏的工程方向。
+另一个难题就是将长思维链能力高效迁移到小模型。传统的单教师蒸馏处理长序列推理中的误差累积问题非常不力，并不适合长COT的蒸馏。而简单的将多个教师的数据混合（Data Union）往往会因为推理路径的冲突而导致模型困惑，反而降低了性能。
+为了能应对这个情况，思维融合蒸馏（Merge-of-Thought, MoT）应运而生。这是一种轻量级的、迭代式的蒸馏框架，通过共识去噪（Consensus Denoising）原理，让多个教师可以有效的引导学生模型，还可以避免长序列推理的误差积累。
+比如在解决同一个复杂数学或逻辑问题时，不同教师的表达各异，但其核心的推理逻辑往往是相似的。就那干脆在高维参数空间中，让学生模型能够提取出所有教师的“公约数”，即最稳健的推理逻辑。
+通过这两种方式，加上长COT本身对蒸馏的增强作用，让小模型的能力越来越强。也许有一天，我们甚至不用牺牲推理带来的速度减缓，就能享受到完整的智能体验了。
+注意力机制的变化，解放上下文
+每一年，注意力机制都会有些新突破。毕竟这是自回归框架下最重要的机制之一，它深度影响了大模型的上下文能力和指令遵从能力。2025年的变化相对比较多样。
+如果说2024年之前是MHA（多头注意力）的时代，那么2025年则是MLA（Multi-Head Latent Attention，多头潜在注意力）及其变体全面普及的时代。
+从DeepSeek从V3开始采用MLA架构后，它就开始大受欢迎。毕竟既能压缩大量降低显存占用，又能保持了原有注意力机制的水平，多好。而且在推理COT越来越长的背景下，的KV Cache显存爆炸问题更严重，MLA 就更加流行。
+不过在发展过程中，MLA现在很少是作为一个独立的注意力层被应用，而是更多地作为一种“高性能组件”被嵌入到混合架构中，给其他更高效的注意力新方法做精度保底。
+2025年的另一个变化是线性注意力的复归。长期以来，线性注意被视为全注意力的一种“有损压缩”妥协方案，它用精度的下降换取推理速度。但在2025年，随着Kimi Linear的发布，这一刻板印象被彻底打破。
+Kimi Linear采用3:1混合架构（3层线性穿插1层MLA），利用线性注意力层承担主要的计算负载（节省75% KV缓存），再利用MLA兜底全局信息，实现了在1M超长上下文任务（RULER测试）中达到94.8的高分，性能上首次全面超越全注意力。这标志着线性注意力现在又了从备胎转为主力的实力。
+除此之外，Kimi还证明了线性注意力可以内在地学习各个token的位置信息，从而不再需要传统的RoPE（旋转位置编码），在1M上下文解码时，少了ROPE和N方的计算量，它的吞吐量可以达到全注意力的6.3倍。
+除了在传统的Token层面优化注意力，2025年的另一个重要趋势是打破离散Token的限制，向连续空间（Continuous Space）演进。这以“大型概念模型”（Large Concept Models, LCM）和腾讯的CALM（Continuous Autoregressive Language Models）为代表。
+传统的LLM只预测下一个token，因此非常慢，且对于长文本概念的关联性理解也不行。Meta的Large Comcept Moedel 则试图将多个Token压缩为一个连续向量，从“预测下一个词”转变为“预测下一个概念向量”。这增加了每个生成步骤的“语义带宽”，在一次推理步骤中生成相当于原来4倍的信息量，理论上能让模型训练和推理的更快。
+这个逻辑很好，但在LCM提出时，因为压缩token向量的工程化问题，其训练效率并没有比传统方法提升太多。但今年10月，腾讯的CALM才第一次在工程上找到了平衡点，用更极简的方式证明了这条路径的工业可行性。
+2026，模型研究可能向哪里走？
+了解完2025年模型的进步路径后，我们大可以畅想一下明年可能出现的一些研究方向。首先，我们上面提及的这些方向，毫无疑问会朝着更精细化和工程化的方向演进，进而给我们带来模型体验上的持续提升。从2025年的技术总结中，我们已经可以看到，几乎所有重要的Scaling Law继续发威的绊脚石都被搬的七七八八了。也正是因此，我们才在年末迎来了Gemini 3和GPT 5两个确实提升明显的新模型。
+虽然像Test Time Compute这类范式革新性的创新是难以预测的，但有些已有苗头的新方向很可能会在2026年结果，产生很重要的落地应用。我下面会罗列一些我认为可能会发生的技术推进方向。
+记忆的工程化实践
+2026年，一定是一个记忆大年。
+因为记忆事关持续学习，事关Agent落地（个性化和新技能学习），如果理论上的方向已经明确，那除了工程上的难题外，基本没有什么可以阻止它落地。
+在AI领域，我们以TTC革命为例子，可以看到一个复杂的系统性新想法从产生、实验、工程落地，大概需要的时间是2年左右。2024年末的GPT o1，实际上在22年左右，已经在Illya脑海中逐步成型，到方法确定和工程优化，大概用了整整两年。
+在2025年，我们看到了从RAG、微调到架构上三种路径上的思考都逐步迈向成熟，并且已经进行了小规模的实验。这说明很可能再有一年时间，这些研究成果就可能在工程上成熟，被采用。在一个成功架构（比如像DeepSeek R1）的推动下，成为标配，完成范式转换。
+即使做不到架构层的变化，RAG层的精修和SFT技术的优化，也可以让之前那些实验性的记忆系统，比如Mem0、Second Me有了更好的落地体验。
+在2025年中，基本上主流模型都已经配置了基于上下文的记忆系统。但在2026年，更细节，更具有学习性的记忆将会逐步被产品化。
+标准架构的变革
+不论是Nested Learning、还是元学习，以及Universe of Thought，似乎都在证明着，我们当下的语言模型架构必须进行一些升级，才可能补全其缺失的能力。
+这种升级的趋势主要以分区、分层、增加更多功能层为特质。不管是直接在层级间加入Titans 的记忆层，还是像Herachical Reasoning 那样，把模型分为不同的分区，都可能更符合人脑运作的模式。
+在2026年，这种潜在的混合架构，可能会随着神经学和符号主义的回潮，变得有更多更丰富的尝试。
+进化的螺旋开启
+2025年除了推理这个词之外，最热门的应该就是自进化了。这是机器学习的圣杯。一个可以无限自我对弈、自我进化的通用型AI，基本就等于是AGI、ASI。
+不过在2025年，探索才刚刚起步。在这一年里，有借鉴了生成式对抗网络，让模型能够在无数据的情况下，自问自答进行强化学习的。这条路确实走的通，也确实是自进化，但它的上限依然受制于模型本身的预训练能力，暂时没有呈现出超过人工设计的后训练的水平。
+自进化AI的另一个验证方法是是否能发明出让自己进化的算法。这就是Alpha Evolve努力的一个方向。
+它是由系统使用Gemini Flash（追求速度）和Gemini Pro（追求深度）组成的模型集成，形成一个个独立的探索Agent。系统将当前表现最好的算法代码作为上下文输入LLM，并告诉这些Agent，去优化这段代码的某些具体方向。LLM由此生成多个变异版本的代码。在Agent规则的限制下，这些变异一般是逻辑层面的重构，例如改变循环结构、引入新的数学技巧或调整数据结构。生成的代码会被放入沙箱环境中执行。系统通过预定义的测试用例验证其正确性（Provable Correctness），并通过性能分析器测量其效率（如延迟、吞吐量或指令数）。那些既正确又更高效的算法将被保留，成为下一代的父本。由此，持续的多次优化，最终带来算法的最优优化。
+在实践上，Alpha Evolve确实找到了优于人类答案的优化算法。
+不过，我们其实可以把Alpha Evolve看成Deep research的变体版本，只是把搜索部分替换成优化而已。在缺乏反思和内化，只是作为流程Agent存在的大模型，虽然确实可以找到进化算法，但很难称之为自进化。
+以上两种比较有代表性的尝试，其实都属于自进化早期的尝试。
+在记忆、合成数据、元学习的模式完善之后，自进化的AI在2026年必然会产生更多的可能性。
+Part I TTC革命
+● The Art of Scaling Reinforcement Learning Compute for LLMs（文中 “ScaleRL / Sigmoid 曲线”） https://arxiv.org/abs/2510.13786 ([2510.13786] The Art of Scaling Reinforcement Learning Compute for LLMs)
+● Group Sequence Policy Optimization (GSPO)（文中 Qwen 的 GSPO / GSPO 类）https://arxiv.org/abs/2507.18071 ([2507.18071] Group Sequence Policy Optimization)
+● MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention（文中 MiniMax、以及 CISPO 出处） https://arxiv.org/abs/2506.13585 ([2506.13585] MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention)你文中提到的 CISPO，在这篇 MiniMax-M1 论文里作为其 RL 算法之一出现。 ([2506.13585] MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention)Part II. 记忆力
+● Titans: Learning to Memorize at Test Timehttps://arxiv.org/abs/2501.00663 (research.google)
+● MIRAS 框架（Miras 作为统一记忆/序列模型设计框架）论文：It’s All Connected: A Journey Through Test-Time Memorization, Attentional Bias, Retention, and Online Optimizationhttps://arxiv.org/abs/2504.13173 ([2504.13173] It's All Connected: A Journey Through Test-Time Memorization, Attentional Bias, Retention, and Online Optimization)
+● Nested Learning（ Nested Learning / Hope / “多更新频率层级”相关）https://arxiv.org/abs/2512.24695 ([2512.24695] Nested Learning: The Illusion of Deep Learning Architectures)
+● Evo-Memory（含 ExpRAG 与 ReMem：Action–Think–Memory–Refine）https://arxiv.org/abs/2511.20857 ([2511.20857] Evo-Memory: Benchmarking LLM Agent Test-time Learning with Self-Evolving Memory)
+● 稀疏记忆微调（Sparse Memory Finetuning）论文：Continual Learning via Sparse Memory Finetuninghttps://arxiv.org/abs/2510.15103 ([2510.15103] Continual Learning via Sparse Memory Finetuning)Part III. 空间智能
+● Towards Precise Scaling Laws for Video Diffusion Transformers（DiT scaling law、对 batch/lr 更敏感”）https://arxiv.org/abs/2411.17470 ([2411.17470] Towards Precise Scaling Laws for Video Diffusion Transformers)
+● Visual Autoregressive Modeling (VAR): Scalable Image Generation via Next-Scale Prediction（ VAR）https://arxiv.org/abs/2404.02905 ([2404.02905] Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction)
+● V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning（ V-JEPA 2 / 预测式世界表征）https://arxiv.org/abs/2506.09985 ([2506.09985] V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning)
+● Scaling Laws for Native Multimodal Modelshttps://arxiv.org/abs/2504.07951 ([2504.07951] Scaling Laws for Native Multimodal Models)
+● Latent Diffusion Model without Variational Autoencoder（无 VAE / SVG”） https://arxiv.org/abs/2510.15301 ([2510.15301] Latent Diffusion Model without Variational Autoencoder)（可选：后续扩展版）
+● SVG-T2I: Scaling Up Text-to-Image Latent Diffusion Model Without Variational Autoencoderhttps://arxiv.org/abs/2512.11749 ([2512.11749] SVG-T2I: Scaling Up Text-to-Image Latent Diffusion Model Without Variational Autoencoder)Part IV.重要的是学习
+●Why Can GPT Learn In-Context? Language Models Implicitly Perform Gradient Descent as Meta-Optimizershttps://arxiv.org/abs/2212.10559 （[2212.10559] Why Can GPT Learn In-Context? Language Models Implicitly Perform Gradient Descent as Meta-Optimizers)
+●Transformers Learn In-Context by Gradient Descent https://arxiv.org/abs/2212.07677 ([2212.07677] Transformers learn in-context by gradient descent )
+●In-context Learning and Induction Headshttps://arxiv.org/abs/2209.11895 ([2209.11895] In-context Learning and Induction Heads)
+●Meta-RL Induces Exploration in Language Agentshttps://arxiv.org/abs/2512.16848 (https://arxiv.org/abs/2512.16848)
+●Optimizing Test-Time Compute via Meta Reinforcement Fine-Tuninghttps://arxiv.org/abs/2503.07572 (https://arxiv.org/abs/2503.07572)
+●Agent Learning via Early Experiencehttps://arxiv.org/abs/2510.08558 ([2510.08558] Agent Learning via Early Experience)
+●What does it mean to understand language?https://arxiv.org/abs/2511.19757 ([2511.19757] What does it mean to understand language?)
+●DynamicMind: A Tri-Mode Thinking System for Large Language Modelshttps://arxiv.org/abs/2506.05936 ([2506.05936] DynamicMind: A Tri-Mode Thinking System for Large Language Models)Part V . 其他进展合成数据部分
+● Scaling Laws Revisited: Modeling the Role of Data Quality in Language Model Pretraininghttps://arxiv.org/abs/2510.03313 (research.google)
+● LLMs Can Get “Brain Rot”!（“脑损伤/brain rot”论文）https://arxiv.org/abs/2510.13928 (research.google)
+● Self-Verification Provably Prevents Model Collapse in Recursive Synthetic Training（ NeurIPS 2025 / OpenReview 那篇）https://openreview.net/forum?id=X5Hk8aMs6w (research.google)PDF：https://openreview.net/pdf?id=X5Hk8aMs6w (research.google)蒸馏部分
+● Every Expert Matters: Towards Effective Knowledge Distillation for Mixture-of-Experts Language Models（你文中《Every Expert Matters》）https://arxiv.org/abs/2502.12947 ([2502.12947] Every Expert Matters: Towards Effective Knowledge Distillation for Mixture-of-Experts Language Models)
+● Merge-of-Thought Distillation (MoT)（你文中“思维融合蒸馏 MoT”）https://arxiv.org/abs/2509.08814 (research.google)
+● On-Policy Distillation / GKD（你文中 OPD 类“学生自采样 + 教师逐 token KL”最接近的公开论文锚）论文：On-Policy Distillation of Language Models: Learning from Self-Generated Mistakeshttps://arxiv.org/abs/2306.13649 ([2306.13649] On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes )说明：你文里提到的“逐 token KL、密集反馈、比 RL 便宜”的叙述，学术上最接近这条 On-Policy Distillation / GKD 线。([2306.13649] On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes) 注意力部分
+● Kimi Linear: An Expressive, Efficient Attention Architecture（ Kimi Linear、3:1 混合、1M 上下文、吞吐提升等）https://arxiv.org/abs/2510.26692 ([2510.26692] Kimi Linear: An Expressive, Efficient Attention Architecture)
+● CALM：Continuous Autoregressive Language Models（腾讯 CALM）https://arxiv.org/abs/2510.27688 ([2510.27688] Continuous Autoregressive Language Models)
+● Large Concept Models: Language Modeling in a Sentence Representation Space（ LCM）https://arxiv.org/abs/2412.08821 ([2412.08821] Large Concept Models: Language Modeling in a Sentence Representation Space)（可选补充：概念/连续概念混合方向
+● LLM Pretraining with Continuous Concepts (CoCoMix) https://arxiv.org/abs/2502.08524 ([2502.08524] LLM Pretraining with Continuous Concepts )返回搜狐，查看更多

@@ -5,10 +5,12 @@
 import pandas as pd
 from collections import Counter
 from datetime import date
+from pathlib import Path
 
-UPDATED_PATH = r"D:\yuwang\action\data\Object-Models-Updated.xlsx"
-OLD_PATH = r"D:\yuwang\action\data\Object-Models-Old.xlsx"
-REPORT_PATH = r"D:\yuwang\action\Report\update_report_20260416.md"
+_ROOT = Path(__file__).parent.parent
+UPDATED_PATH = str(_ROOT / "data" / "Object-Models-Updated.xlsx")
+OLD_PATH = str(_ROOT / "data" / "Object-Models-Old.xlsx")
+REPORT_PATH = str(_ROOT / "Report" / f"update_report_{date.today().strftime('%Y%m%d')}.md")
 
 df = pd.read_excel(UPDATED_PATH)
 old_df = pd.read_excel(OLD_PATH)
