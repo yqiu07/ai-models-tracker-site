@@ -30,20 +30,25 @@ Skill 工作目录为本文件所在目录。核心入口是 `main.py`，运行�
 - 调超时阈值？→ 改 `config.py` 的 `SUBPROCESS_TIMEOUT_MINUTES` 等
 - 换爬虫目标页？→ 改 `config.py` 的 `TXRESEARCH_SOHU_URL`
 
-### 两套表格体系
+### 数据架构（v3：总表 + 增量归档 + 备份）
 
-- **流水线表** `data/Object-Models-*.xlsx`：`main.py` 自动更新，每轮从 `Old.xlsx` 复制基线、采集写入 `Updated.xlsx`
-- **总表** `data/Object-Models.xlsx`（推荐）：从最早到现在的全量模型/智能体记录，流水线步骤 7 自动增量合并
+```
+data/
+├── Object-Models.xlsx          ← 唯一真相源（总表，全量模型记录）
+├── increments/                 ← 增量归档（每次运行产出的新增模型快照）
+│   └── YYYYMMDD_runHHMM.xlsx   ← 单次增量文件，含"触发时间"列
+├── Backup/                     ← 总表备份（合并前自动备份）
+│   └── Object-Models_YYYYMMDD_HHMM.xlsx
+└── run_log.csv                 ← 运行记录（时间/来源/新增数/是否推送）
+```
 
-### 总表说明
+**核心原则**：
+- **总表是唯一真相源**：所有去重、查询、推送都基于总表
+- **增量按次归档**：每次流水线跑出的新模型，先写入 `increments/`，再合并到总表
+- **合并前自动备份**：防止数据损坏可回滚
+- **去重标准**：`name.strip().lower().replace('-','').replace('_','').replace(' ','')`
 
-`data/Object-Models.xlsx` 是全量模型总表，记录所有历次追踪到的模型/智能体信息。
-
-**行为**：每次流水线运行（步骤 7）时，自动将新增模型增量合并到总表。去重标准：`name.strip().lower().replace('-','').replace('_','').replace(' ','')`。
-
-**冷启动建议**：首次使用时，可将已有的模型数据（如历史 Excel、手工记录等）直接复制粘贴到 `data/Object-Models.xlsx` 中作为初始数据。总表列顺序必须与流水线表一致（参见下方字段定义）。
-
-**不放 Object-Models.xlsx** = 不启用总表功能，不影响流水线正常运行。
+**冷启动建议**：首次使用时，可将已有模型数据直接放入 `data/Object-Models.xlsx` 作为初始总表。
 
 ### Trace 机制
 
@@ -88,19 +93,16 @@ AI 能力等级：**L0** 纯机械 / **L1** 规则判断 / **L2** 需 AI 创作�
 
 冷启动时 `main.py` 会自动创建空基线 Excel（含正确表头），无需手动准备。
 
-### 阶段 A：自动采集
+### 阶段 A：自动采集（v3 六步精简流水线）
 
 运行 `python main.py --since YYYYMMDD --until YYYYMMDD`，自动完成：
 
-1. 从 `Object-Models-Old.xlsx` 复制基线（冷启动时自动创建空基线）
-2. `auto_collect.py`：llmstats HTTP 直连 + 腾讯研究院 Selenium 爬虫 + HuggingFace API 校验
-3. `Extract/extract_models_llm.py`（可选）：LLM 从文章全文提取模型
-4. `review_models.py`：GPT-5.5 审核（名称规范性 + 旧模型检测 + 字段补全 + 重要性评级）
-5. `Test/check_result.py`：数据检查
-6. `Report/generate_report.py`：报告生成
-7. `Crawl/Arena_x/format_cases.py`：Case 格式化
-8. 表格对比 + 验收报告
-9. `push_dingtalk.py`：钉钉推送（需 `--push` 参数）
+1. **数据采集** — `auto_collect.py`：多源采集（llmstats + 腾讯研究院 + HuggingFace + 平台目录），2026+ 时效过滤
+2. **增量去重** — 与总表 `Object-Models.xlsx` 对比，只保留新增模型，标记"触发时间"
+3. **AI 审核** — `review_models.py`：GPT-5.5 审核（名称规范 + 字段补全 + 重要性评级）
+4. **合并归档** — 新增模型写入 `increments/YYYYMMDD_runHHMM.xlsx`，合并到总表，合并前自动备份
+5. **钉钉推送** — `push_dingtalk.py`：生成日报推送（需 `--push` 参数）
+6. **运行记录** — 写入 `run_log.csv`（时间/来源/新增数/是否推送）
 
 ### 阶段 B：AI 创作校验（你的核心任务）
 

@@ -137,12 +137,11 @@ REPORT_DIR = ROOT / "Report"
 EXTRACT_DIR = ROOT / "Extract"
 CRAWL_DIR = ROOT / "Crawl"
 
-# Excel 文件
-EXCEL_BASELINE = DATA_DIR / "Object-Models-Old.xlsx"
-EXCEL_UPDATED = DATA_DIR / "Object-Models-Updated.xlsx"
-EXCEL_MEDIUM = DATA_DIR / "Object-Models-Medium.xlsx"
-EXCEL_ONLY = DATA_DIR / "Object-Models-Updated - only.xlsx"
-EXCEL_ORIGINAL = DATA_DIR / "Object-Models.xlsx"
+# Excel 文件（v3 架构：总表 + 增量归档 + 备份）
+EXCEL_MASTER = DATA_DIR / "Object-Models.xlsx"           # 唯一真相源（总表）
+INCREMENT_DIR = DATA_DIR / "increments"                  # 增量归档目录
+BACKUP_DIR_DATA = DATA_DIR / "Backup"                    # 备份目录
+RUN_LOG_FILE = DATA_DIR / "run_log.csv"                  # 运行记录
 
 # 报告文件
 TEST_REPORT = REPORT_DIR / "E2E-Test-Report.md"

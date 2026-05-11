@@ -74,14 +74,25 @@ cp Model_Navigate/.env.example Model_Navigate/.env
 
 所有过程性数据（爬虫结果、文章全文、JSON 缓存、报告等）都在 `Model_Navigate/` 目录内自动生成，不会额外创建工作目录。
 
-### 5. 总表功能（推荐）
+### 5. 数据架构（v3）
 
-在 `Model_Navigate/data/` 下放置 `Object-Models.xlsx`（全量模型总表）即可启用总表功能。
+项目采用**总表 + 增量归档 + 备份**的三层数据架构：
 
-- **自动合并**：每次流水线运行（步骤 7）后，新增模型自动增量合并到总表（标准化去重）
-- **冷启动建议**：首次使用时，可将已有的模型数据（历史 Excel、手工记录等）直接复制粘贴到总表作为初始数据
+```
+Model_Navigate/data/
+├── Object-Models.xlsx          ← 唯一真相源（总表）
+├── increments/                 ← 增量归档（每次运行产出的新增模型快照）
+│   └── YYYYMMDD_runHHMM.xlsx
+├── Backup/                     ← 总表备份（合并前自动备份）
+│   └── Object-Models_YYYYMMDD_HHMM.xlsx
+└── run_log.csv                 ← 运行记录
+```
+
+- **总表是唯一真相源**：所有去重、查询、推送都基于总表
+- **增量按次归档**：每次流水线跑出的新模型先归档再合并到总表
+- **合并前自动备份**：防止数据损坏可回滚
 - **去重标准**：`name.strip().lower().replace('-','').replace('_','').replace(' ','')`
-- 不放 `Object-Models.xlsx` = 不启用总表功能，不影响流水线运行
+- **冷启动建议**：首次使用时将已有模型数据放入 `Object-Models.xlsx` 即可
 
 ---
 
@@ -114,21 +125,17 @@ cd Extract; python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
 
 每轮模型追踪包含三个阶段：
 
-### 阶段 A：自动采集
+### 阶段 A：自动采集（v3 六步精简流水线）
 
-运行 `python main.py`，自动执行 9 个步骤：
+运行 `python main.py`，自动执行 6 个步骤：
 
 ```
-Step 1    准备基线 → 从 Old.xlsx 复制
-Step 2    数据采集 → llmstats + 腾讯研究院 + HuggingFace
-Step 2.5  LLM 提取 → 从文章全文提取模型（可选）
-Step 3    GPT-5.5 审核 → 名称规范 + 字段补全 + 重要性评级
-Step 4    数据检查
-Step 5    报告生成
-Step 6    Case 格式化
-Step 7    表格对比
-Step 8    验收报告
-Step 9    钉钉推送（需 --push）
+Step 1    数据采集 → 多源采集（llmstats + 腾讯研究院 + HuggingFace + 平台目录），2026+ 时效过滤
+Step 2    增量去重 → 与总表对比，只保留新增模型
+Step 3    AI 审核 → GPT-5.5 名称规范 + 字段补全 + 重要性评级
+Step 4    合并归档 → 新增写入 increments/，合并到总表，合并前自动备份
+Step 5    钉钉推送（需 --push）
+Step 6    运行记录 → 写入 run_log.csv
 ```
 
 ### 阶段 B：AI 创作校验（推荐）
@@ -248,7 +255,7 @@ model-navigate-skill/               ← 项目根目录（GitHub 仓库）
     ├── review_models.py             ← GPT-5.5 模型审核 + 重要性评级
     ├── push_dingtalk.py             ← 钉钉日报生成与推送
     │
-    ├── data/                        ← 运行时数据（总表 Object-Models.xlsx 放这里）
+    ├── data/                        ← 运行时数据（v3 架构：总表 + increments/ + Backup/）
     ├── Trace/                       ← 流水线运行记录（自动生成）
     │
     ├── Eval/                        ← 验收评估
