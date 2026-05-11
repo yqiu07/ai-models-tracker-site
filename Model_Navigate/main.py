@@ -71,76 +71,63 @@ _load_env()
 
 DATA_DIR = ACTION_DIR / "data"
 REPORT_DIR = ACTION_DIR / "Report"
-BASELINE_FILE = DATA_DIR / "Object-Models-Old.xlsx"
-UPDATED_FILE = DATA_DIR / "Object-Models-Updated.xlsx"
-MEDIUM_FILE = DATA_DIR / "Object-Models-Medium.xlsx"
-ONLY_FILE = DATA_DIR / "Object-Models-Updated - only.xlsx"
-BACKUP_DIR = ACTION_DIR / "Backup"
+TRACE_DIR = ACTION_DIR / "Trace"
+
+# ── v3 数据架构（精简为：总表 + 增量日志 + 备份 + 运行记录）──
+MASTER_FILE = DATA_DIR / "Object-Models.xlsx"          # 总表：唯一真相源
+INCREMENT_DIR = DATA_DIR / "increments"                 # 增量日志：每次触发归档
+BACKUP_DIR = DATA_DIR / "Backup"                        # 备份：写入总表前快照
+RUN_LOG_FILE = DATA_DIR / "run_log.csv"                 # 运行记录：轻量级追溯
+
+# ── 兼容旧路径（迁移期间 push_dingtalk 等脚本可能仍引用）──
+UPDATED_FILE = DATA_DIR / "Object-Models-Updated.xlsx"  # 已废弃，兼容保留
 TEST_REPORT_FILE = REPORT_DIR / "E2E-Test-Report.md"
 UPDATE_LOG_FILE = REPORT_DIR / "Update-Log.md"
 
 TODAY = date.today().isoformat()
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
-TRACE_DIR = ACTION_DIR / "Trace"
+RUN_ID = datetime.now().strftime("%Y%m%d_run%H%M")
 
 # ============================================================
-# 步骤定义
+# 步骤定义（v3 精简流水线：6 步）
 # ============================================================
 
 STEPS = [
     {
         "number": 1,
-        "name": "准备基线",
-        "description": "备份 Updated→Medium，复制 Old→Updated",
-        "script": None,
-    },
-    {
-        "number": 2,
-        "name": "自动化数据采集",
-        "description": "llmstats + 腾讯研究院 → 去重 → HuggingFace 核实 → 写入 Excel",
+        "name": "数据采集",
+        "description": "llmstats + 腾讯研究院 + HuggingFace + 平台目录 → 采集原始数据",
         "script": ACTION_DIR / "auto_collect.py",
     },
     {
+        "number": 2,
+        "name": "增量去重",
+        "description": "与总表去重，提取本次新增模型",
+        "script": None,
+    },
+    {
         "number": 3,
-        "name": "数据完整性检查",
-        "description": "检查更新后表格的字段完整性",
-        "script": ACTION_DIR / "Test" / "check_result.py",
+        "name": "LLM 审核",
+        "description": "GPT-5.5 审核新增模型（名称规范性 + 字段补全 + 重要性评级）",
+        "script": ACTION_DIR / "review_models.py",
     },
     {
         "number": 4,
-        "name": "生成更新报告",
-        "description": "生成 Markdown 格式的更新报告（含统计图表）",
-        "script": ACTION_DIR / "Report" / "generate_report.py",
+        "name": "合并归档",
+        "description": "增量写入总表 + 归档到 increments/ + 备份总表",
+        "script": None,
     },
     {
         "number": 5,
-        "name": "整理 Case 文件",
-        "description": "将 Crawl/Arena_x/ 下的原始 Case 文件整理为标准 Markdown 表格",
-        "script": ACTION_DIR / "Crawl" / "Arena_x" / "format_cases.py",
+        "name": "钉钉推送",
+        "description": "生成日报并推送到钉钉群（需 --push 参数）",
+        "script": ACTION_DIR / "push_dingtalk.py",
     },
     {
         "number": 6,
-        "name": "对比新旧表格",
-        "description": "对比 Updated.xlsx 与 Medium.xlsx，输出新增/原有/遗漏模型清单",
+        "name": "运行记录",
+        "description": "写入 run_log.csv + 生成 Trace 记录",
         "script": None,
-    },
-    {
-        "number": 7,
-        "name": "同步新增模型",
-        "description": "将本次新增的模型同步到 Object-Models-Updated - only.xlsx，并同步到总表",
-        "script": None,
-    },
-    {
-        "number": 8,
-        "name": "生成验收报告",
-        "description": "汇总测试结果、对比结果，生成 E2E-Test-Report.md 和 Update-Log.md",
-        "script": None,
-    },
-    {
-        "number": 9,
-        "name": "钉钉推送日报",
-        "description": "生成 AI 模型追踪日报并推送到钉钉群（需要 --push 参数或 DINGTALK_WEBHOOK 环境变量）",
-        "script": ACTION_DIR / "push_dingtalk.py",
     },
 ]
 
@@ -351,355 +338,176 @@ def backup_current():
 
 
 # ============================================================
-# 步骤 1：准备基线（内置逻辑）
+# v3 步骤函数
 # ============================================================
 
-def step_prepare_baseline():
-    """
-    复制基线文件。
-    注意：update_models.py 内部硬编码了 SOURCE = Object-Models.xlsx，
-    所以步骤 1 需要同时准备好这个文件（从 Old.xlsx 复制），
-    让步骤 2 的 shutil.copy2 能正常执行。
+def step_collect_data(since_int, until_int, source, force):
+    """步骤 1: 数据采集。调用 auto_collect.py 采集原始数据到临时 DataFrame。"""
+    args = [sys.executable, "-X", "utf8", str(ACTION_DIR / "auto_collect.py"),
+            "--since", str(since_int), "--until", str(until_int)]
+    if source != "all":
+        args += ["--source", source]
+    if force:
+        args.append("--force")
 
-    质量保障：在覆盖 Updated.xlsx 之前，先备份为 Medium.xlsx，
-    供步骤 10 对比使用。
-    """
-    import pandas as pd
-
-    if not BASELINE_FILE.exists():
-        _create_empty_baseline()
-
-    # 如果 Updated 已存在，先备份为 Medium（供后续对比）
-    if UPDATED_FILE.exists():
-        shutil.copy2(UPDATED_FILE, MEDIUM_FILE)
-        log(f"已备份为 Medium: {UPDATED_FILE.name} → {MEDIUM_FILE.name}")
-        medium_row_count = len(pd.read_excel(MEDIUM_FILE))
-        log(f"Medium 模型数量: {medium_row_count}")
-        # 同时做一份带时间戳的备份
-        backup_current()
-    else:
-        log("Updated.xlsx 不存在，跳过 Medium 备份（首次运行）", "WARN")
-
-    # update_models.py 内部会从 Object-Models.xlsx 复制到 Updated.xlsx
-    # 所以需要确保 Object-Models.xlsx 存在
-    original_baseline = DATA_DIR / "Object-Models.xlsx"
-    if not original_baseline.exists():
-        shutil.copy2(BASELINE_FILE, original_baseline)
-        log(f"已创建: {original_baseline.name}（从 {BASELINE_FILE.name} 复制，供 update_models.py 使用）")
-
-    # 同时也直接准备 Updated.xlsx（以防从步骤 3+ 开始时使用）
-    shutil.copy2(BASELINE_FILE, UPDATED_FILE)
-    log(f"已复制: {BASELINE_FILE.name} → {UPDATED_FILE.name}")
-
-    # 验证
-    row_count = len(pd.read_excel(UPDATED_FILE))
-    log(f"基线模型数量: {row_count}")
-    return True
-
-
-# ============================================================
-# 步骤 10：对比新旧表格（内置逻辑）
-# ============================================================
-
-def step_diff_tables():
-    """
-    对比 Updated.xlsx（本次生产结果）与 Medium.xlsx（上次的结果），
-    输出三类模型清单：新增、原有、遗漏。
-    """
-    import pandas as pd
-
-    if not MEDIUM_FILE.exists():
-        log("Medium.xlsx 不存在（可能是首次运行），跳过对比", "WARN")
-        return True
-
-    if not UPDATED_FILE.exists():
-        log("Updated.xlsx 不存在，无法对比", "ERROR")
-        return False
-
-    df_new = pd.read_excel(UPDATED_FILE)
-    df_medium = pd.read_excel(MEDIUM_FILE)
-
-    name_col = "模型名称"
-    if name_col not in df_new.columns or name_col not in df_medium.columns:
-        log(f"表格中缺少'{name_col}'列，无法对比", "ERROR")
-        return False
-
-    new_names = set(df_new[name_col].dropna().astype(str).str.strip())
-    medium_names = set(df_medium[name_col].dropna().astype(str).str.strip())
-
-    added = sorted(new_names - medium_names)
-    kept = sorted(new_names & medium_names)
-    missing = sorted(medium_names - new_names)
-
-    log(f"对比结果：Updated={len(new_names)} vs Medium={len(medium_names)}")
-    log(f"  📈 新增模型: {len(added)}")
-    log(f"  📋 原有模型: {len(kept)}")
-    log(f"  ⚠️  遗漏模型: {len(missing)}")
-
-    if added:
-        log(f"  新增列表: {', '.join(added[:20])}{'...' if len(added) > 20 else ''}")
-    if missing:
-        log(f"  ⚠️ 遗漏列表: {', '.join(missing)}", "WARN")
-
-    # 将对比结果写入文件供验收报告使用
-    diff_report_path = REPORT_DIR / "diff_result.md"
-    with open(diff_report_path, "w", encoding="utf-8") as f:
-        f.write(f"# 新旧表格对比结果\n\n")
-        f.write(f"> 对比时间：{TIMESTAMP}\n\n")
-        f.write(f"| 类别 | 数量 |\n|------|------|\n")
-        f.write(f"| Updated 总数 | {len(new_names)} |\n")
-        f.write(f"| Medium 总数 | {len(medium_names)} |\n")
-        f.write(f"| 📈 新增 | {len(added)} |\n")
-        f.write(f"| 📋 原有 | {len(kept)} |\n")
-        f.write(f"| ⚠️ 遗漏 | {len(missing)} |\n\n")
-
-        if added:
-            f.write(f"## 📈 新增模型（{len(added)}）\n\n")
-            for name in added:
-                f.write(f"- {name}\n")
-            f.write("\n")
-
-        if missing:
-            f.write(f"## ⚠️ 遗漏模型（{len(missing)}）\n\n")
-            f.write("> 以下模型在 Medium 中存在但在 Updated 中消失了，请检查是否为误删。\n\n")
-            for name in missing:
-                f.write(f"- {name}\n")
-            f.write("\n")
-
-        f.write(f"## 📋 原有模型（{len(kept)}）\n\n")
-        f.write(f"共 {len(kept)} 个模型保持不变（列表省略）。\n")
-
-    log(f"对比报告已写入: {diff_report_path.name}")
-    return True
-
-
-# ============================================================
-# 步骤 11：同步新增模型到 only.xlsx（内置逻辑）
-# ============================================================
-
-def step_sync_only():
-    """
-    将本次新增的模型同步到 Object-Models-Updated - only.xlsx。
-    新增模型 = Updated 中有但 Medium 中没有的模型。
-    如果 only.xlsx 已存在，则追加（去重）；否则新建。
-    """
-    import pandas as pd
-
-    if not UPDATED_FILE.exists():
-        log("Updated.xlsx 不存在，无法同步", "ERROR")
-        return False
-
-    df_updated = pd.read_excel(UPDATED_FILE)
-    name_col = "模型名称"
-
-    if name_col not in df_updated.columns:
-        log(f"表格中缺少'{name_col}'列", "ERROR")
-        return False
-
-    # 确定新增模型
-    if MEDIUM_FILE.exists():
-        df_medium = pd.read_excel(MEDIUM_FILE)
-        medium_names = set(df_medium[name_col].dropna().astype(str).str.strip())
-        df_added = df_updated[
-            ~df_updated[name_col].astype(str).str.strip().isin(medium_names)
-        ].copy()
-    else:
-        # 首次运行，用"是否新增"列判断
-        new_col = "是否新增"
-        if new_col in df_updated.columns:
-            df_added = df_updated[
-                df_updated[new_col].astype(str).str.strip().str.lower() == "new"
-            ].copy()
-        else:
-            log("无法确定新增模型（无 Medium 文件也无'是否新增'列）", "WARN")
-            return True
-
-    if df_added.empty:
-        log("本次无新增模型")
-        return True
-
-    # 如果 only.xlsx 已存在，追加并去重
-    if ONLY_FILE.exists():
-        df_existing = pd.read_excel(ONLY_FILE)
-        existing_names = set(df_existing[name_col].dropna().astype(str).str.strip())
-        df_truly_new = df_added[
-            ~df_added[name_col].astype(str).str.strip().isin(existing_names)
-        ]
-        if df_truly_new.empty:
-            log(f"新增模型已全部存在于 only.xlsx 中，无需追加")
-            return True
-        df_result = pd.concat([df_existing, df_truly_new], ignore_index=True)
-        log(f"追加 {len(df_truly_new)} 个新模型到 only.xlsx（原有 {len(df_existing)}，现有 {len(df_result)}）")
-    else:
-        df_result = df_added
-        log(f"创建 only.xlsx，写入 {len(df_result)} 个新增模型")
-
-    df_result.to_excel(ONLY_FILE, index=False)
-    log(f"已同步到: {ONLY_FILE.name}")
-
-    # ------ 增量合并到总表 Object-Models.xlsx ------
-    master_file = DATA_DIR / "Object-Models.xlsx"
-    if master_file.exists() and not df_added.empty:
-        df_master = pd.read_excel(master_file)
-
-        def _normalize_name(name):
-            return str(name).strip().lower().replace("-", "").replace("_", "").replace(" ", "")
-
-        master_normalized = set(
-            df_master[name_col].dropna().apply(_normalize_name)
-        )
-        df_master_new = df_added[
-            ~df_added[name_col].apply(_normalize_name).isin(master_normalized)
-        ].copy()
-
-        if df_master_new.empty:
-            log("新增模型已全部存在于总表中，无需合并")
-        else:
-            # 对齐列结构：以总表已有列顺序为准
-            master_columns = list(df_master.columns)
-            for col in df_master_new.columns:
-                if col not in master_columns:
-                    master_columns.append(col)
-            df_master = df_master.reindex(columns=master_columns)
-            df_master_new = df_master_new.reindex(columns=master_columns)
-
-            df_merged = pd.concat([df_master, df_master_new], ignore_index=True)
-            df_merged.to_excel(master_file, index=False)
-            log(f"已合并 {len(df_master_new)} 个新模型到总表（原有 {len(df_master)}，现有 {len(df_merged)}）")
-    elif not master_file.exists():
-        log("总表 Object-Models.xlsx 不存在，跳过总表合并", "WARN")
-
-    return True
-
-
-# ============================================================
-# 步骤 12：生成验收报告（内置逻辑）
-# ============================================================
-
-def step_generate_acceptance_report():
-    """
-    汇总本次更新的所有结果，生成 E2E-Test-Report.md 和更新 Update-Log.md。
-    """
-    import pandas as pd
-
-    if not UPDATED_FILE.exists():
-        log("Updated.xlsx 不存在，无法生成验收报告", "ERROR")
-        return False
-
-    df_updated = pd.read_excel(UPDATED_FILE)
-    total_count = len(df_updated)
-
-    # 读取 Medium 数据（如果存在）
-    medium_count = 0
-    added_count = 0
-    missing_count = 0
-    if MEDIUM_FILE.exists():
-        df_medium = pd.read_excel(MEDIUM_FILE)
-        medium_count = len(df_medium)
-        name_col = "模型名称"
-        if name_col in df_updated.columns and name_col in df_medium.columns:
-            new_names = set(df_updated[name_col].dropna().astype(str).str.strip())
-            medium_names = set(df_medium[name_col].dropna().astype(str).str.strip())
-            added_count = len(new_names - medium_names)
-            missing_count = len(medium_names - new_names)
-
-    # 读取对比报告（如果存在）
-    diff_report_path = REPORT_DIR / "diff_result.md"
-    diff_content = ""
-    if diff_report_path.exists():
-        with open(diff_report_path, "r", encoding="utf-8") as f:
-            diff_content = f.read()
-
-    # 计算字段覆盖率
-    coverage = {}
-    for col in df_updated.columns:
-        non_empty = df_updated[col].dropna().astype(str).str.strip().replace("", pd.NA).dropna()
-        coverage[col] = f"{len(non_empty)}/{total_count} ({100*len(non_empty)//total_count}%)"
-
-    # 生成 E2E-Test-Report.md
-    with open(TEST_REPORT_FILE, "w", encoding="utf-8") as f:
-        f.write(f"# 端到端测试报告\n\n")
-        f.write(f"> **测试时间**：{TIMESTAMP}\n")
-        f.write(f"> **测试环境**：Windows 11 + PowerShell + Python {sys.version.split()[0]}\n")
-        f.write(f"> **测试命令**：`python main.py`（完整流水线）\n\n")
-        f.write(f"---\n\n")
-
-        f.write(f"## 测试概览\n\n")
-        f.write(f"| 指标 | 数值 |\n|------|------|\n")
-        f.write(f"| 更新前模型数（Medium） | {medium_count} |\n")
-        f.write(f"| 更新后模型数（Updated） | {total_count} |\n")
-        f.write(f"| 📈 新增模型 | {added_count} |\n")
-        f.write(f"| ⚠️ 遗漏模型 | {missing_count} |\n")
-        f.write(f"| 表格总列数 | {len(df_updated.columns)} |\n\n")
-
-        if missing_count > 0:
-            f.write(f"### ⚠️ 遗漏警告\n\n")
-            f.write(f"有 {missing_count} 个模型在 Medium 中存在但在 Updated 中消失了，请检查 `diff_result.md` 中的详细列表。\n\n")
-
-        f.write(f"## 字段覆盖率\n\n")
-        f.write(f"| 字段 | 覆盖率 |\n|------|--------|\n")
-        for col, cov in coverage.items():
-            f.write(f"| {col} | {cov} |\n")
-        f.write(f"\n")
-
-        f.write(f"## 产出文件清单\n\n")
-        f.write(f"```\naction/\n")
-        f.write(f"├── data/\n")
-        f.write(f"│   ├── Object-Models-Updated.xlsx        ← 最终表格（{total_count}行）\n")
-        f.write(f"│   ├── Object-Models-Medium.xlsx          ← 更新前备份（{medium_count}行）\n")
-        if ONLY_FILE.exists():
-            only_count = len(pd.read_excel(ONLY_FILE))
-            f.write(f"│   └── Object-Models-Updated - only.xlsx ← 仅新增模型（{only_count}行）\n")
-        f.write(f"├── Report/\n")
-        f.write(f"│   ├── diff_result.md                     ← 新旧对比报告\n")
-        f.write(f"│   ├── E2E-Test-Report.md                 ← 本文件\n")
-        f.write(f"│   ├── Update-Log.md                      ← 更新日志\n")
-        report_files = sorted(REPORT_DIR.glob("update_report_*.md"), reverse=True)
-        if report_files:
-            f.write(f"│   ├── {report_files[0].name}            ← 更新报告\n")
-        f.write(f"│   └── daily_report_*.md                  ← 日报\n")
-        f.write(f"```\n")
-
-    log(f"测试报告已生成: {TEST_REPORT_FILE.name}")
-
-    # 更新 Update-Log.md（在文件顶部的分隔线后追加新条目）
-    new_entry = (
-        f"\n## {TODAY} 更新\n\n"
-        f"### 更新概览\n\n"
-        f"| 指标 | 数值 |\n|---|---|\n"
-        f"| 更新前模型数 | {medium_count} |\n"
-        f"| 更新后模型数 | **{total_count}** |\n"
-        f"| 新增模型数 | **{added_count}** |\n"
-        f"| 遗漏模型数 | {missing_count} |\n"
-        f"| 表格总列数 | {len(df_updated.columns)} |\n\n"
-        f"### 相关文件\n\n"
-        f"- 测试报告：`E2E-Test-Report.md`\n"
-        f"- 对比报告：`diff_result.md`\n"
+    returncode, _ = run_subprocess_heartbeat(
+        args, cwd=str(ACTION_DIR), timeout_minutes=30,
+        label="auto_collect.py"
     )
-    if report_files:
-        new_entry += f"- 详细报告：`Report/{report_files[0].name}`\n"
-    new_entry += f"\n---\n"
+    if returncode != 0:
+        log("数据采集失败", "ERROR")
+        return False
+    return True
 
-    if UPDATE_LOG_FILE.exists():
-        with open(UPDATE_LOG_FILE, "r", encoding="utf-8") as f:
-            existing_content = f.read()
-        # 在第一个 "---" 之后插入新条目
-        marker = "\n---\n"
-        first_marker_pos = existing_content.find(marker)
-        if first_marker_pos != -1:
-            insert_pos = first_marker_pos + len(marker)
-            updated_content = existing_content[:insert_pos] + new_entry + existing_content[insert_pos:]
-        else:
-            updated_content = existing_content + "\n" + new_entry
-        with open(UPDATE_LOG_FILE, "w", encoding="utf-8") as f:
-            f.write(updated_content)
+def step_dedup_against_master(since_int, until_int):
+    """步骤 2: 增量去重。读取采集结果与总表去重，输出本次新增模型。
+
+    采集结果在 UPDATED_FILE（兼容 auto_collect.py 当前写入逻辑），
+    去重基准为 MASTER_FILE。
+    返回新增模型数量。
+    """
+    import pandas as pd
+
+    if not UPDATED_FILE.exists():
+        log("采集结果文件不存在", "ERROR")
+        return False
+
+    df_collected = pd.read_excel(UPDATED_FILE)
+    log(f"采集到 {len(df_collected)} 个模型")
+
+    name_col = "模型名称"
+    if name_col not in df_collected.columns:
+        log(f"采集结果缺少 '{name_col}' 列", "ERROR")
+        return False
+
+    def _normalize(name):
+        return str(name).strip().lower().replace("-", "").replace("_", "").replace(" ", "")
+
+    # 读取总表建立去重集合
+    if MASTER_FILE.exists():
+        df_master = pd.read_excel(MASTER_FILE)
+        master_names = set(df_master[name_col].dropna().apply(_normalize))
+        log(f"总表已有 {len(master_names)} 个模型")
     else:
-        with open(UPDATE_LOG_FILE, "w", encoding="utf-8") as f:
-            f.write(f"# 模型追踪更新日志\n\n")
-            f.write(f"> 每次对 `Object-Models-Updated.xlsx` 进行更新后，在此记录更新情况。\n\n")
-            f.write(f"---\n{new_entry}")
+        master_names = set()
+        log("总表不存在，所有采集模型视为新增", "WARN")
 
-    log(f"更新日志已更新: {UPDATE_LOG_FILE.name}")
+    # 去重
+    is_new = ~df_collected[name_col].apply(_normalize).isin(master_names)
+    df_new = df_collected[is_new].copy()
+    log(f"去重后新增: {len(df_new)} 个")
+
+    if df_new.empty:
+        log("本次无新增模型")
+        # 写空增量到临时位置供后续步骤读取
+        INCREMENT_DIR.mkdir(parents=True, exist_ok=True)
+        empty_path = INCREMENT_DIR / f"{RUN_ID}_empty.xlsx"
+        df_new.to_excel(empty_path, index=False)
+        return True
+
+    # 添加"触发时间"列
+    df_new["触发时间"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    # 写入临时增量文件供后续步骤使用
+    INCREMENT_DIR.mkdir(parents=True, exist_ok=True)
+    increment_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+    df_new.to_excel(increment_path, index=False)
+    log(f"增量已写入: {increment_path.name}（{len(df_new)} 个新模型）")
+
+    # 同时写入 UPDATED_FILE（兼容 push_dingtalk.py 和 review_models.py）
+    df_new.to_excel(UPDATED_FILE, index=False)
+    return True
+
+def step_merge_and_archive(since_int, until_int):
+    """步骤 4: 合并归档。将增量合并到总表 + 备份。"""
+    import pandas as pd
+
+    # 找到本次运行的增量文件
+    increment_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+    empty_marker = INCREMENT_DIR / f"{RUN_ID}_empty.xlsx"
+
+    if empty_marker.exists():
+        log("本次无新增模型，跳过合并")
+        empty_marker.unlink()  # 清理空标记
+        return True
+
+    if not increment_path.exists():
+        log("增量文件不存在，跳过合并", "WARN")
+        return True
+
+    df_increment = pd.read_excel(increment_path)
+    if df_increment.empty:
+        log("增量为空，跳过合并")
+        return True
+
+    # 备份总表
+    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    if MASTER_FILE.exists():
+        backup_name = f"Object-Models_{TIMESTAMP}.xlsx"
+        shutil.copy2(MASTER_FILE, BACKUP_DIR / backup_name)
+        log(f"总表已备份: Backup/{backup_name}")
+
+    # 合并到总表
+    name_col = "模型名称"
+    if MASTER_FILE.exists():
+        df_master = pd.read_excel(MASTER_FILE)
+        # 对齐列结构
+        all_cols = list(df_master.columns)
+        for col in df_increment.columns:
+            if col not in all_cols:
+                all_cols.append(col)
+        df_master = df_master.reindex(columns=all_cols)
+        df_increment = df_increment.reindex(columns=all_cols)
+        df_merged = pd.concat([df_master, df_increment], ignore_index=True)
+        log(f"总表合并: {len(df_master)} + {len(df_increment)} = {len(df_merged)}")
+    else:
+        df_merged = df_increment
+        log(f"总表新建: {len(df_merged)} 个模型")
+
+    df_merged.to_excel(MASTER_FILE, index=False)
+    log(f"总表已更新: {MASTER_FILE.name}")
+    return True
+
+def step_write_run_log(since_int, until_int, source, pushed):
+    """步骤 6: 写入运行记录。"""
+    import pandas as pd
+    import csv
+
+    # 统计本次新增数量
+    increment_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+    new_count = 0
+    if increment_path.exists():
+        df = pd.read_excel(increment_path)
+        new_count = len(df)
+
+    # 写入 run_log.csv
+    RUN_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    file_exists = RUN_LOG_FILE.exists()
+    with open(RUN_LOG_FILE, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if not file_exists:
+            writer.writerow(["run_id", "since", "until", "trigger_time", "new_count", "source", "pushed", "note"])
+        writer.writerow([
+            RUN_ID, since_int, until_int,
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            new_count, source, pushed, ""
+        ])
+    log(f"运行记录已写入: {RUN_LOG_FILE.name}")
+
+    # 生成 Trace 记录
+    TRACE_DIR.mkdir(parents=True, exist_ok=True)
+    trace_path = TRACE_DIR / f"trace_{since_int}-{until_int}_{TIMESTAMP}.md"
+    trace_content = (
+        f"# Trace: {since_int}-{until_int}\n\n"
+        f"- **Run ID**: {RUN_ID}\n"
+        f"- **时间段**: {since_int} ~ {until_int}\n"
+        f"- **触发时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"- **数据源**: {source}\n"
+        f"- **新增模型**: {new_count}\n"
+        f"- **已推送**: {pushed}\n"
+    )
+    trace_path.write_text(trace_content, encoding="utf-8")
+    log(f"Trace 记录: {trace_path.name}")
     return True
 
 
@@ -859,146 +667,20 @@ def verify_step(step_num, since_int=None, until_int=None):
                 json_cache = tx_dir / f"articles_{tag}.json"
                 if json_cache.exists():
                     messages.append(f"✅ 腾讯研究院 JSON 缓存存在: articles_{tag}.json")
-                else:
-                    messages.append(f"⚠️ 腾讯研究院 JSON 缓存不存在: articles_{tag}.json")
-                    messages.append(f"   💡 可能原因：Selenium/Chrome/ChromeDriver 未安装")
-                    messages.append(f"   💡 手动运行：cd Crawl\\TXresearch && python crawl_sohu.py --since {since_int} --until {until_int}")
-        else:
-            messages.append("⚠️ Extract/articles/ 目录不存在")
 
-        # TXCrawl_result.xlsx 校验
-        if txcrawl_result.exists():
-            tx_df = pd.read_excel(txcrawl_result, engine="openpyxl")
-            messages.append(f"✅ TXCrawl_result.xlsx 存在（{len(tx_df)} 行）")
-            # 检查是否有模型提取结果
-            model_col = "文章提及的新兴模型"
-            if model_col in tx_df.columns:
-                filled = tx_df[model_col].dropna().astype(str)
-                filled = filled[filled.str.len() > 0]
-                if len(filled) == 0:
-                    messages.append("⚠️ TXCrawl_result.xlsx 中[文章提及的新兴模型]列为空（需人机协作完成 L2 提取）")
-                else:
-                    messages.append(f"✅ TXCrawl_result.xlsx 中有 {len(filled)}/{len(tx_df)} 篇已提取模型信息")
-        else:
-            messages.append("⚠️ TXCrawl_result.xlsx 不存在")
 
-        # ── 数据链路断裂检测 ──
-        # 如果 llmstats 有数据但腾讯研究院 JSON 缓存为空，说明数据链路可能断裂
-        has_llmstats = llmstats_json.exists()
-        has_tx_json = False
-        if since_int and until_int:
-            tag = f"{since_int}-{until_int}"
-            tx_json = tx_dir / f"articles_{tag}.json"
-            has_tx_json = tx_json.exists()
-        has_articles = articles_dir.exists() and len(list(articles_dir.glob("*.txt"))) > 0
+# ============================================================
+# 主流程
+# ============================================================
 
-        if has_llmstats and not has_tx_json and not has_articles:
-            messages.append("")
-            messages.append("🚨 ══════════════════════════════════════════")
-            messages.append("🚨 数据链路断裂警告：腾讯研究院数据为空！")
-            messages.append("🚨 llmstats 有数据但腾讯研究院无 JSON 缓存也无文章 TXT")
-            messages.append("🚨 可能原因：爬虫路径错误 / Selenium 未安装 / 超时")
-            messages.append("🚨 影响：后续 LLM 提取和 GPT 审核将形同虚设")
-            messages.append("🚨 建议：手动检查 TXresearch/ 目录，或从对话中补录")
-            messages.append("🚨 ══════════════════════════════════════════")
-            messages.append("")
-
-    elif step_num == 3:
-        # 校验：check_result.py 的输出（通过文件存在性判断）
-        check_files = list((ACTION_DIR / "Test").glob("DataForCheck*.md"))
-        if check_files:
-            messages.append(f"✅ 数据检查报告存在（{len(check_files)} 个文件）")
-        else:
-            messages.append("⚠️ 未找到数据检查报告文件")
-
-    elif step_num == 4:
-        # 校验：Report/ 下有 update_report_*.md
-        report_files = sorted(REPORT_DIR.glob("update_report_*.md"), reverse=True)
-        if report_files:
-            messages.append(f"✅ 更新报告存在: {report_files[0].name}")
-        else:
-            messages.append("⚠️ 未找到更新报告（Report/update_report_*.md）")
-
-    elif step_num == 5:
-        # 校验：format_cases.py 的输出
-        formatted = ACTION_DIR / "Crawl" / "Arena_x" / "formatted_leaderboards.md"
-        if formatted.exists():
-            messages.append(f"✅ Case 文件已整理: {formatted.name}")
-        else:
-            messages.append("⚠️ formatted_leaderboards.md 不存在（format_cases.py 可能未执行或脚本不存在）")
-
-    elif step_num == 6:
-        # 校验：diff_result.md 存在
-        diff_path = REPORT_DIR / "diff_result.md"
-        if diff_path.exists():
-            messages.append(f"✅ 对比报告存在: {diff_path.name}")
-            with open(diff_path, "r", encoding="utf-8") as f:
-                diff_content = f.read()
-            if "遗漏" in diff_content:
-                # 提取遗漏数量
-                import re
-                match = re.search(r"⚠️ 遗漏 \| (\d+)", diff_content)
-                if match and int(match.group(1)) > 0:
-                    messages.append(f"⚠️ 有 {match.group(1)} 个遗漏模型，请检查")
-        else:
-            messages.append("⚠️ diff_result.md 不存在")
-
-    elif step_num == 7:
-        # 校验：only.xlsx 存在或无新增
-        if ONLY_FILE.exists():
-            only_count = len(pd.read_excel(ONLY_FILE, engine="openpyxl"))
-            messages.append(f"✅ only.xlsx 存在（{only_count} 个新增模型）")
-        else:
-            messages.append("ℹ️ only.xlsx 不存在（可能无新增模型）")
-
-    elif step_num == 8:
-        # 校验：E2E-Test-Report.md + Update-Log.md 存在
-        if TEST_REPORT_FILE.exists():
-            messages.append(f"✅ 验收报告存在: {TEST_REPORT_FILE.name}")
-        else:
-            messages.append("❌ E2E-Test-Report.md 不存在")
-            passed = False
-        if UPDATE_LOG_FILE.exists():
-            messages.append(f"✅ 更新日志存在: {UPDATE_LOG_FILE.name}")
-        else:
-            messages.append("❌ Update-Log.md 不存在")
-            passed = False
-
-        # 数据质量校验
-        if UPDATED_FILE.exists():
-            df = pd.read_excel(UPDATED_FILE, engine="openpyxl")
-            total = len(df)
-            for col_name in ["公司", "备注", "模型发布时间"]:
-                if col_name in df.columns:
-                    filled = df[col_name].dropna().astype(str)
-                    filled = filled[(filled.str.len() > 0) & (filled != "nan")]
-                    pct = len(filled) / total * 100 if total > 0 else 0
-                    icon = "✅" if pct == 100 else "⚠️"
-                    messages.append(f"{icon} {col_name}: {len(filled)}/{total} ({pct:.0f}%)")
-
-    elif step_num == 9:
-        # 校验：日报 MD 文件存在
-        daily_reports = sorted(REPORT_DIR.glob("daily_report_*.md"), reverse=True)
-        if daily_reports:
-            messages.append(f"✅ 日报存在: {daily_reports[0].name}")
-        else:
-            messages.append("⚠️ 未找到日报文件")
-
-    return passed, messages
-
-def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, source="all", push=False, force=False):
-    """运行端到端流水线（v2 自动化版）"""
-    from datetime import timedelta as _td
-
-    # 计算时间窗口
-    _today = datetime.now()
-    if until_int is None:
-        until_int = int(_today.strftime("%Y%m%d"))
-    if since_int is None:
-        since_int = int((_today - _td(days=7)).strftime("%Y%m%d"))
+def run_pipeline(since_int, until_int, source="all", start_step=1,
+                 push=False, dry_run=False, force=False):
+    """执行 v3 精简流水线。"""
+    total_steps = len(STEPS)
+    results = {}
 
     print(f"\n{'#'*60}")
-    print(f"  AI 模型追踪 —— 端到端更新流水线 (v2)")
+    print(f"  AI 模型追踪 —— 端到端更新流水线 (v3)")
     print(f"  日期: {TODAY}")
     print(f"  时间窗口: {since_int} ~ {until_int}")
     print(f"  数据源: {source}")
@@ -1006,508 +688,142 @@ def run_pipeline(start_step=1, dry_run=False, since_int=None, until_int=None, so
     print(f"  模式: {'预览' if dry_run else '执行'}")
     print(f"{'#'*60}")
 
-    # 前置检查
-    issues = check_prerequisites() if start_step == 1 else check_midway_prerequisites()
-    if issues:
-        log("前置条件检查失败:", "ERROR")
-        for issue in issues:
-            log(f"  - {issue}", "ERROR")
-        return False
-
-    results = {}
-
     for step in STEPS:
         step_num = step["number"]
         step_name = step["name"]
 
-        # 跳过已完成的步骤
         if step_num < start_step:
-            print(f"\n  ⏭️ 跳过步骤 {step_num}: {step_name}")
             results[step_num] = "SKIPPED"
             continue
 
-        log_progress(step_num, len(STEPS), step_name)
-        log(step["description"], "STEP")
-
-        # Checkpoint：检查是否已有今天的产出
-        if not force and not dry_run:
-            has_cache, cache_summary = check_checkpoint(step_num, since_int, until_int)
-            if has_cache:
-                log(f"已有今天的产出（使用 --force 可强制重新执行）", "SKIP")
-                for line in cache_summary:
-                    log(f"  {line}")
-                results[step_num] = "CACHED"
-                continue
+        log_progress(step_num, total_steps, step_name)
+        log(step["description"])
 
         if dry_run:
-            if step_num == 2:
-                log(f"将运行: auto_collect.py --since {since_int} --until {until_int} --source {source}", "STEP")
-                log(f"将运行: extract_models_llm.py --since {since_int} --until {until_int} --write-excel（LLM 提取腾讯研究院模型）", "STEP")
-            elif step["script"]:
-                log(f"将运行: {step['script']}", "STEP")
-            else:
-                log("将执行内置逻辑", "STEP")
-            results[step_num] = "DRY_RUN"
+            results[step_num] = "DRY-RUN"
             continue
 
-        # 执行步骤
         success = False
-        if step_num == 1:
-            success = step_prepare_baseline()
-        elif step_num == 2:
-            # 自动化数据采集（调用 auto_collect.py，心跳探测模式）
-            auto_collect_script = ACTION_DIR / "auto_collect.py"
-            auto_collect_args = [
-                sys.executable, "-X", "utf8", str(auto_collect_script),
-                "--since", str(since_int),
-                "--until", str(until_int),
-                "--source", source,
-            ]
-            log(f"运行: auto_collect.py --since {since_int} --until {until_int} --source {source}", "STEP")
-            returncode, _ = run_subprocess_heartbeat(
-                auto_collect_args,
-                cwd=str(ACTION_DIR),
-                timeout_minutes=30,
-                label="auto_collect.py",
-            )
-            if returncode != 0:
-                log(f"auto_collect.py 失败（退出码 {returncode}）", "ERROR")
-                success = False
-            else:
-                success = True
-
-            # 步骤 2.5：LLM 自动提取腾讯研究院文章中的模型信息并回写主表格
-            if success:
-                extract_llm_script = ACTION_DIR / "Extract" / "extract_models_llm.py"
-                llm_json_cache = ACTION_DIR / "Extract" / "extracted_models_llm.json"
-                if extract_llm_script.exists():
-                    if not force and _file_modified_today(llm_json_cache):
-                        log("LLM 提取结果今天已生成（使用 --force 可强制重新执行）", "SKIP")
-                        import json as _json
-                        with open(llm_json_cache, "r", encoding="utf-8") as _f:
-                            _cached = _json.load(_f)
-                        log(f"  缓存中有 {len(_cached)} 条提取结果")
-                    else:
-                        log("运行: extract_models_llm.py（LLM 自动提取腾讯研究院模型 → 回写主表格）", "STEP")
-                        # 先列出文章数量（快速操作，用 capture 模式）
-                        list_args = [
-                            sys.executable, "-X", "utf8", str(extract_llm_script),
-                            "--since", str(since_int),
-                            "--until", str(until_int),
-                            "--list",
-                        ]
-                        list_rc, list_stdout = run_subprocess_heartbeat(
-                            list_args,
-                            cwd=str(extract_llm_script.parent),
-                            timeout_minutes=2,
-                            label="extract_models_llm --list",
-                            capture=True,
-                        )
-                        # 从 --list 输出中解析文章数量
-                        import re as _re
-                        article_indices = _re.findall(r'\[(\d+)\]', list_stdout or "")
-                        article_count = max((int(i) for i in article_indices), default=0)
-
-                        if article_count == 0:
-                            log("无符合条件的文章，跳过 LLM 提取", "INFO")
-                        else:
-                            log(f"共 {article_count} 篇文章，逐篇提取中...", "INFO")
-                            llm_failed = 0
-                            for article_idx in range(1, article_count + 1):
-                                idx_args = [
-                                    sys.executable, "-X", "utf8", str(extract_llm_script),
-                                    "--since", str(since_int),
-                                    "--until", str(until_int),
-                                    "--index", str(article_idx),
-                                    "--write-excel",
-                                ]
-                                idx_rc, _ = run_subprocess_heartbeat(
-                                    idx_args,
-                                    cwd=str(extract_llm_script.parent),
-                                    timeout_minutes=10,
-                                    label=f"extract_models_llm [{article_idx}/{article_count}]",
-                                )
-                                if idx_rc != 0:
-                                    llm_failed += 1
-                            if llm_failed > 0:
-                                log(f"LLM 提取完成（{llm_failed}/{article_count} 篇失败，不影响流水线）", "WARN")
-                            else:
-                                log(f"LLM 模型提取完成（{article_count} 篇全部成功）", "INFO")
+        try:
+            if step_num == 1:
+                success = step_collect_data(since_int, until_int, source, force)
+            elif step_num == 2:
+                success = step_dedup_against_master(since_int, until_int)
+            elif step_num == 3:
+                # LLM 审核（可选，review_models.py）
+                script = step.get("script")
+                if script and script.exists():
+                    success = run_script(script, timeout_minutes=10)
                 else:
-                    log("extract_models_llm.py 不存在，跳过 LLM 提取", "WARN")
-
-            # 步骤 2.7：GPT-5.5 审核（补全 + 质量审核 + 置信度）
-            if success:
-                review_script = ACTION_DIR / "review_models.py"
-                review_report = REPORT_DIR / "review_report.md"
-                if review_script.exists():
-                    if not force and _file_modified_today(review_report):
-                        log("GPT-5.5 审核报告今天已生成（使用 --force 可强制重新执行）", "SKIP")
-                    else:
-                        log("运行: review_models.py（GPT-5.5 审核 + 补全 + 置信度）", "STEP")
-                        review_rc, _ = run_subprocess_heartbeat(
-                            [sys.executable, "-X", "utf8", str(review_script)],
-                            cwd=str(ACTION_DIR),
-                            timeout_minutes=10,
-                            label="review_models.py",
-                        )
-                        if review_rc != 0:
-                            log("review_models.py 失败（不影响流水线继续）", "WARN")
-                        else:
-                            log("GPT-5.5 审核完成", "INFO")
-                else:
-                    log("review_models.py 不存在，跳过 GPT-5.5 审核", "WARN")
-        elif step_num == 6:
-            success = step_diff_tables()
-        elif step_num == 7:
-            success = step_sync_only()
-        elif step_num == 8:
-            success = step_generate_acceptance_report()
-        elif step_num == 9:
-            # 钉钉推送日报（必须显式传 --push 才真正推送，否则仅 dry-run 预览）
-            # 这是不可撤回操作，防止流水线自动执行时误推送
-            push_script = ACTION_DIR / "push_dingtalk.py"
-            if not push_script.exists():
-                log(f"推送脚本不存在: {push_script}", "ERROR")
-                success = False
-            elif not push:
-                # 未传 --push：仅 dry-run 预览，生成日报文件但不推送
-                log("未指定 --push，仅预览日报（dry-run）", "INFO")
-                log("💡 确认数据无误后，请手动执行: python push_dingtalk.py --since ... --until ...", "INFO")
-                preview_args = [
-                    sys.executable, "-X", "utf8", str(push_script),
-                    "--since", str(since_int),
-                    "--until", str(until_int),
-                    "--dry-run",
-                ]
-                preview_rc, _ = run_subprocess_heartbeat(
-                    preview_args,
-                    cwd=str(ACTION_DIR),
-                    timeout_minutes=5,
-                    label="push_dingtalk.py (dry-run)",
+                    log("审核脚本不存在，跳过", "SKIP")
+                    success = True
+            elif step_num == 4:
+                success = step_merge_and_archive(since_int, until_int)
+            elif step_num == 5:
+                # 钉钉推送
+                if not push:
+                    log("未指定 --push，仅预览日报（dry-run）")
+                    log("💡 确认数据无误后，请手动执行: python push_dingtalk.py --since ... --until ...")
+                args = [sys.executable, "-X", "utf8",
+                        str(ACTION_DIR / "push_dingtalk.py"),
+                        "--since", str(since_int), "--until", str(until_int)]
+                if not push:
+                    args.append("--dry-run")
+                returncode, _ = run_subprocess_heartbeat(
+                    args, cwd=str(ACTION_DIR), timeout_minutes=5,
+                    label="push_dingtalk.py"
                 )
-                success = preview_rc == 0
+                success = (returncode == 0)
+            elif step_num == 6:
+                success = step_write_run_log(since_int, until_int, source, push)
             else:
-                # 显式传了 --push：真正推送
-                has_webhook = bool(os.environ.get("DINGTALK_WEBHOOK", ""))
-                if not has_webhook:
-                    log("推送失败：未设置 DINGTALK_WEBHOOK 环境变量（检查 .env）", "ERROR")
-                    success = False
-                else:
-                    push_args = [
-                        sys.executable, "-X", "utf8", str(push_script),
-                        "--since", str(since_int),
-                        "--until", str(until_int),
-                        "--save-md",
-                    ]
-                    log(f"运行: push_dingtalk.py --since {since_int} --until {until_int}", "STEP")
-                    push_rc, _ = run_subprocess_heartbeat(
-                        push_args,
-                        cwd=str(ACTION_DIR),
-                        timeout_minutes=5,
-                        label="push_dingtalk.py",
-                    )
-                    success = push_rc == 0
-                    if not success:
-                        log("push_dingtalk.py 失败", "ERROR")
-        elif step["script"]:
-            success = run_script(step["script"])
-        else:
-            log("无执行逻辑", "WARN")
-            success = True
+                log(f"未知步骤: {step_num}", "ERROR")
+                success = False
+        except Exception as exc:
+            log(f"步骤异常: {exc}", "ERROR")
+            success = False
 
         results[step_num] = "SUCCESS" if success else "FAILED"
-
-        # ── 步骤校验 ──
-        if success and not dry_run:
-            verify_passed, verify_messages = verify_step(step_num, since_int, until_int)
-            if verify_messages:
-                print(f"  {'─'*40}")
-                print(f"  📋 步骤 {step_num} 校验结果:")
-                for msg in verify_messages:
-                    print(f"     {msg}")
-            if not verify_passed:
-                log(f"步骤 {step_num} 校验未通过（产出不符合预期）", "WARN")
-                log("流水线继续执行，但请注意校验警告", "WARN")
-
         if not success:
-            log(f"步骤 {step_num} 失败，流水线中断", "ERROR")
-            log("提示：修复问题后，可用 --step 参数从失败步骤重新开始", "WARN")
+            log(f"步骤 {step_num} 失败，流水线终止", "ERROR")
             break
 
-    # 打印汇总
+    # 汇总
     print(f"\n{'='*60}")
     print(f"  流水线执行汇总")
     print(f"{'='*60}")
     for step in STEPS:
-        step_num = step["number"]
-        status = results.get(step_num, "NOT_RUN")
-        icon = {
-            "SUCCESS": "✅",
-            "FAILED": "❌",
-            "SKIPPED": "⏭️",
-            "DRY_RUN": "👁️",
-            "CACHED": "📦",
-            "NOT_RUN": "⬜",
-        }.get(status, "❓")
-        print(f"  {icon} 步骤 {step_num}: {step['name']} — {status}")
+        n = step["number"]
+        status = results.get(n, "NOT_RUN")
+        icon = {"SUCCESS": "✅", "FAILED": "❌", "SKIPPED": "⏭️", "DRY-RUN": "🔍"}.get(status, "  ")
+        print(f"  {icon} 步骤 {n}: {step['name']} → {status}")
 
-    # 最终产出
-    all_success = all(
-        v in ("SUCCESS", "SKIPPED", "DRY_RUN", "CACHED") for v in results.values()
-    )
-    if all_success and not dry_run:
-        print(f"\n{'='*60}")
-        print(f"  🎉 流水线执行完成！ {progress_bar(len(STEPS), len(STEPS))}")
-        print(f"{'='*60}")
+    # 数据质量汇总
+    if MASTER_FILE.exists() and not dry_run:
+        import pandas as pd
+        df = pd.read_excel(MASTER_FILE)
+        total = len(df)
+        company_filled = df["公司"].notna().sum() if "公司" in df.columns else 0
+        note_filled = df["备注"].notna().sum() if "备注" in df.columns else 0
+        date_filled = df["模型发布时间"].notna().sum() if "模型发布时间" in df.columns else 0
+        print(f"\n  📊 总表数据质量（{total} 个模型）:")
+        print(f"     公司: [{company_filled}/{total}] {int(100*company_filled/total)}%")
+        print(f"     备注: [{note_filled}/{total}] {int(100*note_filled/total)}%")
+        print(f"     发布时间: [{date_filled}/{total}] {int(100*date_filled/total)}%")
 
-        # 最终数据质量汇总
-        try:
-            import pandas as pd
-            if UPDATED_FILE.exists():
-                df = pd.read_excel(UPDATED_FILE, engine="openpyxl")
-                total = len(df)
-                print(f"\n  📊 数据质量汇总（{total} 个模型）:")
-                for col_name in ["公司", "备注", "模型发布时间"]:
-                    if col_name in df.columns:
-                        filled = df[col_name].dropna().astype(str)
-                        filled = filled[(filled.str.len() > 0) & (filled != "nan")]
-                        pct = len(filled) / total * 100 if total > 0 else 0
-                        icon = "✅" if pct == 100 else ("⚠️" if pct >= 80 else "❌")
-                        bar = progress_bar(len(filled), total, width=20)
-                        print(f"     {icon} {col_name}: {bar}")
-        except Exception:
-            pass
-        if UPDATED_FILE.exists():
-            print(f"  📊 更新表格: {UPDATED_FILE}")
-        if MEDIUM_FILE.exists():
-            print(f"  📦 更新前备份: {MEDIUM_FILE}")
-        if ONLY_FILE.exists():
-            print(f"  🆕 仅新增模型: {ONLY_FILE}")
-        diff_path = REPORT_DIR / "diff_result.md"
-        if diff_path.exists():
-            print(f"  🔍 对比报告: {diff_path}")
-        if TEST_REPORT_FILE.exists():
-            print(f"  🧪 测试报告: {TEST_REPORT_FILE}")
-        if UPDATE_LOG_FILE.exists():
-            print(f"  📋 更新日志: {UPDATE_LOG_FILE}")
-        report_dir = ACTION_DIR / "Report"
-        report_files = sorted(report_dir.glob("update_report_*.md"), reverse=True)
-        if report_files:
-            print(f"  📝 详细报告: {report_files[0]}")
-        formatted_path = ACTION_DIR / "Crawl" / "Arena_x" / "formatted_leaderboards.md"
-        if formatted_path.exists():
-            print(f"  📋 排行榜汇总: {formatted_path}")
-
-    # ── Trace 记录 ──
-    try:
-        TRACE_DIR.mkdir(parents=True, exist_ok=True)
-        trace_filename = f"trace_{since_int}-{until_int}_{TIMESTAMP}.md"
-        trace_path = TRACE_DIR / trace_filename
-
-        trace_lines = [
-            f"# Trace: {since_int}-{until_int}",
-            "",
-            f"**执行时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            "",
-            "## 参数",
-            "",
-            f"| 参数 | 值 |",
-            f"|------|-----|",
-            f"| since | {since_int} |",
-            f"| until | {until_int} |",
-            f"| source | {source} |",
-            f"| push | {push} |",
-            f"| force | {force} |",
-            f"| start_step | {start_step} |",
-            "",
-            "## 步骤结果",
-            "",
-            "| 步骤 | 名称 | 状态 |",
-            "|------|------|------|",
-        ]
-        for step in STEPS:
-            step_num = step["number"]
-            status = results.get(step_num, "NOT_RUN")
-            trace_lines.append(f"| {step_num} | {step['name']} | {status} |")
-
-        # 数据质量
-        trace_lines.extend(["", "## 数据质量", ""])
-        try:
-            import pandas as pd
-            if UPDATED_FILE.exists():
-                df_trace = pd.read_excel(UPDATED_FILE, engine="openpyxl")
-                total_trace = len(df_trace)
-                trace_lines.append(f"模型总数: {total_trace}")
-                trace_lines.append("")
-                trace_lines.append("| 字段 | 已填 | 总数 | 填充率 |")
-                trace_lines.append("|------|------|------|--------|")
-                for col_name in ["公司", "备注", "模型发布时间"]:
-                    if col_name in df_trace.columns:
-                        filled = df_trace[col_name].dropna().astype(str)
-                        filled = filled[(filled.str.len() > 0) & (filled != "nan")]
-                        filled_count = len(filled)
-                        pct = filled_count / total_trace * 100 if total_trace > 0 else 0
-                        trace_lines.append(f"| {col_name} | {filled_count} | {total_trace} | {pct:.1f}% |")
-        except Exception:
-            trace_lines.append("（无法读取数据质量信息）")
-
-        # 产出文件列表
-        trace_lines.extend(["", "## 产出文件", ""])
-        output_files = [
-            ("更新表格", UPDATED_FILE),
-            ("更新前备份", MEDIUM_FILE),
-            ("仅新增模型", ONLY_FILE),
-            ("对比报告", REPORT_DIR / "diff_result.md"),
-            ("测试报告", TEST_REPORT_FILE),
-            ("更新日志", UPDATE_LOG_FILE),
-        ]
-        report_files_trace = sorted((ACTION_DIR / "Report").glob("update_report_*.md"), reverse=True)
-        if report_files_trace:
-            output_files.append(("详细报告", report_files_trace[0]))
-        formatted_path_trace = ACTION_DIR / "Crawl" / "Arena_x" / "formatted_leaderboards.md"
-        output_files.append(("排行榜汇总", formatted_path_trace))
-        for label, fpath in output_files:
-            exists_icon = "✅" if fpath.exists() else "❌"
-            trace_lines.append(f"- {exists_icon} **{label}**: `{fpath.name}`")
-
-        # 问题与不足
-        trace_lines.extend(["", "## 问题与不足", ""])
-        failed_steps = [
-            f"步骤 {s['number']} ({s['name']})"
-            for s in STEPS if results.get(s["number"]) == "FAILED"
-        ]
-        if failed_steps:
-            trace_lines.append(f"### 失败步骤")
-            for fs in failed_steps:
-                trace_lines.append(f"- ❌ {fs}")
-        else:
-            trace_lines.append("无失败步骤。")
-
-        diff_path_trace = REPORT_DIR / "diff_result.md"
-        if diff_path_trace.exists():
-            try:
-                diff_content = diff_path_trace.read_text(encoding="utf-8")
-                import re
-                missing_match = re.search(r"遗漏模型[^\d]*(\d+)", diff_content)
-                if missing_match:
-                    missing_count = missing_match.group(1)
-                    trace_lines.append(f"\n### 遗漏模型")
-                    trace_lines.append(f"- 遗漏模型数: **{missing_count}**")
-            except Exception:
-                pass
-
-        trace_path.write_text("\n".join(trace_lines), encoding="utf-8")
-        log(f"Trace 记录已生成: {trace_path}")
-    except Exception as trace_err:
-        log(f"Trace 记录生成失败: {trace_err}", "WARN")
-
+    all_success = all(v == "SUCCESS" for v in results.values() if v not in ("SKIPPED", "DRY-RUN", "NOT_RUN"))
+    if all_success:
+        print(f"\n  🎉 流水线执行完成！")
+    else:
+        print(f"\n  ⚠️ 流水线存在失败步骤，请检查")
+    print(f"{'='*60}")
     return all_success
 
 
-# ============================================================
-# 入口
-# ============================================================
-
 def main():
-    parser = argparse.ArgumentParser(
-        description="AI 模型追踪 —— 端到端一键更新流水线 (v2 自动化版)",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-示例：
-  python main.py --since 20260417 --until 20260423    指定时间段
-  python main.py --since 20260417                     until 默认今天
-  python main.py                                      默认最近 7 天
-  python main.py --step 3                             从第3步开始
-  python main.py --dry-run                            预览流程
-  python main.py --source llmstats                    只跑 llmstats
-  python main.py --push                               含钉钉推送
-        """,
-    )
-    parser.add_argument(
-        "--step",
-        type=int,
-        default=1,
-        choices=range(1, len(STEPS) + 1),
-        help="从第几步开始执行（默认从1开始）",
-    )
-    parser.add_argument(
-        "--since", type=str, default=None,
-        help="起始日期（YYYYMMDD 格式，如 20260417），默认 7 天前",
-    )
-    parser.add_argument(
-        "--until", type=str, default=None,
-        help="截止日期（YYYYMMDD 格式，如 20260423），默认今天",
-    )
-    parser.add_argument(
-        "--source", type=str, default="all",
-        choices=["all", "llmstats", "txresearch"],
-        help="数据源（默认 all = llmstats + 腾讯研究院）",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="预览模式：只显示将要执行的步骤，不实际运行",
-    )
-    parser.add_argument(
-        "--push",
-        action="store_true",
-        help="启用钉钉推送（步骤9），需配置 DINGTALK_WEBHOOK 环境变量或 .env",
-    )
-    parser.add_argument(
-        "--force",
-        action="store_true",
-        help="强制重新执行所有步骤，忽略 checkpoint 缓存",
-    )
-    parser.add_argument(
-        "--log", type=str, default=None,
-        help="将所有输出同时写入指定日志文件（适用于后台运行时轮询监控）",
-    )
-
-    args = parser.parse_args()
-
-    # 如果指定了 --log，设置 tee 输出（同时写终端 + 日志文件）
-    if args.log:
-        import io
-
-        class TeeWriter:
-            """同时写入多个流的包装器。"""
-            def __init__(self, *streams):
-                self.streams = streams
-            def write(self, data):
-                for s in self.streams:
-                    s.write(data)
-                    s.flush()
-            def flush(self):
-                for s in self.streams:
-                    s.flush()
-
-        log_file = open(args.log, "w", encoding="utf-8")
-        sys.stdout = TeeWriter(sys.stdout, log_file)
-        sys.stderr = TeeWriter(sys.stderr, log_file)
-
-    since_int = int(args.since) if args.since else None
-    until_int = int(args.until) if args.until else None
-
-    success = run_pipeline(
-        start_step=args.step,
-        dry_run=args.dry_run,
-        since_int=since_int,
-        until_int=until_int,
-        source=args.source,
-        push=args.push,
-        force=args.force,
-    )
-
-    if args.log:
-        log_file.close()
-
-    sys.exit(0 if success else 1)
-
-
-if __name__ == "__main__":
-    # Windows GBK 终端兼容：强制 UTF-8 输出
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
+    parser = argparse.ArgumentParser(
+        description="AI 模型追踪 —— v3 精简流水线",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--since", type=str, help="起始日期 (YYYYMMDD)")
+    parser.add_argument("--until", type=str, help="截止日期 (YYYYMMDD)")
+    parser.add_argument("--step", type=int, default=1, help="从第N步开始")
+    parser.add_argument("--source", type=str, default="all", help="数据源 (all/llmstats/txresearch/platform)")
+    parser.add_argument("--push", action="store_true", help="推送到钉钉")
+    parser.add_argument("--force", action="store_true", help="强制重新采集")
+    parser.add_argument("--dry-run", action="store_true", help="预览模式")
+    args = parser.parse_args()
+
+    from datetime import timedelta
+    today = datetime.now()
+    if args.until:
+        until_int = int(args.until)
+    else:
+        until_int = int(today.strftime("%Y%m%d"))
+    if args.since:
+        since_int = int(args.since)
+    else:
+        since_int = int((today - timedelta(days=7)).strftime("%Y%m%d"))
+
+    # 前置检查
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    INCREMENT_DIR.mkdir(parents=True, exist_ok=True)
+    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+
+    run_pipeline(
+        since_int=since_int,
+        until_int=until_int,
+        source=args.source,
+        start_step=args.step,
+        push=args.push,
+        dry_run=args.dry_run,
+        force=args.force,
+    )
+
+
+if __name__ == "__main__":
     main()

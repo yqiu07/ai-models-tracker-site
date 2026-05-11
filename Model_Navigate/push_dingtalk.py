@@ -37,7 +37,11 @@ import requests
 ROOT = Path(__file__).parent
 DATA_DIR = ROOT / "data"
 REPORT_DIR = ROOT / "Report"
-EXCEL_PATH = DATA_DIR / "Object-Models-Updated.xlsx"
+# v3: 优先读总表（唯一真相源），兼容旧路径
+EXCEL_PATH = DATA_DIR / "Object-Models.xlsx"
+_LEGACY_PATH = DATA_DIR / "Object-Models-Updated.xlsx"
+if not EXCEL_PATH.exists() and _LEGACY_PATH.exists():
+    EXCEL_PATH = _LEGACY_PATH
 
 # ── 钉钉 Markdown 最大长度 ──
 DINGTALK_MAX_LENGTH = 18000
