@@ -1014,17 +1014,39 @@ PLATFORM_REGISTRY = [
         "doc_url": "https://platform.stepfun.com/docs",
         "note": "阶跃星辰 StepFun",
     },
-    # ── 聚合平台（兜底补充源）──
+    # ── 官方平台（补全其他重点厂商）──
+    {
+        "name": "MIMO 小米",
+        "type": "openai",
+        "api_base_env": "MIMO_API_BASE",
+        "api_key_env": "MIMO_API_KEY",
+        "default_company": "小米",
+        "owner_map": {},
+        "skip_patterns": [],
+        "doc_url": "https://dev.mi.com/mimo-dev-doc",
+        "note": "小米 MIMO 开放平台",
+    },
+    # ── 聚合平台（兜底补充源，覆盖 OpenAI/Anthropic/Google 等无直接 API 的公司）──
     {
         "name": "OpenRouter",
         "type": "custom",
         "api_base_env": "OPENROUTER_API_BASE",
         "api_key_env": "OPENROUTER_API_KEY",
         "default_company": "未知",
-        "owner_map": {},
+        "owner_map": {
+            "openai": "OpenAI", "gpt": "OpenAI", "o1": "OpenAI", "o3": "OpenAI", "o4": "OpenAI",
+            "anthropic": "Anthropic", "claude": "Anthropic",
+            "google": "Google", "gemini": "Google",
+            "meta-llama": "Meta", "llama": "Meta",
+            "mistralai": "Mistral", "mistral": "Mistral",
+            "x-ai": "xAI", "grok": "xAI",
+            "deepseek": "深度求索", "qwen": "阿里",
+            "nvidia": "NVIDIA", "cohere": "Cohere",
+            "microsoft": "Microsoft", "phi": "Microsoft",
+        },
         "skip_patterns": [],
         "doc_url": "https://openrouter.ai/docs",
-        "note": "OpenRouter 聚合平台",
+        "note": "OpenRouter 聚合平台（兜底覆盖国外重点公司）",
         "fetch_fn": "_fetch_openrouter_models",
     },
     {
@@ -1057,7 +1079,9 @@ def _fetch_openai_compatible_models(config: dict) -> list[dict]:
     url = f"{api_base.rstrip('/')}/models"
     headers = {"Authorization": f"Bearer {api_key}"}
 
-    resp = requests.get(url, headers=headers, timeout=30)
+    # 内网环境可能使用自签名证书，允许通过环境变量控制 SSL 验证
+    verify_ssl = os.environ.get("MODEL_NAVIGATE_TLS_VERIFY", "false").lower() != "false"
+    resp = requests.get(url, headers=headers, timeout=30, verify=verify_ssl)
     if resp.status_code != 200:
         raise RuntimeError(f"HTTP {resp.status_code}: {resp.text[:200]}")
 
