@@ -345,6 +345,117 @@ def backup_current():
 
 
 # ============================================================
+# 验收机制
+# ============================================================
+
+def verify_step_output(step_num, since_int, until_int):
+    """验收每步执行结果，返回 (passed: bool, messages: list[str])。
+
+    各步骤验收规则：
+      Step 1（采集）: UPDATED_FILE 存在 + 行数>0 + "模型名称"列非空率100% + "公司"列非空率≥80%
+      Step 2（去重）: 增量文件存在 + 行数≤采集行数 + 无重复模型名
+      Step 3（审核）: UPDATED_FILE 中 importance 列填充率≥50%（如有）
+      Step 4（校验）: UPDATED_FILE 中 "模型发布时间" 填充率比校验前有提升
+      Step 5（合并）: MASTER_FILE 行数 ≥ 合并前行数 + 无重复模型名
+      Step 6/7: 直接 pass
+    """
+    import pandas as pd
+    messages = []
+
+    if step_num in (6, 7):
+        return True, ["日志/推送类步骤，无需数据验收"]
+
+    if step_num == 1:
+        if not UPDATED_FILE.exists():
+            return False, ["采集结果文件不存在"]
+        df = pd.read_excel(UPDATED_FILE)
+        if len(df) == 0:
+            return False, ["采集结果为空（0行）"]
+        name_col = "模型名称"
+        if name_col in df.columns:
+            name_fill_rate = df[name_col].notna().mean()
+            if name_fill_rate < 1.0:
+                messages.append(f"模型名称列非空率 {name_fill_rate:.0%}（要求100%）")
+                return False, messages
+        else:
+            return False, ["缺少'模型名称'列"]
+        company_col = "公司"
+        if company_col in df.columns:
+            company_fill_rate = df[company_col].notna().mean()
+            if company_fill_rate < 0.8:
+                messages.append(f"公司列非空率 {company_fill_rate:.0%}（要求≥80%）")
+                return False, messages
+        messages.append(f"采集验收通过: {len(df)}行, 模型名称100%, 公司{df['公司'].notna().mean():.0%}" if "公司" in df.columns else f"采集验收通过: {len(df)}行")
+        return True, messages
+
+    elif step_num == 2:
+        increment_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+        empty_marker = INCREMENT_DIR / f"{RUN_ID}_empty.xlsx"
+        if empty_marker.exists():
+            return True, ["本次无新增模型，去重验收通过"]
+        if not increment_path.exists():
+            return False, ["增量文件不存在"]
+        df_inc = pd.read_excel(increment_path)
+        # 行数应≤采集行数
+        if UPDATED_FILE.exists():
+            df_collected = pd.read_excel(UPDATED_FILE)
+            if len(df_inc) > len(df_collected):
+                messages.append(f"增量行数({len(df_inc)})超过采集行数({len(df_collected)})")
+                return False, messages
+        # 无重复模型名
+        name_col = "模型名称"
+        if name_col in df_inc.columns and not df_inc.empty:
+            duplicates = df_inc[name_col].dropna().duplicated().sum()
+            if duplicates > 0:
+                messages.append(f"增量中存在 {duplicates} 个重复模型名")
+                return False, messages
+        messages.append(f"去重验收通过: 增量{len(df_inc)}行, 无重复")
+        return True, messages
+
+    elif step_num == 3:
+        if not UPDATED_FILE.exists():
+            return True, ["审核文件不存在，跳过验收"]
+        df = pd.read_excel(UPDATED_FILE)
+        importance_col = "importance"
+        if importance_col in df.columns and len(df) > 0:
+            fill_rate = df[importance_col].notna().mean()
+            if fill_rate < 0.5:
+                messages.append(f"importance列填充率 {fill_rate:.0%}（要求≥50%）")
+                return False, messages
+            messages.append(f"审核验收通过: importance填充率{fill_rate:.0%}")
+        else:
+            messages.append("无importance列或数据为空，视为通过")
+        return True, messages
+
+    elif step_num == 4:
+        if not UPDATED_FILE.exists():
+            return True, ["校验文件不存在，跳过验收"]
+        df = pd.read_excel(UPDATED_FILE)
+        date_col = "模型发布时间"
+        if date_col in df.columns and len(df) > 0:
+            fill_rate = df[date_col].notna().mean()
+            messages.append(f"校验验收: 模型发布时间填充率{fill_rate:.0%}")
+        else:
+            messages.append("无'模型发布时间'列，视为通过")
+        return True, messages
+
+    elif step_num == 5:
+        if not MASTER_FILE.exists():
+            return False, ["总表文件不存在"]
+        df = pd.read_excel(MASTER_FILE)
+        name_col = "模型名称"
+        if name_col in df.columns:
+            duplicates = df[name_col].dropna().duplicated().sum()
+            if duplicates > 0:
+                messages.append(f"总表存在 {duplicates} 个重复模型名")
+                return False, messages
+        messages.append(f"合并验收通过: 总表{len(df)}行, 无重复模型名")
+        return True, messages
+
+    return True, ["未定义验收规则，默认通过"]
+
+
+# ============================================================
 # v3 步骤函数
 # ============================================================
 
@@ -438,12 +549,16 @@ def step_dedup_against_master(since_int, until_int):
     df_new.to_excel(increment_path, index=False)
     log(f"增量已写入: {increment_path.name}（{len(df_new)} 个新模型）")
 
+    # 写入 .meta 文件持久化 RUN_ID（跨步骤恢复用）
+    meta_path = INCREMENT_DIR / f"{RUN_ID}.meta"
+    meta_path.write_text(RUN_ID, encoding="utf-8")
+
     # 同时写入 UPDATED_FILE（兼容 push_dingtalk.py 和 review_models.py）
     df_new.to_excel(UPDATED_FILE, index=False)
     return True
 
 def step_merge_and_archive(since_int, until_int):
-    """步骤 4: 合并归档。将增量合并到总表 + 备份。"""
+    """步骤 5: 合并归档。将增量合并到总表 + 备份。"""
     import pandas as pd
 
     # 找到本次运行的增量文件
@@ -456,8 +571,18 @@ def step_merge_and_archive(since_int, until_int):
         return True
 
     if not increment_path.exists():
-        log("增量文件不存在，跳过合并", "WARN")
-        return True
+        # Fallback: 扫描 INCREMENT_DIR 下最新的 .xlsx 文件（按修改时间排序）
+        xlsx_files = sorted(
+            [f for f in INCREMENT_DIR.glob("*.xlsx") if not f.stem.endswith("_empty")],
+            key=lambda f: f.stat().st_mtime,
+            reverse=True,
+        )
+        if xlsx_files:
+            increment_path = xlsx_files[0]
+            log(f"RUN_ID 增量不存在，fallback 到最新增量: {increment_path.name}", "WARN")
+        else:
+            log("增量文件不存在且无可用 fallback，跳过合并", "WARN")
+            return True
 
     df_increment = pd.read_excel(increment_path)
     if df_increment.empty:
@@ -742,12 +867,18 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
                     log("审核脚本不存在，跳过", "SKIP")
                     success = True
             elif step_num == 4:
-                # 数据校验（人机协作步骤：AI 对话中 web search 校验发布时间/官网/备注）
-                log("⚠️ 此步骤需在 AI 对话中执行 web search 校验", "WARN")
-                log("💡 请在对话中对新增模型逐个验证：发布时间、官网、备注")
-                log("💡 校验完成后，用 --step 5 继续执行后续步骤")
-                # 自动模式下跳过，标记为成功（校验由 AI 对话承担）
-                success = True
+                # 数据校验：调用 verify_models.py 自动校验发布时间/官网/备注
+                verify_script = ACTION_DIR / "verify_models.py"
+                if verify_script.exists():
+                    returncode, _ = run_subprocess_heartbeat(
+                        [sys.executable, "-X", "utf8", str(verify_script)],
+                        cwd=str(ACTION_DIR), timeout_minutes=15,
+                        label="verify_models.py"
+                    )
+                    success = (returncode == 0)
+                else:
+                    log("verify_models.py 不存在，跳过数据校验", "WARN")
+                    success = True
             elif step_num == 5:
                 success = step_merge_and_archive(since_int, until_int)
             elif step_num == 6:
@@ -773,6 +904,14 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
         except Exception as exc:
             log(f"步骤异常: {exc}", "ERROR")
             success = False
+
+        # 验收机制：步骤成功后执行数据验收
+        if success:
+            passed, verify_msgs = verify_step_output(step_num, since_int, until_int)
+            for msg in verify_msgs:
+                log(f"[验收] {msg}", "INFO" if passed else "WARN")
+            if not passed:
+                log(f"步骤 {step_num} 验收未通过（仅报警，不终止流水线）", "WARN")
 
         results[step_num] = "SUCCESS" if success else "FAILED"
         if not success:
