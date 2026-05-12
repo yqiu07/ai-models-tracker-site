@@ -102,29 +102,36 @@ STEPS = [
     {
         "number": 2,
         "name": "增量去重",
-        "description": "与总表去重，提取本次新增模型",
+        "description": "与总表去重 + 时间窗口过滤，提取本次新增模型",
         "script": None,
     },
     {
         "number": 3,
         "name": "LLM 审核",
-        "description": "GPT-5.5 审核新增模型（名称规范性 + 字段补全 + 重要性评级）",
+        "description": "GPT-5.5 审核（名称规范 + 发布时间/官网/备注补全 + 重要性评级）",
         "script": ACTION_DIR / "review_models.py",
     },
     {
         "number": 4,
+        "name": "数据校验",
+        "description": "Web Search 校验新增模型的发布时间/官网/备注（AI 对话中执行）",
+        "script": None,
+        "manual": True,  # 标记为需要 AI 对话中人机协作执行的步骤
+    },
+    {
+        "number": 5,
         "name": "合并归档",
         "description": "增量写入总表 + 归档到 increments/ + 备份总表",
         "script": None,
     },
     {
-        "number": 5,
+        "number": 6,
         "name": "钉钉推送",
         "description": "生成日报并推送到钉钉群（需 --push 参数）",
         "script": ACTION_DIR / "push_dingtalk.py",
     },
     {
-        "number": 6,
+        "number": 7,
         "name": "运行记录",
         "description": "写入 run_log.csv + 生成 Trace 记录",
         "script": None,
@@ -396,6 +403,23 @@ def step_dedup_against_master(since_int, until_int):
     is_new = ~df_collected[name_col].apply(_normalize).isin(master_names)
     df_new = df_collected[is_new].copy()
     log(f"去重后新增: {len(df_new)} 个")
+
+    # 时间窗口过滤：平台目录采集的模型按"平台上架时间"过滤
+    # 只保留上架时间在 since~until 窗口内的，或没有上架时间的（其他数据源）
+    time_col = "平台上架时间"
+    if time_col in df_new.columns and not df_new.empty:
+        import pandas as _pd
+        since_str = f"{str(since_int)[:4]}-{str(since_int)[4:6]}-{str(since_int)[6:]}"
+        until_str = f"{str(until_int)[:4]}-{str(until_int)[4:6]}-{str(until_int)[6:]}"
+        dates = _pd.to_datetime(df_new[time_col], errors="coerce")
+        has_date = dates.notna()
+        in_window = (dates >= since_str) & (dates <= until_str)
+        # 保留：在窗口内的 + 没有上架时间的（非平台采集来源）
+        keep_mask = ~has_date | in_window
+        filtered_count = has_date.sum() - in_window.sum()
+        df_new = df_new[keep_mask].copy()
+        if filtered_count > 0:
+            log(f"时间窗口过滤: 移除 {filtered_count} 个窗口外模型，保留 {len(df_new)} 个")
 
     if df_new.empty:
         log("本次无新增模型")
@@ -718,8 +742,15 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
                     log("审核脚本不存在，跳过", "SKIP")
                     success = True
             elif step_num == 4:
-                success = step_merge_and_archive(since_int, until_int)
+                # 数据校验（人机协作步骤：AI 对话中 web search 校验发布时间/官网/备注）
+                log("⚠️ 此步骤需在 AI 对话中执行 web search 校验", "WARN")
+                log("💡 请在对话中对新增模型逐个验证：发布时间、官网、备注")
+                log("💡 校验完成后，用 --step 5 继续执行后续步骤")
+                # 自动模式下跳过，标记为成功（校验由 AI 对话承担）
+                success = True
             elif step_num == 5:
+                success = step_merge_and_archive(since_int, until_int)
+            elif step_num == 6:
                 # 钉钉推送
                 if not push:
                     log("未指定 --push，仅预览日报（dry-run）")
@@ -734,7 +765,7 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
                     label="push_dingtalk.py"
                 )
                 success = (returncode == 0)
-            elif step_num == 6:
+            elif step_num == 7:
                 success = step_write_run_log(since_int, until_int, source, push)
             else:
                 log(f"未知步骤: {step_num}", "ERROR")

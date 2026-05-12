@@ -1181,7 +1181,8 @@ def _model_to_row(model_id: str, created_ts: int, config: dict,
     open_source = "开源" if re.search(r'\d+[bB]', display_name) else "闭源"
 
     model_info = {"name": display_name, "model_id": model_id}
-    pub_date = datetime.fromtimestamp(created_ts).strftime("%Y-%m-%d") if created_ts else ""
+    # created_ts 是平台上架时间，不是模型提供方发布时间，需后续 web search 校验
+    platform_date = datetime.fromtimestamp(created_ts).strftime("%Y-%m-%d") if created_ts else ""
 
     return {
         "模型名称": display_name,
@@ -1192,9 +1193,11 @@ def _model_to_row(model_id: str, created_ts: int, config: dict,
         "类型": _infer_type(model_info),
         "能否推理": _infer_reasoning(model_info),
         "任务类型": "",
-        "官网": config.get("doc_url", ""),
-        "备注": config.get("note", ""),
-        "模型发布时间": pub_date,
+        "官网": "",                          # 留空，由审核步骤 web search 补全
+        "备注": "",                          # 留空，由审核步骤生成语义化备注
+        "模型发布时间": "",                  # 留空，由审核步骤 web search 校验填入真实发布日期
+        "平台上架时间": platform_date,       # 平台 API 返回的 created 时间戳（仅供参考）
+        "数据来源": config.get("name", ""),  # 标注来源平台
         "记录创建时间": today_str(),
     }
 
@@ -1232,9 +1235,9 @@ def _collect_single_platform(config: dict) -> list[dict]:
     skipped_pattern = 0
     skipped_old = 0
 
-    # 2026-01-01 00:00:00 UTC 的 Unix 时间戳
-    # 平台目录只追踪 2026 年及之后的模型，旧版模型不纳入增量追踪
-    cutoff_ts = 1735689600  # 2026-01-01T00:00:00Z
+    # 2026-03-19 00:00:00 UTC 的 Unix 时间戳
+    # 平台目录只追踪 2026-03-19 及之后上架的模型，更早的不纳入增量追踪
+    cutoff_ts = 1773878400  # 2026-03-19T00:00:00Z
 
     for model in raw_models:
         model_id = model.get("id", "")
