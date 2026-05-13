@@ -50,13 +50,39 @@ data/
 
 **冷启动建议**：首次使用时，可将已有模型数据直接放入 `data/Object-Models.xlsx` 作为初始总表。
 
-### Trace 机制
+### Trace 审计与来源追溯
 
-每次流水线执行完毕后，自动在 `Trace/` 目录下生成一份结构化运行记录：
+`Trace/` 目录提供**模型来源追溯**和**数据质量审计**两大能力：
+
+#### 1. 流水线运行记录（自动生成）
+
+每次流水线执行完毕后自动生成结构化运行记录：
 
 - **路径**：`Trace/trace_{since}-{until}_{timestamp}.md`
 - **内容**：执行参数、每步结果（SUCCESS/FAILED/SKIPPED）、数据质量填充率、产出文件清单、问题与不足
 - **用途**：复盘流水线是否按 SKILL 规范跑通、定位失败步骤、追踪历史运行情况
+
+#### 2. 人工校验审计工具（`trace_audit.py`）
+
+```bash
+cd Trace/
+
+# 追溯指定模型的完整数据链路（从哪采的、经过哪些步骤、字段填充状态）
+python trace_audit.py trace "pareto-code"
+
+# 批量审计增量文件（可疑项标记 + 字段缺失清单）
+python trace_audit.py audit --latest       # 最新增量
+python trace_audit.py audit --all          # 全部增量
+
+# 总表数据质量评分
+python trace_audit.py quality
+```
+
+**核心功能**：
+- **来源追溯**：模型名 → 增量文件 → 采集脚本 → 具体数据源（llm-stats/OpenRouter/HuggingFace/NVIDIA 等）→ 完整链路图
+- **可疑项检测**：非 LLM 类混入（TTS/ASR/classifier/embedding）、占卜娱乐类、路由后缀名称异常
+- **字段填充率**：官网/备注/发布时间的填充状态，🟢🟡🔴分级
+- **报告自动生成**：输出到 `Trace/reports/`，Markdown 格式，便于人工审核
 
 ### 表格字段（14 列）
 

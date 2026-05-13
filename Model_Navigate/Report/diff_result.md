@@ -1,0 +1,655 @@
+# 新旧表格对比结果
+
+> 对比时间：20260509_192759
+
+| 类别 | 数量 |
+|------|------|
+| Updated 总数 | 594 |
+| Medium 总数 | 454 |
+| 📈 新增 | 386 |
+| 📋 原有 | 208 |
+| ⚠️ 遗漏 | 246 |
+
+## 📈 新增模型（386）
+
+- Dolphin3.0-R1-Mistral-24B
+- Doubao-Seed-2.0-lite
+- ERNIE-3.5-8K
+- ERNIE-4.0-8K
+- ERNIE-Character-8K
+- ERNIE-Functions-8K
+- ERNIE-Lite-8K
+- ERNIE-Speed-128K
+- ERNIE-Speed-8K
+- ERNIE-Tiny-8K
+- Embedding-V1
+- GENE-26.5
+- MiniMax-File-Upload
+- MiniMax-Hailuo-02
+- MiniMax-Hailuo-2.3
+- MiniMax-M2
+- MiniMax-Voice-Clone
+- MiniMax-Voice-Design
+- Qwen3-Reranker-0.6B
+- SparkDesk-v1.1
+- SparkDesk-v2.1
+- SparkDesk-v3.1
+- SparkDesk-v3.5
+- audio1.0
+- babbage-002
+- bce-reranker-base_v1
+- bge-reranker-v2-m3
+- claude-3-haiku-20240307
+- claude-haiku-4-5-20251001
+- claude-opus-4-1-20250805
+- claude-opus-4-20250514
+- claude-opus-4-5-20251101
+- claude-opus-4-7
+- claude-sonnet-4-20250514
+- claude-sonnet-4-5-20250929
+- codex-mini-2025-05-16
+- dall-e-3
+- davinci-002
+- deepseek-chat
+- deepseek-r1-2025-01-20
+- deepseek-r1-250120
+- deepseek-r1-250528
+- deepseek-r1-distill-qwen-7b
+- deepseek-r1-searching
+- deepseek-reasoner
+- deepseek-v3
+- deepseek-v3-1
+- deepseek-v3-1-250821
+- deepseek-v3-1-think-250821
+- deepseek-v3-250324
+- deepseek-v3-fast
+- deepseek-v3-search
+- deepseek-v3.1-fast
+- deepseek-v3.2
+- deepseek-v3.2-exp
+- deepseek-v3.2-fast
+- doubao-seedream-3-0-t2i-250415
+- doubao-seedream-4-0-250828
+- doubao-seedream-4-5-251128
+- doubao-seedream-5-0-260128
+- flux-2-flex
+- flux-2-pro
+- flux-dev
+- flux-pro
+- flux-pro-1.1-ultra
+- flux-pro-max
+- flux-schnell
+- flux.1.1-pro
+- gemma-2b-it
+- gemma-7b-it
+- glm-3-turbo
+- glm-4
+- glm-4-air
+- glm-4-airx
+- glm-4-flash
+- glm-4-long
+- glm-4.5
+- glm-4.5-air
+- glm-4.5-airx
+- glm-4.5-flash
+- glm-4.5-x
+- glm-4.6
+- glm-4.6v
+- glm-4.7
+- glm-5
+- glm-5.1
+- gpt-3.5-turbo-1106
+- gpt-4
+- gpt-4-0125-preview
+- gpt-4-0613
+- gpt-4-1106-preview
+- gpt-4-32k
+- gpt-4-32k-0613
+- gpt-4-all
+- gpt-4-gizmo-*
+- gpt-4-turbo
+- gpt-4-turbo-2024-04-09
+- gpt-4-turbo-preview
+- gpt-4-vision-preview
+- gpt-4.1
+- gpt-4.1-2025-04-14
+- gpt-4.1-mini
+- gpt-4.1-mini-2025-04-14
+- gpt-4.1-nano
+- gpt-4.1-nano-2025-04-14
+- gpt-4o
+- gpt-4o-2024-05-13
+- gpt-4o-2024-08-06
+- gpt-4o-2024-11-20
+- gpt-4o-all
+- gpt-4o-audio-preview
+- gpt-4o-audio-preview-2024-12-17
+- gpt-4o-mini
+- gpt-4o-mini-2024-07-18
+- gpt-4o-mini-audio-preview
+- gpt-4o-mini-audio-preview-2024-12-17
+- gpt-4o-mini-realtime-preview
+- gpt-4o-mini-realtime-preview-2024-12-17
+- gpt-4o-mini-transcribe
+- gpt-4o-mini-tts
+- gpt-4o-realtime-preview
+- gpt-4o-realtime-preview-2024-10-01
+- gpt-4o-realtime-preview-2024-12-17
+- gpt-4o-realtime-preview-2025-06-03
+- gpt-4o-transcribe
+- gpt-5
+- gpt-5-2025-08-07
+- gpt-5-all
+- gpt-5-chat
+- gpt-5-chat-2025-08-07
+- gpt-5-chat-2025-10-03
+- gpt-5-chat-latest
+- gpt-5-codex
+- gpt-5-codex-mini
+- gpt-5-mini
+- gpt-5-mini-2025-08-07
+- gpt-5-nano
+- gpt-5-nano-2025-08-07
+- gpt-5-pro
+- gpt-5-pro-2025-10-06
+- gpt-5-thinking-all
+- gpt-5.1
+- gpt-5.1-2025-11-13
+- gpt-5.1-all
+- gpt-5.1-chat
+- gpt-5.1-chat-2025-11-13
+- gpt-5.1-chat-latest
+- gpt-5.1-codex-2025-11-13
+- gpt-5.1-codex-max-2025-12-04
+- gpt-5.1-thinking-all
+- gpt-5.2
+- gpt-5.2-2025-12-11
+- gpt-5.2-all
+- gpt-5.2-chat
+- gpt-5.2-chat-latest
+- gpt-5.2-pro
+- gpt-5.2-pro-2025-12-11
+- gpt-5.3-chat
+- gpt-5.3-chat-2026-03-03
+- gpt-5.3-chat-latest
+- gpt-5.4
+- gpt-5.4-2026-03-05
+- gpt-5.4-mini
+- gpt-5.4-mini-2026-03-17
+- gpt-5.4-nano
+- gpt-5.4-nano-2026-03-17
+- gpt-5.4-pro
+- gpt-5.4-pro-2026-03-05
+- gpt-5.5
+- gpt-5.5-2026-04-24
+- gpt-audio-2025-08-28
+- gpt-image-1
+- gpt-image-1-2025-04-15
+- gpt-image-1-all
+- gpt-image-1-mini
+- gpt-image-1.5
+- gpt-image-1.5-all
+- gpt-image-2
+- gpt-image-2-all
+- gpt-oss-20b
+- gpt-realtime
+- gpt-realtime-1.5
+- gpt-realtime-1.5-2026-02-23
+- grok-3
+- grok-3-deepsearch
+- grok-3-image
+- grok-3-mini
+- grok-3-reasoner
+- grok-3-reasoning
+- grok-4
+- grok-4-1-fast-non-reasoning
+- grok-4-1-fast-reasoning
+- grok-4-20-non-reasoning
+- grok-4-20-reasoning
+- grok-4-fast
+- grok-4-fast-non-reasoning
+- grok-4-fast-reasoning
+- grok-4-image
+- grok-4.1
+- grok-4.1-fast
+- grok-4.1-image
+- grok-4.2
+- grok-4.2-image
+- grok-imagine-image
+- grok-imagine-image-pro
+- grok-video-3
+- grok-video-3-10s
+- happyhorse-1.0-i2v
+- happyhorse-1.0-r2v
+- happyhorse-1.0-t2v
+- happyhorse-1.0-video-edit
+- kimi-k2
+- kimi-k2-0711-preview
+- kimi-k2-0905
+- kimi-k2-250905
+- kimi-k2-instruct
+- kling-advanced-custom-elements
+- kling-advanced-lip-sync
+- kling-audio
+- kling-avatar-image2video
+- kling-custom-elements
+- kling-custom-voices
+- kling-effects
+- kling-image
+- kling-image-recognize
+- kling-motion-control
+- kling-multi-elements
+- kling-omni-image
+- kling-omni-video
+- kling-video
+- kling-video-extend
+- llama-2-13b
+- llama-2-70b
+- llama-2-7b
+- llama-3-70b
+- llama-3-8b
+- llama-3-sonar-large-32k-chat
+- llama-3-sonar-small-32k-chat
+- llama-3.1-405b
+- llama-3.1-405b-instruct
+- llama-3.1-70b
+- llama-3.1-70b-instruct
+- llama-3.1-8b
+- llama-3.2-11b-vision-instruct
+- llama-3.2-1b-instruct
+- llama-3.2-3b-instruct
+- llama-3.2-90b-vision-instruct
+- llama-4-maverick
+- llama-4-scout
+- longcat-flash
+- longcat-flash-chat
+- mai-ds-r1
+- mimo-v2-pro
+- mimo-v2.5
+- mimo-v2.5-pro
+- mistral-large-latest
+- mistral-small-latest
+- mj_blend
+- mj_custom_zoom
+- mj_describe
+- mj_edits
+- mj_high_variation
+- mj_imagine
+- mj_inpaint
+- mj_low_variation
+- mj_modal
+- mj_pan
+- mj_reroll
+- mj_upload
+- mj_upscale
+- mj_variation
+- mj_video
+- mj_zoom
+- o1
+- o1-2024-12-17
+- o1-all
+- o1-mini
+- o1-mini-2024-09-12
+- o1-mini-all
+- o1-preview
+- o1-preview-2024-09-12
+- o1-preview-all
+- o1-pro-all
+- o3-2025-04-16
+- o3-all
+- o3-mini
+- o3-mini-2025-01-31
+- o3-mini-all
+- o3-mini-high-all
+- o3-pro
+- o3-pro-2025-06-10
+- o3-pro-all
+- o4-mini
+- o4-mini-2025-04-16
+- o4-mini-all
+- qvq-max-latest
+- qwen-image-2.0
+- qwen-image-edit-2509
+- qwen-vl-max-2025-08-13
+- qwen2-vl-72b-instruct
+- qwen2-vl-7b-instruct
+- qwen2.5-vl-3b-instruct
+- qwen2.5-vl-72b-instruct
+- qwen2.5-vl-7b-instruct
+- qwen3-30b-a3b-think
+- qwen3-coder
+- qwen3-coder-30b-a3b-instruct
+- qwen3-coder-next
+- qwen3-max-preview-n
+- qwen3-rerank
+- qwen3-vl-235b-a22b-instruct
+- qwen3-vl-235b-a22b-thinking
+- qwen3-vl-30b-a3b-instruct
+- qwen3-vl-30b-a3b-thinking
+- qwen3-vl-32b-instruct
+- qwen3-vl-32b-thinking
+- qwen3-vl-8b-instruct
+- qwen3-vl-8b-thinking
+- qwen3.6-27b
+- qwen3.6-35b-a3b
+- qwq-32b-preview
+- qwq-72b-preview
+- runwayml-gen4_turbo-10
+- runwayml-gen4_turbo-5
+- seed-oss-36b-instruct
+- sora-2
+- sora-2-all
+- sora-2-characters
+- sora-2-pro-all
+- speech-2.6-hd
+- speech-2.6-turbo
+- suno_lyrics
+- suno_music
+- suno_uploads
+- text-embedding-3-large
+- text-embedding-3-small
+- text-embedding-ada-002
+- tts-1
+- tts-1-1106
+- tts-1-hd
+- tts-1-hd-1106
+- veo2
+- veo2-fast
+- veo2-fast-components
+- veo2-fast-frames
+- veo2-pro
+- veo2-pro-components
+- veo3
+- veo3-fast
+- veo3-fast-frames
+- veo3-frames
+- veo3-pro
+- veo3-pro-frames
+- veo3.1
+- veo3.1-4k
+- veo3.1-components
+- veo3.1-components-4k
+- veo3.1-fast
+- veo3.1-fast-components
+- veo3.1-pro
+- veo3.1-pro-4k
+- veo_3_1
+- veo_3_1-4K
+- veo_3_1-components
+- veo_3_1-components-4K
+- veo_3_1-fast
+- veo_3_1-fast-4K
+- veo_3_1-fast-components-4K
+- veo_3_1-lite
+- veo_3_1-lite-4K
+- vidu-tts
+- vidu2.0
+- viduq1
+- viduq1-classic
+- viduq2
+- viduq2-pro
+- viduq2-turbo
+- viduq3
+- viduq3-mix
+- viduq3-pro
+- viduq3-turbo
+- wan2.5-i2v-preview
+- wan2.6-i2v
+- wan2.7-image
+- wen-max-2025-01-25
+- whisper-1
+
+## ⚠️ 遗漏模型（246）
+
+> 以下模型在 Medium 中存在但在 Updated 中消失了，请检查是否为误删。
+
+- ABot-M0
+- ABot-World
+- Abot-N0
+- Ace-Step 1.5
+- Antigravity
+- ArkClaw
+- AutoClaw
+- Baichuan-M3
+- Being-H 0.7
+- ChatGPT Images 2.0
+- Claude 3 Opus
+- Claude 3.5 Sonnet
+- Claude 4 Opus
+- Claude 4.5 Sonnet
+- Claude Design
+- Claude Managed Agents
+- Claude Opus 4.7
+- ClawBot
+- Composer 2
+- Conway
+- Cowork
+- Cursor 3
+- Deep Research Max
+- DeepSeek-V3
+- DeepSeek-V3.2
+- DeepSeek-V4-Flash-Max
+- DeepSeek-V4-Pro-Max
+- Deepgram Nova 3
+- Desktop App
+- Dispatch
+- DuMeta+DuClaw+RedClaw
+- ERNIE-5.0-Preview-1203
+- EchoZ-1.0
+- EdgeClaw Box
+- Emu3.5
+- FireRed-Image-Edit-1.0
+- FireRed-Image-Edit-1.1
+- Flux 2 Max
+- Flux 2 Pro
+- Fun-CosyVoice3-0.5B-2512
+- GLM-4.6
+- GLM-4.7
+- GLM-4.7-Flash
+- GLM-5
+- GLM-5-Turbo
+- GLM-5.1
+- GLM-5V-Turbo
+- GLM-OCR
+- GPT 4.1
+- GPT 4o
+- GPT 5
+- GPT 5.3-instant
+- GPT-5 High
+- GPT-5.1 High
+- GPT-5.2 Codex
+- GPT-5.3-Codex-Spark
+- GPT-5.4
+- GPT-5.4-Cyber
+- GPT-5.5
+- GPT-5.5 Pro
+- GPT-Image-2
+- GPT-Rosalind
+- Gemini 2.5 pro
+- Gemini 3 Flash
+- Gemini 3 Pro
+- Gemini 3.1 Flash TTS
+- Gemini 3.1 Flash-Lite
+- Gemini 3.1 pro
+- Gemini Robotics-ER 1.6
+- Gen-4 Aleph
+- Genie 3
+- Grok 4.20 Beta
+- Grok 4.3
+- Grok Imagine Image
+- Grok Imagine Image Pro
+- Grok Imagine Video
+- HY-1.8B-2Bit
+- HY-Embodied-0.5
+- HappyHorse-1.0
+- HappyOyster
+- Hermes Agent
+- Hey Tuya
+- Hunyuan Hy3 preview
+- Hy3 preview
+- Imagen 4 Standard
+- Imagen 4 Ultra
+- Intern-S1-Pro
+- Ising
+- JoyAI-Image-Edit
+- JoyStreamer
+- K-EXAONE-236B-A23B
+- Kimi Claw
+- Kimi K2.6
+- Kimi Linear
+- Kling 3.0 series (video, image, etc.,)
+- LabClaw
+- Lantay
+- LibTV
+- LingBot-Map
+- Llama-3.3-70B-Instruct
+- LobsterAI
+- LongCat-AudioDiT
+- LongCat-Flash-Thinking-2601
+- MAI-Image-2
+- MAI-Transcribe-1
+- MAI-Voice-1
+- Mamba-3
+- Marble 1.1
+- Marble 1.1-Plus
+- MaxClaw
+- MaxHermes
+- Meoo/秒悟
+- Mercury 2
+- Meta-Llama-3-1-405B-Instruct
+- MiMo-ASR
+- MiMo-TTS
+- MiMo-V2-Flash
+- MiMo-V2-Omni
+- MiMo-V2-Pro
+- MiMo-V2.5
+- MiMo-V2.5-Pro
+- Midjourney V8 Alpha
+- Ming-flash-omni-2.0
+- MiniMax M2.1
+- MiniMax M2.5
+- MiniMax Music 2.5
+- MiniMax Music 2.5+
+- MiniMax Music 2.6
+- Minimax M2
+- MiroThinker-1.7
+- MiroThinker-H3
+- MuonClip
+- Muse Spark
+- Mythos Preview
+- Nano Banana 2/Gemini 3.1 Flash Image
+- NemoClaw
+- Nemotron 3 Super
+- NeuroVLA
+- OneClaw
+- Oyster_7B_dpo
+- PaperBanana
+- PixVerse C1
+- PixVerse R1
+- PixVerse V6
+- Protenix-v1
+- Psi-R2
+- Psi-W0
+- QBotClaw
+- QClaw V2
+- Qwen Image 2.0
+- Qwen-Image-2.0
+- Qwen3-Coder-Next
+- Qwen3.6-27B
+- Qwen3.6-35B-A3B
+- Reve
+- Revo 3
+- Sage
+- Sarvam-105B
+- Sarvam-30B
+- Seed-OSS-36B-Base
+- Seed3D 2.0
+- Seedance 2.0 Pro
+- Seedream 4.5
+- Seedream 5.0
+- Seeduplex
+- SenseNova U1 Lite 8B-MoT
+- SenseNova U1 Lite A3B-MoT
+- SkillHub
+- SkyReels-V3-A2V-19B
+- Skyreels V4
+- Solaris
+- Spark 2.0
+- StepAudio 2.5 ASR
+- StepAudio 2.5 TTS
+- StepClaw
+- TBStars2.0-42B-A3.5B
+- TPU 8i
+- TPU 8t
+- TRAE SOLO
+- Tabbit
+- UniFolM-VLA-0
+- UniScientist-30B-A3B
+- Vidu Q3
+- Vision Banana
+- VoxCPM 2
+- Voxtral Mini
+- Wan2.7-Image
+- Whisper Large V3 Turbo
+- WorkBuddy
+- X2
+- XChat
+- Xiaomi-Robotics-0 series
+- YOYO Claw
+- autoresearch
+- claude-mythos-preview
+- claude-opus-4-6-thinking
+- claude37_sonnet
+- dola-seed-2.0-preview
+- doubao-1-5-thinking-pro-250415
+- doubao-seed-1-6-251015
+- doubao-seed-1-6-thinking-250715
+- doubao-seed-2.0
+- doubao-seed1.8
+- ernie-5.0-0110
+- gemini-3.1-flash-live-preview
+- gemini-embedding-2-preview
+- gemma-4-26B-A4B
+- gemma-4-27b-it
+- gemma-4-31B
+- gemma-4-E2B
+- gemma-4-E4B
+- gpt-5.2-1211-global
+- kimi-k2.5-thinking
+- lingbot-world-base-cam
+- llama-4-maverick-17b-128e-instruct
+- lyria-3-pro
+- miclaw
+- mistral-small-4-119b-2603
+- o4 mini
+- qwen-flash-no-guard
+- qwen-long-no-guard
+- qwen-plus-character-no-guard
+- qwen-plus-no-guard
+- qwen2.5-0.5b-instruct-no-guard
+- qwen2.5-1.5b-instruct-no-guard
+- qwen2.5-14b
+- qwen2.5-14b-instruct-1m-no-guard
+- qwen2.5-3b-instruct-no-guard
+- qwen2.5-72b
+- qwen2.5-omni-7b
+- qwen3-max-thinking
+- qwen3.5-0.8B
+- qwen3.5-2B
+- qwen3.5-4B
+- qwen3.5-9B
+- step-3.5-flash
+- stormcast-v1-era5-hrrr
+- uAI Nexus MedVLM
+- veo-3.1-lite
+- x-ai/grok-4
+- Ψ₀
+- π0.7
+- 可灵AI视频3.0
+- 大圣
+- 悟空
+- 混元3D世界模型2.0
+
+## 📋 原有模型（208）
+
+共 208 个模型保持不变（列表省略）。

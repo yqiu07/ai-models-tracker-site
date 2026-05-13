@@ -558,36 +558,59 @@ def step_dedup_against_master(since_int, until_int):
     return True
 
 def step_merge_and_archive(since_int, until_int):
-    """步骤 5: 合并归档。将增量合并到总表 + 备份。"""
+    """步骤 5: 合并归档。将增量合并到总表 + 备份。
+
+    数据源优先级（修复 Step 3/4 补全数据丢失问题）：
+      1. Object-Models-Updated.xlsx — Step 3(审核) + Step 4(校验) 的产出（字段已补全）
+      2. increments/{RUN_ID}.xlsx — fallback（未经补全的原始增量）
+    """
     import pandas as pd
 
-    # 找到本次运行的增量文件
-    increment_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+    # 检查是否为空增量
     empty_marker = INCREMENT_DIR / f"{RUN_ID}_empty.xlsx"
-
     if empty_marker.exists():
         log("本次无新增模型，跳过合并")
         empty_marker.unlink()  # 清理空标记
         return True
 
-    if not increment_path.exists():
-        # Fallback: 扫描 INCREMENT_DIR 下最新的 .xlsx 文件（按修改时间排序）
-        xlsx_files = sorted(
-            [f for f in INCREMENT_DIR.glob("*.xlsx") if not f.stem.endswith("_empty")],
-            key=lambda f: f.stat().st_mtime,
-            reverse=True,
-        )
-        if xlsx_files:
-            increment_path = xlsx_files[0]
-            log(f"RUN_ID 增量不存在，fallback 到最新增量: {increment_path.name}", "WARN")
+    # 优先读取 Object-Models-Updated.xlsx（经过 Step 3 审核 + Step 4 校验后的数据）
+    # 这是修复"官网/备注/发布时间没有补上去"问题的关键：
+    # Step 3/4 将补全结果写入 UPDATED_FILE，Step 5 必须从这里读取
+    source_file = None
+    if UPDATED_FILE.exists():
+        source_file = UPDATED_FILE
+        log(f"读取经审核+校验后的数据: {UPDATED_FILE.name}")
+    else:
+        # Fallback: 从 increments 目录读取原始增量
+        increment_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+        if increment_path.exists():
+            source_file = increment_path
+            log(f"UPDATED_FILE 不存在，fallback 到增量: {increment_path.name}", "WARN")
         else:
-            log("增量文件不存在且无可用 fallback，跳过合并", "WARN")
-            return True
+            xlsx_files = sorted(
+                [f for f in INCREMENT_DIR.glob("*.xlsx") if not f.stem.endswith("_empty")],
+                key=lambda f: f.stat().st_mtime,
+                reverse=True,
+            )
+            if xlsx_files:
+                source_file = xlsx_files[0]
+                log(f"RUN_ID 增量也不存在，fallback 到最新增量: {source_file.name}", "WARN")
 
-    df_increment = pd.read_excel(increment_path)
+    if source_file is None:
+        log("无可用增量文件，跳过合并", "WARN")
+        return True
+
+    df_increment = pd.read_excel(source_file)
     if df_increment.empty:
         log("增量为空，跳过合并")
         return True
+
+    # 归档增量到 increments/ 目录（保留审核+校验后的完整版本）
+    INCREMENT_DIR.mkdir(parents=True, exist_ok=True)
+    archive_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+    if source_file != archive_path:
+        df_increment.to_excel(archive_path, index=False)
+        log(f"已归档增量: {archive_path.name}")
 
     # 备份总表
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
@@ -595,6 +618,13 @@ def step_merge_and_archive(since_int, until_int):
         backup_name = f"Object-Models_{TIMESTAMP}.xlsx"
         shutil.copy2(MASTER_FILE, BACKUP_DIR / backup_name)
         log(f"总表已备份: Backup/{backup_name}")
+
+    # 标记增量为新增（供日报 push_dingtalk.py 判断"新增"用）
+    if "是否新增" not in df_increment.columns:
+        df_increment["是否新增"] = "New"
+    else:
+        df_increment["是否新增"] = df_increment["是否新增"].astype(object)
+        df_increment["是否新增"] = df_increment["是否新增"].fillna("New")
 
     # 合并到总表
     name_col = "模型名称"

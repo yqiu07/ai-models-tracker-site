@@ -310,6 +310,12 @@ def run_verification(
     dataframe = pd.read_excel(excel_path, engine="openpyxl")
     print(f"📊 加载 Excel: {len(dataframe)} 行")
 
+    # 将待校验字段列强制转为 object 类型，避免全空列被推断为 float64
+    # 导致后续赋值字符串时抛出 LossySetitemError
+    for field in VERIFY_FIELDS:
+        if field in dataframe.columns:
+            dataframe[field] = dataframe[field].astype(object)
+
     # 筛选需要校验的行
     needs_verify_mask = dataframe.apply(_needs_verification, axis=1)
     pending_indices = dataframe[needs_verify_mask].index.tolist()
