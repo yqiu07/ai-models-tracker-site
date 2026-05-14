@@ -54,10 +54,20 @@ REVIEW_PROMPT = """你是一名资深 AI 模型追踪分析师。请审核以下
 - 错误示例：`千问`、`豆包`、`元宝`、`ChatGPT`、`Cursor`、`Sora`、`Manus`、`即梦`（这些是产品泛称，不指向具体版本）
 - 如果模型名称是产品泛称（无版本号），在 issues 中标注"建议删除：产品泛称无版本号"，并将 should_remove 设为 true
 
-## 任务 2：检查是否为旧模型
-- 如果模型是很早就发布的（如2024年或更早），在 issues 中标注"建议删除：旧模型（发布于YYYY年）"
-- 如果你确定知道该模型的实际发布时间，在 corrections 中补全
-- 将明显旧模型的 should_remove 设为 true
+## 任务 2：判断是否为近期新兴模型（宽松保留，分级标注）
+本次追踪的时间窗口为 **{time_window}**。请基于你的世界知识判断每个模型：
+
+**保留原则（宽松）**：只要模型的发布时间在 2026 年且与时间窗口相关，就应该保留。具体：
+- 时间窗口内首次发布/重大版本更新/新上线 → 保留
+- 时间窗口前后 1-2 周内发布的新兴模型 → 也保留（可能是采集延迟）
+- 2026 年内发布但超出窗口较远的 → 仍保留，但标注"窗口外"
+
+**仅删除**：
+- 发布于 2025 年或更早的旧模型 → should_remove = true，标注"旧模型（发布于YYYY年）"
+- 产品泛称（已在任务1处理）
+
+**不要过度过滤**：宁可多保留、靠重要性分级来区分价值，也不要误删近期新兴模型。
+如果你确定知道该模型的实际发布时间，在 corrections 中补全。
 
 ## 任务 3：补全缺失字段（重点：发布时间、备注、官网）
 对每个模型，基于你的知识库补全以下缺失字段：
@@ -151,9 +161,10 @@ def get_review_model_config() -> tuple[str, str, str]:
     return api_key, api_base, model
 
 
-def call_review_llm(models_json: str, api_key: str, api_base: str, model: str) -> list[dict]:
+def call_review_llm(models_json: str, api_key: str, api_base: str, model: str,
+                    time_window: str = "近期") -> list[dict]:
     """调用 LLM 进行审核。"""
-    prompt = REVIEW_PROMPT.format(models_json=models_json)
+    prompt = REVIEW_PROMPT.format(models_json=models_json, time_window=time_window)
 
     url = f"{api_base.rstrip('/')}/chat/completions"
     headers = {
@@ -404,6 +415,8 @@ def main():
     parser.add_argument("--all", action="store_true", help="审核全部模型（默认只审核新增模型）")
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不调用 LLM")
     parser.add_argument("--batch-size", type=int, default=20, help="每批审核的模型数（默认 20）")
+    parser.add_argument("--since", type=str, default=None, help="追踪窗口起始日期 (YYYYMMDD)")
+    parser.add_argument("--until", type=str, default=None, help="追踪窗口截止日期 (YYYYMMDD)")
     args = parser.parse_args()
 
     load_env()
@@ -426,6 +439,11 @@ def main():
         return
 
     df = pd.read_excel(EXCEL_PATH, engine="openpyxl")
+    # 将可能为空（被推断为 float64）的文本列强制转为 object，避免写入字符串时报错
+    text_columns = ["核实情况", "是否接入", "workflow接入进展", "备注", "官网", "模型发布时间", "触发时间"]
+    for col in text_columns:
+        if col in df.columns:
+            df[col] = df[col].astype(object)
     print(f"  📊 表格总行数: {len(df)}")
 
     # 筛选待审核模型
@@ -480,8 +498,15 @@ def main():
         batch_json = json.dumps(batch, ensure_ascii=False, indent=2)
         batch_api_start = time.time()
 
+        # 构造时间窗口描述（传给 GPT-5.5 做新发布判断）
+        time_window = "近期"
+        if args.since or args.until:
+            since_fmt = f"{args.since[:4]}-{args.since[4:6]}-{args.since[6:]}" if args.since else "?"
+            until_fmt = f"{args.until[:4]}-{args.until[4:6]}-{args.until[6:]}" if args.until else "?"
+            time_window = f"{since_fmt} ~ {until_fmt}"
+
         try:
-            results = call_review_llm(batch_json, api_key, api_base, model)
+            results = call_review_llm(batch_json, api_key, api_base, model, time_window=time_window)
             batch_elapsed = time.time() - batch_api_start
             print(f"    ✅ 审核完成（{batch_elapsed:.1f}s），返回 {len(results)} 条结果")
             all_review_results.extend(results)

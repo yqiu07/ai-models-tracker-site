@@ -144,11 +144,38 @@ def is_domestic(org_id: str, org_country: str = "") -> bool:
     return any(cn in org_lower for cn in CN_ORGS)
 
 
-def load_existing_models(excel_path: Path) -> set[str]:
-    """从 Excel 加载已有模型名称集合（用于去重）。"""
+def load_existing_models(
+    excel_path: Path,
+    exclude_since: int = 0,
+    exclude_until: int = 0,
+) -> set[str]:
+    """从 Excel 加载已有模型名称集合（用于去重）。
+
+    当指定 exclude_since/exclude_until 时，属于该时间窗口内（按记录创建时间）
+    的模型会从基准集中排除，使得重跑同一窗口时这些模型能被重新采集和处理。
+    """
     if not excel_path.exists():
         return set()
     df = pd.read_excel(excel_path, engine="openpyxl")
+
+    # 窗口排除：把当前窗口内的模型从去重基准中移除
+    if exclude_since and "记录创建时间" in df.columns:
+        since_str = f"{str(exclude_since)[:4]}-{str(exclude_since)[4:6]}-{str(exclude_since)[6:8]}"
+        until_str = ""
+        if exclude_until:
+            until_str = f"{str(exclude_until)[:4]}-{str(exclude_until)[4:6]}-{str(exclude_until)[6:8]}"
+
+        dates = df["记录创建时间"].astype(str)
+        if until_str:
+            window_mask = (dates >= since_str) & (dates <= until_str + "z")
+        else:
+            window_mask = dates >= since_str
+
+        excluded_count = window_mask.sum()
+        if excluded_count > 0:
+            df = df[~window_mask]
+            print(f"  🔄 窗口排除: {excluded_count} 个模型不参与去重（允许重跑）")
+
     names = set()
     for val in df.iloc[:, 0].dropna():
         names.add(str(val).strip().lower())
@@ -369,7 +396,7 @@ def _infer_type(model: dict) -> str:
     combined = name_lower + " " + model_id
 
     # 代码类
-    if any(kw in combined for kw in ("code", "codex", "coder")):
+    if any(kw in combined for kw in ("code", "codex", "coder", "devstral")):
         return "代码"
     # 语音类
     if any(kw in combined for kw in ("whisper", "tts", "stt", "speech", "audio", "voice", "vox")):
@@ -392,6 +419,7 @@ def _infer_type(model: dict) -> str:
         "baichuan", "internlm", "minimax", "step", "hunyuan", "ernie",
         "palm", "gemma", "olmo", "falcon", "vicuna", "solar", "arctic",
         "mercury", "nemotron", "longcat", "mimo", "sarvam", "minicpm",
+        "kimi", "muse", "trinity", "doubao", "seed",
     )
     if any(kw in combined for kw in foundation_patterns):
         return "基座"
@@ -1226,8 +1254,8 @@ def _model_to_row(model_id: str, created_ts: int, config: dict,
     }
 
 
-def _collect_single_platform(config: dict) -> list[dict]:
-    """采集单个平台的全量模型目录，返回标准行列表。"""
+def _collect_single_platform(config: dict, since_ts: int = 0, until_ts: int = 0) -> list[dict]:
+    """采集单个平台的模型目录，按时间窗口过滤，返回标准行列表。"""
     platform_name = config["name"]
     api_base = os.environ.get(config["api_base_env"], "")
     api_key = os.environ.get(config["api_key_env"], "")
@@ -1259,9 +1287,10 @@ def _collect_single_platform(config: dict) -> list[dict]:
     skipped_pattern = 0
     skipped_old = 0
 
-    # 2026-03-19 00:00:00 UTC 的 Unix 时间戳
-    # 平台目录只追踪 2026-03-19 及之后上架的模型，更早的不纳入增量追踪
-    cutoff_ts = 1773878400  # 2026-03-19T00:00:00Z
+    # 时间窗口过滤：优先使用 since_ts/until_ts，回退到硬编码 2026-01-01
+    fallback_cutoff = 1735689600  # 2026-01-01T00:00:00Z
+    effective_since = since_ts if since_ts else fallback_cutoff
+    effective_until = until_ts if until_ts else 0  # 0 表示不限上界
 
     for model in raw_models:
         model_id = model.get("id", "")
@@ -1272,8 +1301,11 @@ def _collect_single_platform(config: dict) -> list[dict]:
             skipped_pattern += 1
             continue
 
-        # 时效性过滤：只保留 2026 年及之后上架的模型
-        if created_ts and created_ts < cutoff_ts:
+        # 时效性过滤：只保留时间窗口内的模型
+        if created_ts and created_ts < effective_since:
+            skipped_old += 1
+            continue
+        if created_ts and effective_until and created_ts > effective_until:
             skipped_old += 1
             continue
 
@@ -1284,8 +1316,8 @@ def _collect_single_platform(config: dict) -> list[dict]:
     if skipped_pattern:
         print(f"    ⏭️ 跳过: {skipped_pattern} 个（模式匹配）")
     if skipped_old:
-        print(f"    ⏭️ 跳过: {skipped_old} 个（2026 年以前的旧模型）")
-    print(f"    📊 可用: {len(rows)} 个（2026+）")
+        print(f"    ⏭️ 跳过: {skipped_old} 个（时间窗口外）")
+    print(f"    📊 可用: {len(rows)} 个")
     return rows
 
 
@@ -1293,8 +1325,7 @@ def collect_platform_catalogs(since_int: int, until_int: int) -> list[dict]:
     """遍历所有已配置的平台，采集模型目录并合并去重。
 
     只有环境变量中配置了 API Key 的平台才会被采集。
-    时效性过滤：平台 created 时间戳早于 2026 年的旧模型会被跳过，
-    只追踪 2026 年及之后的新模型（增量追踪原则）。
+    时效性过滤：使用 since_int/until_int 时间窗口过滤，只采集窗口内上架的模型。
     """
     configured = [
         cfg for cfg in PLATFORM_REGISTRY
@@ -1305,15 +1336,30 @@ def collect_platform_catalogs(since_int: int, until_int: int) -> list[dict]:
         print("\n⚠️ 平台模型目录: 无已配置的平台（需在 .env 中配置 API Key）")
         return []
 
+    # 将 since_int/until_int (如 20260508) 转为 Unix 时间戳
+    since_ts = 0
+    until_ts = 0
+    try:
+        if since_int:
+            since_dt = datetime.strptime(str(since_int), "%Y%m%d")
+            since_ts = int(since_dt.timestamp())
+        if until_int:
+            until_dt = datetime.strptime(str(until_int), "%Y%m%d") + timedelta(days=1)
+            until_ts = int(until_dt.timestamp())
+    except ValueError:
+        pass
+
     platform_names = ", ".join(cfg["name"] for cfg in configured)
     print(f"\n📡 数据源: 平台模型目录（{len(configured)} 个平台: {platform_names}）")
+    if since_ts or until_ts:
+        print(f"  📅 时间窗口: {since_int} → {until_int}")
     print("=" * 50)
 
     all_rows = []
     seen_names: set[str] = set()
 
     for config in configured:
-        rows = _collect_single_platform(config)
+        rows = _collect_single_platform(config, since_ts=since_ts, until_ts=until_ts)
         # 跨平台去重（同一模型可能在多个平台上架）
         unique_rows = []
         for row in rows:
@@ -1532,6 +1578,107 @@ def _build_hf_search_names(name: str, company: str, org_id: str) -> list[str]:
             seen.add(candidate)
             unique.append(candidate)
     return unique
+
+
+# ================================================================
+#  数据源 5：LM Arena（原 LMSYS Chatbot Arena）排行榜
+# ================================================================
+
+def collect_lmarena(since_int: int, until_int: int) -> list[dict]:
+    """通过第三方 REST API 采集 LM Arena 排行榜数据。
+
+    采集 text 和 code 两个排行榜，将模型映射为流水线标准行格式。
+    Arena 不提供模型发布时间，因此不按时间窗口过滤，全量采集排名模型。
+
+    API: https://api.wulong.dev/arena-ai-leaderboards/v1/
+    """
+    leaderboard_names = ["text", "code"]
+    base_url = "https://api.wulong.dev/arena-ai-leaderboards/v1/leaderboard"
+
+    print(f"\n🏆 数据源: LM Arena 排行榜（{', '.join(leaderboard_names)}）")
+    print("=" * 50)
+
+    # 用 dict 按模型名去重，合并跨榜排名信息
+    seen_models: dict[str, dict] = {}
+
+    for leaderboard_name in leaderboard_names:
+        try:
+            api_url = f"{base_url}?name={leaderboard_name}"
+            resp = requests.get(api_url, timeout=30)
+
+            if resp.status_code != 200:
+                print(f"  ❌ {leaderboard_name}: HTTP {resp.status_code}")
+                continue
+
+            data = resp.json()
+            models = data.get("models", [])
+            fetched_at = data.get("meta", {}).get("fetched_at", "")
+            print(f"  📡 {leaderboard_name}: 获取到 {len(models)} 个模型（fetched_at: {fetched_at}）")
+
+            for model_entry in models:
+                model_name = model_entry.get("model", "")
+                vendor = model_entry.get("vendor", "")
+                license_type = model_entry.get("license", "")
+                rank = model_entry.get("rank", "")
+                score = model_entry.get("score", "")
+                confidence_interval = model_entry.get("ci", "")
+                votes = model_entry.get("votes", "")
+
+                # 构造本排行榜的备注片段
+                note_parts = [f"Arena-{leaderboard_name} #{rank}"]
+                if score:
+                    note_parts.append(f"ELO {score}")
+                if confidence_interval:
+                    note_parts.append(f"±{confidence_interval}")
+                if votes:
+                    note_parts.append(f"{votes} votes")
+                remark_fragment = " | ".join(note_parts)
+
+                # 跨排行榜去重：同一模型合并备注
+                name_key = model_name.strip().lower()
+                if name_key in seen_models:
+                    existing_remark = seen_models[name_key]["备注"]
+                    seen_models[name_key]["备注"] = f"{existing_remark} ; {remark_fragment}"
+                    continue
+
+                # 判断国内外
+                vendor_lower = vendor.lower().replace(" ", "").replace("-", "")
+                domestic = "国内" if is_domestic(vendor_lower) else "国外"
+
+                # 判断开闭源
+                open_source = "开源" if license_type == "open" else "闭源"
+
+                # 利用已有推断函数推断类型和推理能力
+                pseudo_model = {"name": model_name, "model_id": model_name}
+                inferred_type = _infer_type(pseudo_model)
+                inferred_reasoning = _infer_reasoning(pseudo_model)
+
+                row = {
+                    "模型名称": model_name,
+                    "公司": vendor,
+                    "国内外": domestic,
+                    "开闭源": open_source,
+                    "尺寸": _infer_size_from_name(model_name),
+                    "类型": inferred_type,
+                    "能否推理": inferred_reasoning,
+                    "任务类型": "",
+                    "官网": "https://lmarena.ai/",
+                    "备注": remark_fragment,
+                    "模型发布时间": "",
+                    "记录创建时间": today_str(),
+                    "是否新增": "New",
+                    "核实情况": "LM Arena 排行榜",
+                }
+                seen_models[name_key] = row
+
+        except requests.exceptions.Timeout:
+            print(f"  ❌ {leaderboard_name}: 请求超时（30s）")
+        except Exception as exc:
+            print(f"  ❌ {leaderboard_name}: {exc}")
+
+    all_rows = list(seen_models.values())
+    print(f"\n  ✅ LM Arena 共采集 {len(all_rows)} 个模型（跨榜去重后）")
+    return all_rows
 
 
 def verify_via_huggingface(rows: list[dict]) -> list[dict]:
@@ -1764,8 +1911,8 @@ def parse_args():
     parser.add_argument("--until", type=str, help="截止日期 (YYYYMMDD)")
     parser.add_argument(
         "--source", type=str, default="all",
-        choices=["all", "llmstats", "txresearch", "huggingface", "platform", "llm_extract"],
-        help="数据源 (默认 all；platform 获取各平台模型目录；llm_extract 加载 LLM 提取结果)",
+        choices=["all", "llmstats", "txresearch", "huggingface", "platform", "llm_extract", "lmarena"],
+        help="数据源 (默认 all；platform 获取各平台模型目录；llm_extract 加载 LLM 提取结果；lmarena 采集 LM Arena 排行榜)",
     )
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不写 Excel")
     return parser.parse_args()
@@ -1792,8 +1939,13 @@ def main():
     print()
 
     # 加载已有模型（用于去重）
-    existing_names = load_existing_models(EXCEL_PATH)
-    print(f"  📋 已有模型: {len(existing_names)} 个\n")
+    # 窗口排除：把当前窗口内的模型从去重基准中移除，支持重跑同一窗口
+    existing_names = load_existing_models(
+        EXCEL_PATH,
+        exclude_since=since_int,
+        exclude_until=until_int,
+    )
+    print(f"  📋 去重基准: {len(existing_names)} 个（已排除窗口内模型）\n")
 
     all_new_rows = []
 
@@ -1848,7 +2000,17 @@ def main():
         print(f"  去重后: {len(hf_unique)}/{len(hf_rows)} 条")
         all_new_rows.extend(hf_unique)
 
-    # 4. HuggingFace 核实（对开源模型自动验证）
+    # 5. LM Arena 排行榜（text + code）
+    if args.source in ("all", "lmarena"):
+        arena_rows = collect_lmarena(since_int, until_int)
+        combined_existing = existing_names | {
+            r.get("模型名称", "").strip().lower() for r in all_new_rows
+        }
+        arena_unique = deduplicate_rows(arena_rows, combined_existing)
+        print(f"  去重后: {len(arena_unique)}/{len(arena_rows)} 条")
+        all_new_rows.extend(arena_unique)
+
+    # 6. HuggingFace 核实（对开源模型自动验证）
     if all_new_rows:
         all_new_rows = verify_via_huggingface(all_new_rows)
 

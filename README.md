@@ -1,12 +1,12 @@
-Re 2026/05/09/12:01
+Re 2026/05/14/22:00
 name: Model Navigate
 description: AI 模型导航与追踪系统，全自动化 AI 模型追踪流水线
 
 # Model Navigate — AI 模型导航与追踪系统
 
-> 全自动化 AI 模型追踪流水线，覆盖**采集→提取→校验→审核→推送→评估**全链路。
+> 全自动化 AI 模型追踪流水线，覆盖**采集→去重→审核→校验→巡检→归档→推送→记录**八步全链路。
 
-多数据源自动采集（llmstats.com / 腾讯研究院 / HuggingFace / **平台模型目录**），LLM 自动提取模型信息，GPT-5.5 智能审核 + 重要性评级，钉钉日报一键推送。
+多数据源自动采集（llmstats.com / 腾讯研究院 / HuggingFace / **平台模型目录** / **LM Arena**），LLM 自动提取模型信息，GPT-5.5 智能审核 + 重要性评级（宽松保留 + 三级分类），钉钉日报一键推送。
 
 本项目同时是一个 AI Skill —— `Model_Navigate/SKILL.md` 是 AI 的操作手册，AI 可直接按流程执行完整的模型追踪任务。
 
@@ -14,10 +14,11 @@ description: AI 模型导航与追踪系统，全自动化 AI 模型追踪流水
 
 ## 功能亮点
 
-- **多源自动采集**：llm-stats.com 4 页面（[首页](https://llm-stats.com) / [LLM 详情](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates)）+ 腾讯研究院 Selenium 爬虫 + HuggingFace API 交叉校验 + **平台模型目录采集**（通用适配器框架，支持 7 个平台）
+- **多源自动采集**：llm-stats.com 4 页面（[首页](https://llm-stats.com) / [LLM 详情](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates)）+ 腾讯研究院 Selenium 爬虫 + HuggingFace API 交叉校验 + **平台模型目录采集**（通用适配器框架，支持 12 个平台）+ **LM Arena 排行榜**（text/code 双榜采集，跨榜去重，84+ 模型）
+- **LLM 交叉巡检**：调用 DashScope 联网搜索 API，搜索指定时间段内新发布的 AI 模型/智能体，与已有采集数据交叉比对，自动发现遗漏模型
 - **LLM 智能提取**：从文章全文中自动提取模型名称、公司、类型等字段
-- **GPT-5.5 审核**：模型名称规范性审核 + 旧模型检测 + 字段补全 + 重要性评级（高/中/低）
-- **钉钉日报推送**：自动生成日报并推送到钉钉群
+- **GPT-5.5 审核**：模型名称规范性审核 + 智能新旧判断（宽松保留 2026 年内新兴模型） + 字段补全 + 重要性三级评级（🔴高/🟡中/🟢低）
+- **钉钉日报推送**：从总表按"模型发布时间"精确筛选生成日报（等同 Excel 筛选器），变体自动合并防刷屏，支持 `--created-date` 精确控制
 - **AI 协作就绪**：内置 `SKILL.md` 操作手册，AI 可直接按流程执行
 - **金标验收评估**：自动化评估流水线产出质量（覆盖率、字段准确率、补全能力），支持金标纠错
 - **Trace 来源审计**：模型来源追溯（追踪完整数据链路）+ 增量批量审计（可疑项标记）+ 总表质量评分，辅助人工校验
@@ -81,7 +82,8 @@ cp Model_Navigate/.env.example Model_Navigate/.env
 
 ```
 Model_Navigate/data/
-├── Object-Models.xlsx          ← 唯一真相源（总表）
+├── Object-Models.xlsx          ← 唯一真相源（总表，日报也从这里筛选）
+├── Object-Models-Updated.xlsx  ← Step 1 采集输出 → Step 2 去重后成为增量
 ├── increments/                 ← 增量归档（每次运行产出的新增模型快照）
 │   └── YYYYMMDD_runHHMM.xlsx
 ├── Backup/                     ← 总表备份（合并前自动备份）
@@ -89,10 +91,13 @@ Model_Navigate/data/
 └── run_log.csv                 ← 运行记录
 ```
 
-- **总表是唯一真相源**：所有去重、查询、推送都基于总表
+- **总表是唯一真相源**：所有去重、查询、日报生成都基于总表
+- **日报筛选逻辑**：`发布时间 ∈ [since, until]`（可选 AND `记录创建时间 = 指定日期`），等同 Excel 筛选器
+- **总表保证唯一性**：合并前按模型名称 normalize 去重，日报不会出现重复
 - **增量按次归档**：每次流水线跑出的新模型先归档再合并到总表
 - **合并前自动备份**：防止数据损坏可回滚
 - **去重标准**：`name.strip().lower().replace('-','').replace('_','').replace(' ','')`
+- **幂等重跑**：重跑同一时间窗口时，窗口内已有模型从去重基准中排除，确保增量不为 0
 - **冷启动建议**：首次使用时将已有模型数据放入 `Object-Models.xlsx` 即可
 
 ---
@@ -110,8 +115,9 @@ python main.py --since YYYYMMDD --until YYYYMMDD
 # 含钉钉推送
 python main.py --since YYYYMMDD --until YYYYMMDD --push
 
-# 推送日报（预览加 --dry-run）
+# 推送日报（预览加 --dry-run，可选 --created-date 精确控制）
 python push_dingtalk.py --since YYYYMMDD --until YYYYMMDD
+python push_dingtalk.py --since YYYYMMDD --until YYYYMMDD --created-date 2026-05-14
 
 # 模型审核（预览加 --dry-run）
 python review_models.py
@@ -126,17 +132,19 @@ cd Extract; python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
 
 每轮模型追踪包含三个阶段：
 
-### 阶段 A：自动采集（v3 六步精简流水线）
+### 阶段 A：自动采集（v3 八步流水线）
 
-运行 `python main.py`，自动执行 6 个步骤：
+运行 `python main.py`，自动执行 8 个步骤：
 
 ```
-Step 1    数据采集 → 多源采集（llmstats + 腾讯研究院 + HuggingFace + 平台目录），2026+ 时效过滤
+Step 1    数据采集 → 多源采集（llmstats + 腾讯研究院 + HuggingFace + 平台目录 + LM Arena）
 Step 2    增量去重 → 与总表对比，只保留新增模型
 Step 3    AI 审核 → GPT-5.5 名称规范 + 字段补全 + 重要性评级
-Step 4    合并归档 → 新增写入 increments/，合并到总表，合并前自动备份
-Step 5    钉钉推送（需 --push）
-Step 6    运行记录 → 写入 run_log.csv
+Step 4    数据校验 → Web Search 校验发布时间/官网/备注
+Step 5    交叉巡检 → LLM 联网搜索该时段新模型，与已有数据交叉比对补漏
+Step 6    合并归档 → 新增写入 increments/，合并到总表，合并前自动备份
+Step 7    钉钉推送（需 --push，从总表按发布时间筛选生成日报，变体自动合并）
+Step 8    运行记录 → 写入 run_log.csv
 ```
 
 ### 阶段 B：AI 创作校验（推荐）
@@ -196,21 +204,22 @@ AI 会自动加载 `Model_Navigate/SKILL.md` 并按规范执行。
 | 平台 | API 类型 | 环境变量 | 状态 |
 |------|---------|---------|------|
 | DashScope 百炼（阿里） | OpenAI 兼容 | `LLM_API_BASE` + `LLM_API_KEY` | ✅ 已验证 |
-| 硅基流动 SiliconFlow | OpenAI 兼容 | `SILICONFLOW_API_BASE` + `SILICONFLOW_API_KEY` | 🔧 待配置 |
-| DeepSeek（深度求索） | OpenAI 兼容 | `DEEPSEEK_API_BASE` + `DEEPSEEK_API_KEY` | 🔧 待配置 |
-| 火山引擎（字节/豆包） | OpenAI 兼容 | `VOLCENGINE_API_BASE` + `VOLCENGINE_API_KEY` | 🔧 待配置 |
-| MiniMax | OpenAI 兼容 | `MINIMAX_API_BASE` + `MINIMAX_API_KEY` | 🔧 待配置 |
+| 硅基流动 SiliconFlow | OpenAI 兼容 | `SILICONFLOW_API_BASE` + `SILICONFLOW_API_KEY` | ✅ 已验证（102个模型） |
+| DeepSeek（深度求索） | OpenAI 兼容 | `DEEPSEEK_API_BASE` + `DEEPSEEK_API_KEY` | ✅ 已验证（2个模型） |
+| 火山引擎（字节/豆包） | OpenAI 兼容 | `VOLCENGINE_API_BASE` + `VOLCENGINE_API_KEY` | ✅ 已验证 |
+| MiniMax | OpenAI 兼容 | `MINIMAX_API_BASE` + `MINIMAX_API_KEY` | ✅ 已验证 |
 | 腾讯混元 | OpenAI 兼容 | `HUNYUAN_API_BASE` + `HUNYUAN_API_KEY` | 🔧 待配置 |
-| 阶跃星辰 StepFun | OpenAI 兼容 | `STEPFUN_API_BASE` + `STEPFUN_API_KEY` | 🔧 待配置 |
-| Moonshot 月之暗面 | OpenAI 兼容 | `MOONSHOT_API_BASE` + `MOONSHOT_API_KEY` | 🔧 待配置 |
-| 智谱 Zhipu（GLM） | OpenAI 兼容 | `ZHIPU_API_BASE` + `ZHIPU_API_KEY` | 🔧 待配置 |
-| 百度千帆（ERNIE） | 自定义 REST | `QIANFAN_API_BASE` + `QIANFAN_API_KEY` | 🔧 待配置 |
+| 阶跃星辰 StepFun | OpenAI 兼容 | `STEPFUN_API_BASE` + `STEPFUN_API_KEY` | ✅ 已验证（36个模型） |
+| Moonshot 月之暗面 | OpenAI 兼容 | `MOONSHOT_API_BASE` + `MOONSHOT_API_KEY` | ✅ 已验证 |
+| 智谱 Zhipu（GLM） | OpenAI 兼容 | `ZHIPU_API_BASE` + `ZHIPU_API_KEY` | ✅ 已验证 |
+| MIMO 小米 | OpenAI 兼容 | `MIMO_API_BASE` + `MIMO_API_KEY` | ✅ 已验证 |
+| 百度千帆（ERNIE） | 自定义 REST | `QIANFAN_API_BASE` + `QIANFAN_API_KEY` | ⚠️ 需加白 `qianfan.baidubce.com` |
 
 **聚合平台**（兜底补充源，覆盖遗漏）：
 
 | 平台 | API 类型 | 环境变量 | 状态 |
 |------|---------|---------|------|
-| OpenRouter（全球 500+ 模型） | 自定义适配器 | `OPENROUTER_API_BASE` + `OPENROUTER_API_KEY` | 🔧 待配置 |
+| OpenRouter（全球 500+ 模型） | 自定义适配器 | `OPENROUTER_API_BASE` + `OPENROUTER_API_KEY` | ✅ 已验证 |
 | 酷爱 Kuai（国内外聚合） | OpenAI 兼容 | `KUAI_API_BASE` + `KUAI_API_KEY` | 🔧 待配置 |
 
 **设计理念**：配置驱动，零代码扩展——新增平台只需在 `PLATFORM_REGISTRY` 注册表中添加一个配置项并在 `.env` 中填入 API Key 即可启用，无需编写新代码。对于非标准 API（如百度千帆、OpenRouter），通过自定义适配器函数处理响应格式转换和 owner 解析。
@@ -233,7 +242,7 @@ python 20260509_1700_eval_full_pipeline.py
 | [llm-stats.com](https://llm-stats.com) | ✅ 全自动 | HTTP 直连 + Next.js RSC JSON 解析 |
 | [腾讯研究院](https://mp.sohu.com/profile?xpt=bGl1amluc29uZzIwMDBAMTI2LmNvbQ==) | ✅ 全自动 | Selenium 爬虫抓取搜狐号文章全文 + LLM 提取模型信息 |
 | [HuggingFace](https://huggingface.co) | ✅ 全自动 | 第三源补充：API 交叉校验开源模型参数、日期，补全各类变体模型 |
-| [Arena](https://arena.ai/leaderboard) | ❌ 手动 | 需手动复制排行榜到 Case 文件 |
+| [LM Arena](https://lmarena.ai) | ✅ 全自动 | 第三方 REST API（text/code 双榜，跨榜去重，84+ 模型） |
 
 ---
 
@@ -251,8 +260,10 @@ model-navigate-skill/               ← 项目根目录（GitHub 仓库）
     ├── .env.example                 ← API Key 配置模板
     ├── config.py                    ← 全局配置（列定义、超时、黑名单等）
     │
-    ├── main.py                      ← 流水线入口（9步 + Trace 记录）
+    ├── main.py                      ← 流水线入口（v3 八步 + Trace 记录）
     ├── auto_collect.py              ← 自动化数据采集
+    ├── cross_check.py               ← 多源交叉校验（LM Arena + HuggingFace）
+    ├── verify_models.py             ← 模型数据验证与一致性检查
     ├── review_models.py             ← GPT-5.5 模型审核 + 重要性评级
     ├── push_dingtalk.py             ← 钉钉日报生成与推送
     │

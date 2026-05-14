@@ -1,7 +1,8 @@
 """
 AI 模型/智能体追踪日报 —— 钉钉推送
 ====================================
-从 Object-Models-Updated.xlsx 生成日报 Markdown 并推送到钉钉群。
+从总表按"模型发布时间"精确筛选窗口内的模型，生成日报 Markdown 并推送到钉钉群。
+等同于在 Excel 中对"模型发布时间"列做筛选器勾选目标日期范围。
 
 用法:
     python push_dingtalk.py --since 20260417 --until 20260423
@@ -37,11 +38,10 @@ import requests
 ROOT = Path(__file__).parent
 DATA_DIR = ROOT / "data"
 REPORT_DIR = ROOT / "Report"
-# v3: 优先读总表（唯一真相源），兼容旧路径
-EXCEL_PATH = DATA_DIR / "Object-Models.xlsx"
-_LEGACY_PATH = DATA_DIR / "Object-Models-Updated.xlsx"
-if not EXCEL_PATH.exists() and _LEGACY_PATH.exists():
-    EXCEL_PATH = _LEGACY_PATH
+# v6: 日报直接从总表按"模型发布时间"筛选，简单直接
+# 等同于在 Excel 中对"模型发布时间"列做筛选器勾选目标日期
+MASTER_PATH = DATA_DIR / "Object-Models.xlsx"
+UPDATED_PATH = DATA_DIR / "Object-Models-Updated.xlsx"
 
 # ── 钉钉 Markdown 最大长度 ──
 DINGTALK_MAX_LENGTH = 18000
@@ -69,7 +69,7 @@ def load_env():
 def dingtalk_sign(secret: str, timestamp: str) -> str:
     """计算钉钉加签模式的签名。"""
     string_to_sign = f"{timestamp}\n{secret}"
-    hmac_code = hmac.new(
+    hmac_code = hmac.HMAC(
         secret.encode("utf-8"),
         string_to_sign.encode("utf-8"),
         digestmod=hashlib.sha256,
@@ -108,26 +108,38 @@ def _parse_date_int(raw_date) -> int | None:
         return None
 
 
-def load_models(excel_path: Path, since_int: int, until_int: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_models(excel_path: Path, since_int: int, until_int: int,
+                created_date: str | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
     """从 Excel 加载数据，返回 (时间段内全部模型, 时间段内新增模型)。
 
-    筛选逻辑：模型发布时间 或 记录创建时间（报道日期）任一落在时间窗口内即纳入。
-    这样既覆盖"当天发布"的模型，也覆盖"当天被报道但实际更早发布"的模型。
+    筛选逻辑：
+      - 必选：模型发布时间精确落在 [since, until] 窗口内
+      - 可选：若指定 created_date，则同时要求记录创建时间匹配（AND 关系）
+
+    等同于在 Excel 中对"模型发布时间"列做筛选器（可选加"记录创建时间"筛选）。
+    总表必须事先保证唯一性（合并前去重），这样日报不会出现重复模型。
     """
     df = pd.read_excel(excel_path, engine="openpyxl")
 
+    release_col = "模型发布时间"
+    create_col = "记录创建时间"
+
     all_in_range = []
-    date_columns = ["模型发布时间", "记录创建时间"]
     for _, row in df.iterrows():
-        matched = False
-        for col in date_columns:
-            if col in df.columns:
-                date_int = _parse_date_int(row.get(col))
-                if date_int is not None and since_int <= date_int <= until_int:
-                    matched = True
-                    break
-        if matched:
-            all_in_range.append(row)
+        # 条件 1（必选）：发布时间在 [since, until]
+        release_date_int = _parse_date_int(row.get(release_col)) if release_col in df.columns else None
+        if release_date_int is None or not (since_int <= release_date_int <= until_int):
+            continue
+
+        # 条件 2（可选）：记录创建时间匹配
+        if created_date is not None and create_col in df.columns:
+            create_val = str(row.get(create_col, "")).strip()
+            create_day = create_val.replace("/", "-")[:10]
+            if create_day != created_date:
+                continue
+
+        all_in_range.append(row)
+
     df_all = pd.DataFrame(all_in_range) if all_in_range else pd.DataFrame(columns=df.columns)
 
     # 从全部模型中筛选新增（"是否新增"为 New / 是）
@@ -235,33 +247,75 @@ def generate_daily_report(
                     lines.append(f'  <font color="#999999" size="2">💡 {reason_short}</font>')
             lines.append("")
 
-        # 🟡 值得关注
+        # 🟡 值得关注（变体合并防刷屏）
         if mid_models:
+            def _base_name_for_highlight(name):
+                """高亮区变体合并用的基座名提取"""
+                n = str(name).strip()
+                n = _re.sub(r'[-_]\d{4}-\d{2}-\d{2}$', '', n)
+                n = _re.sub(r'[-_]\d{8}$', '', n)
+                n = _re.sub(r'[-_]\d+\.?\d*[BbMm]$', '', n)
+                n = _re.sub(r'[-_](preview|latest|fast|exp|beta|alpha)$', '', n, flags=_re.IGNORECASE)
+                n = _re.sub(r'[-_](v\d+|[\d]{4,})$', '', n, flags=_re.IGNORECASE)
+                return n.lower().strip()
+
+            mid_groups = {}
+            for m in mid_models:
+                base = _base_name_for_highlight(m["name"])
+                mid_groups.setdefault(base, []).append(m)
+
             lines.append(f'<font color="#F59E0B">**🟡 值得关注 ({len(mid_models)})**</font>')
             lines.append("")
-            for m in mid_models:
-                line = f"- **{m['name']}**"
-                if m["company"]:
-                    line += f" ({m['company']})"
-                lines.append(line)
-                # 展示理由
-                reason_text = m.get("reason", "")
-                if not reason_text:
-                    reason_text = _re.sub(r'\s*\[重要性[:：][高中低](?:\|[^]]*)?\]', '', m["note"]).strip()
-                if reason_text:
-                    reason_short = reason_text[:60] + "..." if len(reason_text) > 60 else reason_text
-                    lines.append(f'  <font color="#999999" size="2">💡 {reason_short}</font>')
+            for base, members in mid_groups.items():
+                if len(members) == 1:
+                    m = members[0]
+                    line = f"- **{m['name']}**"
+                    if m["company"]:
+                        line += f" ({m['company']})"
+                    lines.append(line)
+                    reason_text = m.get("reason", "")
+                    if not reason_text:
+                        reason_text = _re.sub(r'\s*\[重要性[:：][高中低](?:\|[^]]*)?\]', '', m["note"]).strip()
+                    if reason_text:
+                        reason_short = reason_text[:60] + "..." if len(reason_text) > 60 else reason_text
+                        lines.append(f'  <font color="#999999" size="2">💡 {reason_short}</font>')
+                else:
+                    first = members[0]
+                    names = [m["name"] for m in members]
+                    line = f"- **{first['name']}** 等 {len(members)} 个变体"
+                    if first["company"]:
+                        line += f" ({first['company']})"
+                    lines.append(line)
+                    reason_text = first.get("reason", "")
+                    if not reason_text:
+                        reason_text = _re.sub(r'\s*\[重要性[:：][高中低](?:\|[^]]*)?\]', '', first["note"]).strip()
+                    if reason_text:
+                        reason_short = reason_text[:60] + "..." if len(reason_text) > 60 else reason_text
+                        lines.append(f'  <font color="#999999" size="2">💡 {reason_short}</font>')
             lines.append("")
 
-        # 🟢 其他新增
+        # 🟢 其他新增（变体合并）
         if low_models:
+            low_groups = {}
+            for m in low_models:
+                base = _base_name_for_highlight(m["name"])
+                low_groups.setdefault(base, []).append(m)
+
             lines.append(f'<font color="#999999">**🟢 其他新增 ({len(low_models)})**</font>')
             lines.append("")
-            for m in low_models:
-                line = f"- {m['name']}"
-                if m["company"]:
-                    line += f" ({m['company']})"
-                lines.append(line)
+            for base, members in low_groups.items():
+                if len(members) == 1:
+                    m = members[0]
+                    line = f"- {m['name']}"
+                    if m["company"]:
+                        line += f" ({m['company']})"
+                    lines.append(line)
+                else:
+                    first = members[0]
+                    line = f"- {first['name']} 等 {len(members)} 个变体"
+                    if first["company"]:
+                        line += f" ({first['company']})"
+                    lines.append(line)
             lines.append("")
 
         # 如果没有重要性标签（review_models.py 未执行），回退到原始列表
@@ -279,9 +333,10 @@ def generate_daily_report(
     lines.append("---")
     lines.append("")
 
-    # 全部模型按公司分组展示
+    # 全部模型按公司分组展示（同系列变体合并为一个单元防刷屏）
     df = df_all
     if "公司" in df.columns:
+        import re as _re
         company_groups = df.groupby("公司", sort=False)
 
         # 按模型数量排序
@@ -292,40 +347,87 @@ def generate_daily_report(
             if not company_str or company_str == "nan":
                 company_str = "未知"
 
+            # 变体合并：同公司下，相同基座名的模型合并为一个单元
+            # 基座名提取：去掉尾部的 -size/-variant（如 Qwen3-7B, Qwen3-14B → Qwen3）
+            def _extract_base_name(name):
+                """提取模型基座名（去掉尺寸/变体/日期后缀）"""
+                n = str(name).strip()
+                # 去掉日期后缀：-2026-04-16, -20260416, -0416
+                n = _re.sub(r'[-_]\d{4}-\d{2}-\d{2}$', '', n)
+                n = _re.sub(r'[-_]\d{8}$', '', n)
+                # 去掉常见的尺寸后缀：-7B, -14B, -0.5B, -A3B
+                n = _re.sub(r'[-_]\d+\.?\d*[BbMm]$', '', n)
+                # 去掉变体标记：-preview, -latest, -fast
+                n = _re.sub(r'[-_](preview|latest|fast|exp|beta|alpha)$', '', n, flags=_re.IGNORECASE)
+                # 去掉末尾版本号如 -v1, -0711
+                n = _re.sub(r'[-_](v\d+|[\d]{4,})$', '', n, flags=_re.IGNORECASE)
+                # 注意：不去掉 turbo/flash/pro/max/mini 等，因为它们代表不同的模型线
+                return n.lower().strip()
+
+            base_groups = {}
+            for _, row in group.iterrows():
+                name = str(row.get("模型名称", "")).strip()
+                base = _extract_base_name(name)
+                if base not in base_groups:
+                    base_groups[base] = []
+                base_groups[base].append(row)
+
             model_count = len(group)
+            unit_count = len(base_groups)
             lines.append(f'<font color="#6366F1">**{company_str}**</font> ({model_count})')
             lines.append("")
 
-            for _, row in group.iterrows():
-                name = str(row.get("模型名称", "")).strip()
-                model_type = str(row.get("类型", "")).strip()
-                size = str(row.get("尺寸", "")).strip()
-                open_closed = str(row.get("开闭源", "")).strip()
-                note = str(row.get("备注", "")).strip()
+            for base, rows in base_groups.items():
+                if len(rows) == 1:
+                    # 单个模型，正常展示
+                    row = rows[0]
+                    name = str(row.get("模型名称", "")).strip()
+                    model_type = str(row.get("类型", "")).strip()
+                    note = str(row.get("备注", "")).strip()
+                    if model_type == "nan":
+                        model_type = ""
+                    if note == "nan":
+                        note = ""
 
-                # 构造简洁的模型信息行
-                info_parts = []
-                if model_type and model_type != "nan":
-                    info_parts.append(model_type)
-                if size and size != "nan":
-                    info_parts.append(size)
-                if open_closed and open_closed != "nan":
-                    info_parts.append(open_closed)
+                    model_line = f"- **{name}**"
+                    if model_type:
+                        model_line += f"  [{model_type}]"
+                    lines.append(model_line)
 
-                info_str = " · ".join(info_parts)
-                model_line = f"- **{name}**"
-                if info_str:
-                    model_line += f"  [{info_str}]"
+                    if note and len(note) > 2:
+                        note_clean = _re.sub(r'\s*\[重要性[:：][高中低](?:\|[^]]*)?\]', '', note).strip()
+                        if note_clean:
+                            note_short = note_clean[:80] + "..." if len(note_clean) > 80 else note_clean
+                            lines.append(f'  <font color="#999999" size="2">{note_short}</font>')
+                else:
+                    # 多个变体，合并展示
+                    variant_names = [str(r.get("模型名称", "")).strip() for r in rows]
+                    first_row = rows[0]
+                    model_type = str(first_row.get("类型", "")).strip()
+                    note = str(first_row.get("备注", "")).strip()
+                    if model_type == "nan":
+                        model_type = ""
+                    if note == "nan":
+                        note = ""
 
-                lines.append(model_line)
+                    # 用第一个名称作为系列标题，列出所有变体
+                    series_label = variant_names[0]
+                    model_line = f"- **{series_label}** 等 {len(rows)} 个变体"
+                    if model_type:
+                        model_line += f"  [{model_type}]"
+                    lines.append(model_line)
 
-                # 备注（简化显示，去掉重要性标签）
-                if note and note != "nan" and len(note) > 2:
-                    import re as _re
-                    note_clean = _re.sub(r'\s*\[重要性[:：][高中低]\]', '', note).strip()
-                    if note_clean:
-                        note_short = note_clean[:80] + "..." if len(note_clean) > 80 else note_clean
-                        lines.append(f'  <font color="#999999" size="2">{note_short}</font>')
+                    # 变体列表简短展示
+                    variants_str = "、".join(variant_names[1:4])
+                    if len(variant_names) > 4:
+                        variants_str += f" 等"
+                    lines.append(f'  <font color="#999999" size="2">含: {variants_str}</font>')
+
+                    if note and len(note) > 2:
+                        note_clean = _re.sub(r'\s*\[重要性[:：][高中低](?:\|[^]]*)?\]', '', note).strip()
+                        if note_clean:
+                            note_short = note_clean[:60] + "..." if len(note_clean) > 60 else note_clean
+                            lines.append(f'  <font color="#999999" size="2">{note_short}</font>')
 
             lines.append("")
     else:
@@ -398,6 +500,8 @@ def parse_args():
     )
     parser.add_argument("--since", type=str, help="起始日期 (YYYYMMDD)")
     parser.add_argument("--until", type=str, help="截止日期 (YYYYMMDD)")
+    parser.add_argument("--created-date", type=str,
+                        help="记录创建日期 (YYYY-MM-DD)，默认今天。用于筛选'本次入库'的模型")
     parser.add_argument("--webhook", type=str, help="钉钉 Webhook URL（覆盖环境变量）")
     parser.add_argument("--secret", type=str, help="钉钉加签密钥（覆盖环境变量）")
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不推送")
@@ -422,19 +526,30 @@ def main():
     webhook = args.webhook or os.environ.get("DINGTALK_WEBHOOK", "")
     secret = args.secret or os.environ.get("DINGTALK_SECRET", "")
 
+    # 记录创建日期（可选，不指定则只按发布时间筛选）
+    created_date = args.created_date if args.created_date else None
+
+    # 日报数据源：总表
+    data_source = MASTER_PATH
+    source_label = "总表（按发布时间筛选）"
+    if created_date:
+        source_label += f" + 创建日期={created_date}"
+
     print("📊 AI 模型追踪日报")
     print(f"  时间窗口: {since_int} ~ {until_int}")
-    print(f"  Excel: {EXCEL_PATH}")
+    if created_date:
+        print(f"  记录创建日期: {created_date}")
+    print(f"  数据源: {data_source.name} ← {source_label}")
     if args.dry_run:
         print("  模式: 🔍 DRY-RUN")
     print()
 
     # 加载数据
-    if not EXCEL_PATH.exists():
-        print(f"  ❌ Excel 不存在: {EXCEL_PATH}")
+    if not data_source.exists():
+        print(f"  ❌ 数据源不存在: {data_source}")
         return
 
-    df_all, df_new = load_models(EXCEL_PATH, since_int, until_int)
+    df_all, df_new = load_models(data_source, since_int, until_int, created_date=created_date)
     print(f"  📋 时间窗口内共 {len(df_all)} 个模型，其中新增 {len(df_new)} 个")
 
     if df_all.empty:

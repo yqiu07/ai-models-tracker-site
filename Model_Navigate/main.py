@@ -1,5 +1,5 @@
 """
-AI 模型追踪 —— 端到端一键更新流水线（v2 自动化版）
+AI 模型追踪 —— 端到端一键更新流水线（v3 精简版）
 
 使用方式：
     python main.py --since 20260417 --until 20260423    # 指定时间段
@@ -9,35 +9,28 @@ AI 模型追踪 —— 端到端一键更新流水线（v2 自动化版）
     python main.py --dry-run                            # 预览流程
     python main.py --source llmstats                    # 只跑 llmstats 数据源
 
-流水线步骤（v2.1, 9步）：
-    === 数据准备 ===
-    1. 准备基线：备份 Updated→Medium，复制 Old→Updated
-    2. 自动化数据采集：llmstats + 腾讯研究院 → 去重 → HuggingFace 核实 → 写入 Excel
-       2.5 LLM 提取腾讯研究院模型：读取文章全文 → LLM API 提取 → 回写主表格
-    === 检查 ===
-    3. 数据完整性检查：运行 Test/check_result.py
-    === 报告与整理 ===
-    4. 生成更新报告：运行 Report/generate_report.py
-    5. 整理 Case 文件：运行 Crawl/Arena_x/format_cases.py
+流水线步骤（v3, 8步）：
+    === 数据采集与清洗 ===
+    1. 数据采集：llmstats + 腾讯研究院 + HuggingFace + 平台目录 + LM Arena → 采集原始数据
+    2. 增量去重：与总表去重 + 时间窗口过滤，提取本次新增模型
     === 质量保障 ===
-    6. 对比新旧表格：Updated vs Medium，输出新增/原有/遗漏清单
-    7. 同步新增模型：将新增模型写入 Object-Models-Updated - only.xlsx
-    8. 生成验收报告：汇总 E2E-Test-Report.md + 更新 Update-Log.md
-    === 推送 ===
-    9. 钉钉推送日报：生成日报 Markdown 并推送到钉钉群（需 --push 参数）
+    3. LLM 审核：GPT-5.5 审核（名称规范 + 发布时间/官网/备注补全 + 重要性评级）
+    4. 数据校验：Web Search 校验新增模型的发布时间/官网/备注
+    5. 交叉巡检：LLM 联网搜索该时段新模型，与已有数据交叉比对，补漏遗漏模型
+    === 归档与推送 ===
+    6. 合并归档：增量写入总表 + 归档到 increments/ + 备份总表
+    7. 钉钉推送：生成日报并推送到钉钉群（需 --push 参数）
+    8. 运行记录：写入 run_log.csv + 生成 Trace 记录
 
 前置条件：
-    - Object-Models-Old.xlsx 存在（基线表格）
+    - 首次运行时自动创建空总表（冷启动）
     - 请先关闭 Excel 中打开的相关文件
 
-v2 变更（相对 v1 12步版）：
-    - 步骤 2-6 合并为自动化数据采集（auto_collect.py）
-    - 不再需要手动硬编码模型列表
-    - 新增 --since/--until 时间段参数
-    - llmstats 自动 HTTP 抓取 + Next.js RSC 解析
-    - 腾讯研究院按时间段爬取 + 全文抓取
-    - HuggingFace API 自动核实开源模型
-    - 发布时间自动从数据源映射
+数据架构（v3）：
+    - 总表 Object-Models.xlsx：唯一真相源
+    - increments/：每次运行的增量日志
+    - Backup/：写入总表前的快照备份
+    - run_log.csv：轻量级运行记录
 """
 import subprocess
 import sys
@@ -79,8 +72,8 @@ INCREMENT_DIR = DATA_DIR / "increments"                 # 增量日志：每次�
 BACKUP_DIR = DATA_DIR / "Backup"                        # 备份：写入总表前快照
 RUN_LOG_FILE = DATA_DIR / "run_log.csv"                 # 运行记录：轻量级追溯
 
-# ── 兼容旧路径（迁移期间 push_dingtalk 等脚本可能仍引用）──
-UPDATED_FILE = DATA_DIR / "Object-Models-Updated.xlsx"  # 已废弃，兼容保留
+# ── 兼容旧路径 ──
+UPDATED_FILE = DATA_DIR / "Object-Models-Updated.xlsx"  # Step 1 采集输出 → Step 2 去重后成为增量
 TEST_REPORT_FILE = REPORT_DIR / "E2E-Test-Report.md"
 UPDATE_LOG_FILE = REPORT_DIR / "Update-Log.md"
 
@@ -96,7 +89,7 @@ STEPS = [
     {
         "number": 1,
         "name": "数据采集",
-        "description": "llmstats + 腾讯研究院 + HuggingFace + 平台目录 → 采集原始数据",
+        "description": "llmstats + 腾讯研究院 + HuggingFace + 平台目录 + LM Arena → 采集原始数据",
         "script": ACTION_DIR / "auto_collect.py",
     },
     {
@@ -120,18 +113,24 @@ STEPS = [
     },
     {
         "number": 5,
+        "name": "交叉巡检",
+        "description": "LLM 联网搜索该时段新模型，与已有数据交叉比对，补漏遗漏模型",
+        "script": ACTION_DIR / "cross_check.py",
+    },
+    {
+        "number": 6,
         "name": "合并归档",
         "description": "增量写入总表 + 归档到 increments/ + 备份总表",
         "script": None,
     },
     {
-        "number": 6,
+        "number": 7,
         "name": "钉钉推送",
         "description": "生成日报并推送到钉钉群（需 --push 参数）",
         "script": ACTION_DIR / "push_dingtalk.py",
     },
     {
-        "number": 7,
+        "number": 8,
         "name": "运行记录",
         "description": "写入 run_log.csv + 生成 Trace 记录",
         "script": None,
@@ -279,25 +278,26 @@ def run_script(script_path, timeout_minutes=30, heartbeat_seconds=60, silent_lim
     return True
 
 
-def _create_empty_baseline():
-    """冷启动：创建空基线 Excel（含正确表头）。"""
+def _create_empty_master():
+    """冷启动：创建空总表 Excel（含正确表头）。"""
     import pandas as pd
     from auto_collect import EXCEL_COLUMNS
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     empty_df = pd.DataFrame(columns=EXCEL_COLUMNS)
-    empty_df.to_excel(BASELINE_FILE, index=False)
-    log(f"冷启动：已自动创建空基线文件 {BASELINE_FILE.name}（首次运行）", "WARN")
+    empty_df.to_excel(MASTER_FILE, index=False)
+    log(f"冷启动：已自动创建空总表 {MASTER_FILE.name}（首次运行）", "WARN")
+
 
 def check_prerequisites():
-    """检查前置条件。基线文件不存在时自动创建空基线（冷启动）。"""
+    """检查前置条件。总表不存在时自动创建空总表（冷启动）。"""
     issues = []
 
-    if not BASELINE_FILE.exists():
-        _create_empty_baseline()
+    if not MASTER_FILE.exists():
+        _create_empty_master()
 
     # 检查 Excel 是否被占用（尝试以写模式打开）
-    for filepath in [BASELINE_FILE, UPDATED_FILE]:
+    for filepath in [MASTER_FILE, UPDATED_FILE]:
         if filepath.exists():
             try:
                 with open(filepath, "a"):
@@ -307,21 +307,21 @@ def check_prerequisites():
 
     # 检查关键脚本是否存在
     for step in STEPS:
-        if step["script"] and not step["script"].exists():
+        if step.get("script") and not step["script"].exists():
             issues.append(f"脚本不存在: {step['script']}")
 
     return issues
 
 
 def check_midway_prerequisites():
-    """从中间步骤开始时的前置检查"""
+    """从中间步骤开始时的前置检查。"""
     issues = []
 
-    if not UPDATED_FILE.exists():
-        issues.append(f"Updated 文件不存在（从中间步骤开始需要先完成前面的步骤）: {UPDATED_FILE}")
+    if not UPDATED_FILE.exists() and not MASTER_FILE.exists():
+        issues.append("总表和增量文件均不存在（从中间步骤开始需要先完成前面的步骤）")
 
     # 检查 Excel 是否被占用
-    for filepath in [UPDATED_FILE]:
+    for filepath in [MASTER_FILE, UPDATED_FILE]:
         if filepath.exists():
             try:
                 with open(filepath, "a"):
@@ -332,18 +332,6 @@ def check_midway_prerequisites():
     return issues
 
 
-def backup_current():
-    """备份当前的 Updated.xlsx"""
-    if not UPDATED_FILE.exists():
-        return
-
-    BACKUP_DIR.mkdir(exist_ok=True)
-    backup_name = f"Object-Models-Updated_{TIMESTAMP}.xlsx"
-    backup_path = BACKUP_DIR / backup_name
-    shutil.copy2(UPDATED_FILE, backup_path)
-    log(f"已备份: {backup_path.name}")
-
-
 # ============================================================
 # 验收机制
 # ============================================================
@@ -351,18 +339,19 @@ def backup_current():
 def verify_step_output(step_num, since_int, until_int):
     """验收每步执行结果，返回 (passed: bool, messages: list[str])。
 
-    各步骤验收规则：
+    各步骤验收规则（v3 8步）：
       Step 1（采集）: UPDATED_FILE 存在 + 行数>0 + "模型名称"列非空率100% + "公司"列非空率≥80%
       Step 2（去重）: 增量文件存在 + 行数≤采集行数 + 无重复模型名
       Step 3（审核）: UPDATED_FILE 中 importance 列填充率≥50%（如有）
-      Step 4（校验）: UPDATED_FILE 中 "模型发布时间" 填充率比校验前有提升
-      Step 5（合并）: MASTER_FILE 行数 ≥ 合并前行数 + 无重复模型名
-      Step 6/7: 直接 pass
+      Step 4（校验）: UPDATED_FILE 中 "模型发布时间" 填充率报告
+      Step 5（交叉巡检）: 脚本正常执行即通过（遗漏模型数仅做报告）
+      Step 6（合并归档）: MASTER_FILE 行数 ≥ 合并前行数 + 无重复模型名
+      Step 7/8（推送/记录）: 直接 pass
     """
     import pandas as pd
     messages = []
 
-    if step_num in (6, 7):
+    if step_num in (7, 8):
         return True, ["日志/推送类步骤，无需数据验收"]
 
     if step_num == 1:
@@ -440,6 +429,11 @@ def verify_step_output(step_num, since_int, until_int):
         return True, messages
 
     elif step_num == 5:
+        # 交叉巡检：只要脚本正常执行即通过，遗漏模型数仅做报告
+        messages.append("交叉巡检验收: 脚本执行完成即通过")
+        return True, messages
+
+    elif step_num == 6:
         if not MASTER_FILE.exists():
             return False, ["总表文件不存在"]
         df = pd.read_excel(MASTER_FILE)
@@ -460,7 +454,13 @@ def verify_step_output(step_num, since_int, until_int):
 # ============================================================
 
 def step_collect_data(since_int, until_int, source, force):
-    """步骤 1: 数据采集。调用 auto_collect.py 采集原始数据到临时 DataFrame。"""
+    """步骤 1: 数据采集。调用 auto_collect.py + extract_models_llm.py 采集原始数据。
+
+    数据源：
+      1. auto_collect.py: llmstats + HuggingFace + 平台目录 + LM Arena
+      2. extract_models_llm.py: 腾讯研究院 AI 速递（LLM 从文章中提取模型信息）
+    """
+    # ── 1/2: auto_collect.py（llmstats + HF + 平台目录 + LM Arena）──
     args = [sys.executable, "-X", "utf8", str(ACTION_DIR / "auto_collect.py"),
             "--since", str(since_int), "--until", str(until_int)]
     if source != "all":
@@ -473,8 +473,29 @@ def step_collect_data(since_int, until_int, source, force):
         label="auto_collect.py"
     )
     if returncode != 0:
-        log("数据采集失败", "ERROR")
+        log("数据采集失败（auto_collect）", "ERROR")
         return False
+
+    # ── 2/2: extract_models_llm.py（腾讯研究院 LLM 提取）──
+    # 仅在 source == "all" 或 source == "tencent" 时执行
+    if source in ("all", "tencent"):
+        extract_script = ACTION_DIR / "Extract" / "extract_models_llm.py"
+        if extract_script.exists():
+            log("腾讯研究院 LLM 提取...")
+            tx_args = [sys.executable, "-X", "utf8", str(extract_script),
+                       "--since", str(since_int), "--until", str(until_int),
+                       "--write-excel"]
+            tx_returncode, _ = run_subprocess_heartbeat(
+                tx_args, cwd=str(extract_script.parent), timeout_minutes=15,
+                label="extract_models_llm.py"
+            )
+            if tx_returncode != 0:
+                log("腾讯研究院 LLM 提取失败（非致命，继续流水线）", "WARN")
+            else:
+                log("腾讯研究院 LLM 提取完成")
+        else:
+            log(f"腾讯研究院提取脚本不存在: {extract_script}", "WARN")
+
     return True
 
 def step_dedup_against_master(since_int, until_int):
@@ -707,145 +728,75 @@ def _file_modified_today(filepath):
     return mtime.date() == date.today()
 
 
+
 # ------------------------------------------------------------
-# Checkpoint：检查每步产出文件是否已存在
+# Checkpoint：检查每步产出文件是否已在今天生成过（v3 适配）
 # ------------------------------------------------------------
 
 def check_checkpoint(step_num, since_int=None, until_int=None):
     """检查第 step_num 步的产出文件是否已在今天生成过。
 
     返回 (has_cache: bool, summary_lines: list[str])。
+    适配 v3 8步流水线。
     """
     import pandas as pd
     lines = []
     has_cache = False
 
     if step_num == 1:
-        medium_ok = _file_modified_today(MEDIUM_FILE)
-        updated_ok = _file_modified_today(UPDATED_FILE)
-        if medium_ok and updated_ok:
+        # 数据采集：检查 UPDATED_FILE 是否今天已更新
+        if _file_modified_today(UPDATED_FILE):
             has_cache = True
-            lines.append(f"Medium.xlsx 今天已更新")
-            lines.append(f"Updated.xlsx 今天已更新")
+            lines.append("UPDATED_FILE 今天已更新（采集结果已存在）")
 
     elif step_num == 2:
-        if _file_modified_today(UPDATED_FILE) and MEDIUM_FILE.exists():
-            updated_rows = len(pd.read_excel(UPDATED_FILE, engine="openpyxl"))
-            medium_rows = len(pd.read_excel(MEDIUM_FILE, engine="openpyxl"))
-            if updated_rows > medium_rows:
+        # 增量去重：检查增量文件是否今天已生成
+        if INCREMENT_DIR.exists():
+            today_increments = [
+                f for f in INCREMENT_DIR.glob(f"{RUN_ID}*.xlsx")
+                if _file_modified_today(f)
+            ]
+            if today_increments:
                 has_cache = True
-                lines.append(f"Updated.xlsx（{updated_rows} 行）> Medium.xlsx（{medium_rows} 行）")
+                for increment_file in today_increments:
+                    lines.append(f"今天已生成: {increment_file.name}")
 
     elif step_num == 3:
-        test_dir = ACTION_DIR / "Test"
-        if test_dir.exists():
-            check_files = list(test_dir.glob("DataForCheck*.md"))
-            today_files = [f for f in check_files if _file_modified_today(f)]
-            if today_files:
+        # LLM 审核：检查 UPDATED_FILE 中 importance 列是否已填充
+        if _file_modified_today(UPDATED_FILE) and UPDATED_FILE.exists():
+            df = pd.read_excel(UPDATED_FILE, engine="openpyxl")
+            if "importance" in df.columns and df["importance"].notna().mean() > 0.5:
                 has_cache = True
-                for f in today_files:
-                    lines.append(f"今天已生成: {f.name}")
+                lines.append("importance 列已填充，审核可能已完成")
 
     elif step_num == 4:
-        report_files = list(REPORT_DIR.glob("update_report_*.md"))
-        today_reports = [f for f in report_files if _file_modified_today(f)]
-        if today_reports:
+        # 数据校验：检查校验脚本产出
+        if _file_modified_today(UPDATED_FILE):
             has_cache = True
-            for f in today_reports:
-                lines.append(f"今天已生成: {f.name}")
+            lines.append("UPDATED_FILE 今天已更新（校验可能已完成）")
 
     elif step_num == 5:
-        arena_formatted = ACTION_DIR / "Crawl" / "Arena_x" / "formatted_leaderboards.md"
-        if _file_modified_today(arena_formatted):
+        # 交叉巡检：检查巡检产出
+        if _file_modified_today(UPDATED_FILE):
             has_cache = True
-            lines.append(f"今天已生成: {arena_formatted.name}")
+            lines.append("UPDATED_FILE 今天已更新（巡检可能已完成）")
 
     elif step_num == 6:
-        diff_result = REPORT_DIR / "diff_result.md"
-        if _file_modified_today(diff_result):
+        # 合并归档：检查总表是否今天已更新
+        if _file_modified_today(MASTER_FILE):
             has_cache = True
-            lines.append(f"今天已生成: {diff_result.name}")
+            lines.append("总表今天已更新（合并可能已完成）")
 
-    elif step_num == 7:
-        if _file_modified_today(ONLY_FILE):
-            has_cache = True
-            lines.append(f"今天已生成: {ONLY_FILE.name}")
-
-    elif step_num == 8:
-        if _file_modified_today(TEST_REPORT_FILE):
-            has_cache = True
-            lines.append(f"今天已生成: {TEST_REPORT_FILE.name}")
-
-    elif step_num == 9:
+    elif step_num in (7, 8):
+        # 钉钉推送 / 运行记录：检查日报文件
         daily_reports = list(REPORT_DIR.glob("daily_report_*.md"))
         today_dailies = [f for f in daily_reports if _file_modified_today(f)]
         if today_dailies:
             has_cache = True
-            for f in today_dailies:
-                lines.append(f"今天已生成: {f.name}")
+            for daily_file in today_dailies:
+                lines.append(f"今天已生成: {daily_file.name}")
 
     return has_cache, lines
-
-
-# ============================================================
-# 步骤校验（每步执行完后验证产出）
-# ============================================================
-
-def verify_step(step_num, since_int=None, until_int=None):
-    """验证每步执行后的产出是否符合预期。返回 (passed, messages) 元组。"""
-    import pandas as pd
-    messages = []
-    passed = True
-
-    if step_num == 1:
-        # 校验：Updated.xlsx 存在且行数>0，Medium.xlsx 存在
-        if UPDATED_FILE.exists():
-            row_count = len(pd.read_excel(UPDATED_FILE, engine="openpyxl"))
-            messages.append(f"✅ Updated.xlsx 存在（{row_count} 行）")
-            if row_count == 0:
-                messages.append("❌ Updated.xlsx 行数为 0")
-                passed = False
-        else:
-            messages.append("❌ Updated.xlsx 不存在")
-            passed = False
-        if MEDIUM_FILE.exists():
-            medium_count = len(pd.read_excel(MEDIUM_FILE, engine="openpyxl"))
-            messages.append(f"✅ Medium.xlsx 存在（{medium_count} 行）")
-        else:
-            messages.append("⚠️ Medium.xlsx 不存在（首次运行属正常）")
-
-    elif step_num == 2:
-        # 校验：Updated.xlsx 行数、Extract/articles/ 文件数、TXCrawl_result.xlsx
-        articles_dir = ACTION_DIR / "Extract" / "articles"
-        txcrawl_result = ACTION_DIR / "Extract" / "TXCrawl_result.xlsx"
-        llmstats_json = ACTION_DIR / "Crawl" / "Arena_x" / "llmstats_models.json"
-        tx_dir = ACTION_DIR / "TXresearch"
-
-        if UPDATED_FILE.exists():
-            row_count = len(pd.read_excel(UPDATED_FILE, engine="openpyxl"))
-            messages.append(f"✅ Updated.xlsx 存在（{row_count} 行）")
-        else:
-            messages.append("❌ Updated.xlsx 不存在")
-            passed = False
-
-        # llmstats 校验
-        if llmstats_json.exists():
-            import json
-            with open(llmstats_json, "r", encoding="utf-8") as f:
-                llm_data = json.load(f)
-            messages.append(f"✅ llmstats_models.json 存在（{len(llm_data)} 条）")
-        else:
-            messages.append("⚠️ llmstats_models.json 不存在（llmstats 可能未抓取成功）")
-
-        # 腾讯研究院校验
-        if articles_dir.exists():
-            txt_files = list(articles_dir.glob("*.txt"))
-            messages.append(f"✅ Extract/articles/ 有 {len(txt_files)} 篇文章")
-            if since_int and until_int:
-                tag = f"{since_int}-{until_int}"
-                json_cache = tx_dir / f"articles_{tag}.json"
-                if json_cache.exists():
-                    messages.append(f"✅ 腾讯研究院 JSON 缓存存在: articles_{tag}.json")
 
 
 # ============================================================
@@ -889,10 +840,16 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
             elif step_num == 2:
                 success = step_dedup_against_master(since_int, until_int)
             elif step_num == 3:
-                # LLM 审核（可选，review_models.py）
+                # LLM 审核（review_models.py，传入时间窗口让 GPT-5.5 智能判断）
                 script = step.get("script")
                 if script and script.exists():
-                    success = run_script(script, timeout_minutes=10)
+                    review_args = [sys.executable, "-X", "utf8", str(script),
+                                   "--since", str(since_int), "--until", str(until_int)]
+                    returncode, _ = run_subprocess_heartbeat(
+                        review_args, cwd=str(ACTION_DIR), timeout_minutes=10,
+                        label="review_models.py"
+                    )
+                    success = (returncode == 0)
                 else:
                     log("审核脚本不存在，跳过", "SKIP")
                     success = True
@@ -910,8 +867,26 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
                     log("verify_models.py 不存在，跳过数据校验", "WARN")
                     success = True
             elif step_num == 5:
-                success = step_merge_and_archive(since_int, until_int)
+                # 交叉巡检：LLM 联网搜索该时段新模型，与已有数据交叉比对补漏
+                cross_check_script = ACTION_DIR / "cross_check.py"
+                if cross_check_script.exists():
+                    cross_args = [
+                        sys.executable, "-X", "utf8", str(cross_check_script),
+                        "--since", str(since_int), "--until", str(until_int),
+                    ]
+                    if UPDATED_FILE.exists():
+                        cross_args.extend(["--excel", str(UPDATED_FILE)])
+                    returncode, _ = run_subprocess_heartbeat(
+                        cross_args, cwd=str(ACTION_DIR), timeout_minutes=10,
+                        label="cross_check.py"
+                    )
+                    success = (returncode == 0)
+                else:
+                    log("cross_check.py 不存在，跳过交叉巡检", "WARN")
+                    success = True
             elif step_num == 6:
+                success = step_merge_and_archive(since_int, until_int)
+            elif step_num == 7:
                 # 钉钉推送
                 if not push:
                     log("未指定 --push，仅预览日报（dry-run）")
@@ -926,7 +901,7 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
                     label="push_dingtalk.py"
                 )
                 success = (returncode == 0)
-            elif step_num == 7:
+            elif step_num == 8:
                 success = step_write_run_log(since_int, until_int, source, push)
             else:
                 log(f"未知步骤: {step_num}", "ERROR")

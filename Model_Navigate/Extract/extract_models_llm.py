@@ -143,7 +143,7 @@ def get_fallback_llm_config() -> tuple[str, str, str]:
         or os.environ.get("TRACKER_FIELD_API_BASE")
         or "https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
-    model = os.environ.get("LLM_MODEL") or "qwen-plus"
+    model = os.environ.get("LLM_MODEL") or "qwen3.6-plus"
     return api_key, api_base, model
 
 
@@ -485,7 +485,6 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
     new_rows = []
     merge_updates = []  # (normalized_name, model_info, release_date) — 已存在但需要补全字段的模型
     filtered_generic = []
-    filtered_date = []
 
     for model_info in untracked_models:
         model_name = model_info.get("model_name", "").strip()
@@ -509,15 +508,8 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
                 date_str = str(source_date)
                 release_date = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}"
 
-        # 过滤 2：如果有明确的 release_date 且不在时间窗口内，则跳过
-        if release_date and since_int and until_int:
-            try:
-                release_int = int(release_date.replace("-", "").replace("/", "")[:8])
-                if release_int < since_int or release_int > until_int:
-                    filtered_date.append(f"{model_name} ({release_date})")
-                    continue
-            except (ValueError, TypeError):
-                pass
+        # 注：时间窗口过滤已移交给 Step 3 GPT-5.5 审核（基于世界知识智能判断）
+        # 此处不再做机械的日期硬过滤
 
         if is_existing:
             # 已存在的模型：合并更新空字段（覆盖而非跳过）
@@ -544,8 +536,6 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
     # 打印过滤日志
     if filtered_generic:
         print(f"\n  🚫 过滤掉 {len(filtered_generic)} 个产品泛称: {', '.join(filtered_generic[:10])}")
-    if filtered_date:
-        print(f"  🚫 过滤掉 {len(filtered_date)} 个时间窗口外模型: {', '.join(filtered_date[:10])}")
 
     # 处理已存在模型的字段合并更新（覆盖空字段）
     merged_count = 0

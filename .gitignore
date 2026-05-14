@@ -1,11 +1,41 @@
-# 环境变量（含 API Key）
+# ── 环境变量（含 API Key，绝不能入库）──
 .env
 .env.backup.*
 
-# OS 生成
+# ── OS 生成 ──
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Python 缓存
+# ── Python 缓存 ──
 __pycache__/
 *.pyc
+*.pyo
+
+# ── 运行时数据（由流水线自动生成）──
+Model_Navigate/data/Object-Models.xlsx
+Model_Navigate/data/Object-Models-Updated.xlsx
+Model_Navigate/data/Object-Models copy*.xlsx
+Model_Navigate/data/Backup/
+Model_Navigate/data/increments/
+Model_Navigate/data/run_log.csv
+
+# ── 爬虫缓存 ──
+Model_Navigate/Crawl/Arena_x/llmstats_models.json
+Model_Navigate/Crawl/Arena_x/llm-stats-*.com
+Model_Navigate/TXresearch/articles_*.json
+
+# ── LLM 提取结果 ──
+Model_Navigate/Extract/extracted_models_llm.json
+Model_Navigate/Extract/TXCrawl.xlsx
+Model_Navigate/Extract/TXCrawl_result.xlsx
+Model_Navigate/Extract/articles/
+
+# ── 报告与 Trace（自动生成，可选入库）──
+Model_Navigate/Report/daily_report_*.md
+Model_Navigate/Report/review_results.json
+Model_Navigate/Trace/trace_*.md
+Model_Navigate/Trace/reports/
+
+# ── 临时脚本 ──
+Model_Navigate/_*.py

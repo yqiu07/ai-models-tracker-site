@@ -290,6 +290,8 @@ def run_verification(
     max_concurrent: int = 5,
     max_models: int | None = None,
     dry_run: bool = False,
+    since: str | None = None,
+    until: str | None = None,
 ) -> pd.DataFrame | None:
     """批量校验所有需要校验的模型（发布时间/官网/备注任一为空的）。
 
@@ -298,6 +300,8 @@ def run_verification(
         max_concurrent: 最大并发数。
         max_models: 最多校验多少条，None 表示全部。
         dry_run: 预览模式，不实际调用 API。
+        since: 只校验该日期及之后的模型（YYYYMMDD，基于记录创建时间）。
+        until: 只校验该日期及之前的模型（YYYYMMDD，基于记录创建时间）。
 
     Returns:
         更新后的 DataFrame；dry_run 模式返回 None。
@@ -315,6 +319,21 @@ def run_verification(
     for field in VERIFY_FIELDS:
         if field in dataframe.columns:
             dataframe[field] = dataframe[field].astype(object)
+
+    # 时间窗口过滤（基于"记录创建时间"列）
+    if since or until:
+        time_col = "记录创建时间"
+        if time_col in dataframe.columns:
+            before_filter = len(dataframe)
+            if since:
+                since_str = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
+                dataframe = dataframe[dataframe[time_col].astype(str) >= since_str].copy()
+            if until:
+                until_str = f"{until[:4]}-{until[4:6]}-{until[6:8]}"
+                dataframe = dataframe[dataframe[time_col].astype(str) <= until_str + "z"].copy()
+            print(f"📅 时间窗口过滤: {before_filter} → {len(dataframe)} 行")
+        else:
+            print(f"⚠️ 未找到 '{time_col}' 列，跳过时间过滤")
 
     # 筛选需要校验的行
     needs_verify_mask = dataframe.apply(_needs_verification, axis=1)
@@ -586,6 +605,18 @@ def main():
         default=None,
         help="指定 Excel 文件路径（默认 data/Object-Models-Updated.xlsx）",
     )
+    parser.add_argument(
+        "--since",
+        type=str,
+        default=None,
+        help="只校验该日期及之后的模型（YYYYMMDD，基于记录创建时间）",
+    )
+    parser.add_argument(
+        "--until",
+        type=str,
+        default=None,
+        help="只校验该日期及之前的模型（YYYYMMDD，基于记录创建时间）",
+    )
     args = parser.parse_args()
 
     load_env()
@@ -597,6 +628,8 @@ def main():
     print(f"   模式: {'预览（dry-run）' if args.dry_run else '正式校验'}")
     if args.max_models:
         print(f"   上限: {args.max_models} 条")
+    if args.since or args.until:
+        print(f"   时间窗口: {args.since or '不限'} → {args.until or '不限'}")
     print()
 
     run_verification(
@@ -604,6 +637,8 @@ def main():
         max_concurrent=args.concurrent,
         max_models=args.max_models,
         dry_run=args.dry_run,
+        since=args.since,
+        until=args.until,
     )
 
 

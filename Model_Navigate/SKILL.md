@@ -119,16 +119,18 @@ AI 能力等级：**L0** 纯机械 / **L1** 规则判断 / **L2** 需 AI 创作�
 
 冷启动时 `main.py` 会自动创建空基线 Excel（含正确表头），无需手动准备。
 
-### 阶段 A：自动采集（v3 六步精简流水线）
+### 阶段 A：自动采集（v3 八步流水线）
 
 运行 `python main.py --since YYYYMMDD --until YYYYMMDD`，自动完成：
 
-1. **数据采集** — `auto_collect.py`：多源采集（llmstats + 腾讯研究院 + HuggingFace + 平台目录），2026+ 时效过滤
+1. **数据采集** — `auto_collect.py`：多源采集（llmstats + 腾讯研究院 + HuggingFace + 平台目录 + **LM Arena**），2026+ 时效过滤
 2. **增量去重** — 与总表 `Object-Models.xlsx` 对比，只保留新增模型，标记"触发时间"
 3. **AI 审核** — `review_models.py`：GPT-5.5 审核（名称规范 + 字段补全 + 重要性评级）
-4. **合并归档** — 新增模型写入 `increments/YYYYMMDD_runHHMM.xlsx`，合并到总表，合并前自动备份
-5. **钉钉推送** — `push_dingtalk.py`：生成日报推送（需 `--push` 参数）
-6. **运行记录** — 写入 `run_log.csv`（时间/来源/新增数/是否推送）
+4. **数据校验** — `verify_models.py`：Web Search 校验新增模型的发布时间/官网/备注
+5. **交叉巡检** — `cross_check.py`：LLM 联网搜索该时段新模型，与已有数据交叉比对，补漏遗漏模型
+6. **合并归档** — 新增模型写入 `increments/YYYYMMDD_runHHMM.xlsx`，合并到总表，合并前自动备份
+7. **钉钉推送** — `push_dingtalk.py`：生成日报推送（需 `--push` 参数）
+8. **运行记录** — 写入 `run_log.csv`（时间/来源/新增数/是否推送）
 
 ### 阶段 B：AI 创作校验（你的核心任务）
 
@@ -315,6 +317,7 @@ shell("cd D:\yuwang\action; python -X utf8 main.py --since ... --until ... --pus
 | 步骤 2（腾讯研究院爬虫） | 5-20 分钟 | 30 分钟 |
 | 步骤 2.5（LLM 提取） | 每篇 30-60 秒 | 每篇 10 分钟 |
 | 步骤 2.7（GPT-5.5 审核） | 2-5 分钟 | 10 分钟 |
+| 步骤 5（LLM 交叉巡检） | 1-3 分钟 | 10 分钟 |
 | 步骤 9（钉钉推送） | < 30 秒 | 5 分钟 |
 | 其他步骤 | < 30 秒 | 30 分钟（默认） |
 
@@ -361,6 +364,12 @@ python review_models.py
 
 # LLM 提取
 cd Extract; python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
+
+# LM Arena 排行榜采集
+python auto_collect.py --source lmarena --since YYYYMMDD --until YYYYMMDD
+
+# LLM 交叉巡检（dry-run 预览）
+python cross_check.py --since YYYYMMDD --until YYYYMMDD --dry-run
 ```
 
 ---
