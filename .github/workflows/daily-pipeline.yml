@@ -45,12 +45,14 @@ jobs:
           if [ -n "${{ github.event.inputs.since }}" ]; then
             echo "since=${{ github.event.inputs.since }}" >> $GITHUB_OUTPUT
           else
+            # 定时触发：跑昨天一整天的数据
             echo "since=$(date -d 'yesterday' +%Y%m%d)" >> $GITHUB_OUTPUT
           fi
           if [ -n "${{ github.event.inputs.until }}" ]; then
             echo "until=${{ github.event.inputs.until }}" >> $GITHUB_OUTPUT
           else
-            echo "until=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+            # 定时触发：until 也是昨天（跑昨天一整天）
+            echo "until=$(date -d 'yesterday' +%Y%m%d)" >> $GITHUB_OUTPUT
           fi
 
       - name: Run pipeline (no push)
