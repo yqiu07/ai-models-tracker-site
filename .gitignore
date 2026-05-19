@@ -13,7 +13,8 @@ __pycache__/
 *.pyo
 
 # ── 运行时数据（由流水线自动生成）──
-Model_Navigate/data/Object-Models.xlsx
+# Re 2026/05/19/14:53 — 总表纳入 git（GitHub Actions 需要读取）
+# Model_Navigate/data/Object-Models.xlsx  ← 已取消排除，Actions 依赖此文件
 Model_Navigate/data/Object-Models-Updated.xlsx
 Model_Navigate/data/Object-Models copy*.xlsx
 Model_Navigate/data/Backup/

@@ -1,0 +1,48 @@
+# Re 2026/05/19/14:49
+# name: Push DingTalk
+# description: 手动触发钉钉日报推送（由 GitHub Pages 网页按钮触发 workflow_dispatch）
+
+name: Push DingTalk
+
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: '日报起始日期 (YYYYMMDD)'
+        required: true
+      until:
+        description: '日报截止日期 (YYYYMMDD)'
+        required: true
+      created_date:
+        description: '按记录创建时间筛选 (YYYY-MM-DD, 留空不限)'
+        required: false
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          cd Model_Navigate
+          pip install -r requirements.txt
+
+      - name: Push to DingTalk
+        env:
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+        run: |
+          cd Model_Navigate
+          CMD="python push_dingtalk.py --since ${{ github.event.inputs.since }} --until ${{ github.event.inputs.until }}"
+          if [ -n "${{ github.event.inputs.created_date }}" ]; then
+            CMD="$CMD --created-date ${{ github.event.inputs.created_date }}"
+          fi
+          eval $CMD
