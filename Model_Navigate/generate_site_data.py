@@ -8,6 +8,7 @@
 输出到 docs/data/ 目录：
   - daily_report.json   — 最新日报数据（按发布时间筛选）
   - dashboard.json      — 仪表盘统计数据（趋势、分布等）
+  - all_models.json     — 全量模型数据（供前端搜索/筛选/排序交互表格）
   - history/YYYYMMDD.json — 历史日报归档
 
 用法:
@@ -151,6 +152,36 @@ def main():
     with open(dashboard_path, "w", encoding="utf-8") as f:
         json.dump(dashboard, f, ensure_ascii=False, indent=2)
     print(f"[OK] dashboard: {dashboard_path.name} (total {dashboard['total']} models)")
+
+    # 3. 全量模型数据（供前端交互式表格）
+    all_models_list = []
+    for _, row in dataframe.iterrows():
+        all_models_list.append({
+            "name": str(row.get("模型名称", "")),
+            "company": str(row.get("公司", "")),
+            "domestic": str(row.get("国内外", "")),
+            "open_source": str(row.get("开闭源", "")),
+            "size": str(row.get("尺寸", "")),
+            "type": str(row.get("类型", "")),
+            "reasoning": str(row.get("能否推理", "")),
+            "release_date": str(row.get("模型发布时间", "")),
+            "created_date": str(row.get("记录创建时间", "")),
+            "note": str(row.get("备注", "")),
+            "website": str(row.get("官网", "")),
+            "status": str(row.get("核实情况", "")),
+        })
+
+    all_models_data = {
+        "models": all_models_list,
+        "meta": {
+            "total": len(all_models_list),
+            "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        },
+    }
+    all_models_path = DATA_DIR / "all_models.json"
+    with open(all_models_path, "w", encoding="utf-8") as f:
+        json.dump(all_models_data, f, ensure_ascii=False, indent=2)
+    print(f"[OK] all_models: {all_models_path.name} ({len(all_models_list)} models)")
 
 
 if __name__ == "__main__":
