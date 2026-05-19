@@ -74,14 +74,7 @@ jobs:
           cd Model_Navigate
           python generate_site_data.py --since ${{ steps.dates.outputs.since }} --until ${{ steps.dates.outputs.until }}
 
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          keep_files: true
-
-      - name: Commit updated data back to main
+      - name: Commit updated data back to branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
