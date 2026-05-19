@@ -1,4 +1,4 @@
-# 2026/05/19/14:49
+# Re 2026/05/19/18:01
 # name: generate_site_data
 # description: 从总表生成静态站所需的 JSON 数据文件，供 GitHub Pages 前端展示日报和仪表盘
 
@@ -6,9 +6,11 @@
 从 Object-Models.xlsx 总表生成前端展示所需的 JSON 数据。
 
 输出到 docs/data/ 目录：
-  - daily_report.json   — 最新日报数据（按发布时间筛选）
-  - dashboard.json      — 仪表盘统计数据（趋势、分布等）
-  - all_models.json     — 全量模型数据（供前端搜索/筛选/排序交互表格）
+  - daily_report.json     — 最新日报数据（按发布时间筛选）
+  - dashboard.json        — 仪表盘统计数据（趋势、分布等）
+  - all_models.json       — 全量模型数据（含所有Excel列，供前端交互表格）
+  - history_index.json    — 历史日报文件列表（供前端切换）
+  - site_meta.json        — 站点元信息（数据源列表、README内容等）
   - history/YYYYMMDD.json — 历史日报归档
 
 用法:
@@ -29,9 +31,60 @@ import pandas as pd
 
 ROOT = Path(__file__).parent
 EXCEL_PATH = ROOT / "data" / "Object-Models.xlsx"
+README_PATH = ROOT.parent / "README.md"
 DOCS_DIR = ROOT.parent / "docs"
 DATA_DIR = DOCS_DIR / "data"
 HISTORY_DIR = DATA_DIR / "history"
+
+# 当前启用的数据源（与 auto_collect.py 同步维护）
+ACTIVE_DATA_SOURCES = [
+    {"name": "llm-stats.com", "url": "https://llm-stats.com", "status": "active",
+     "description": "HTTP 直连 + Next.js RSC JSON 解析，有可靠时间戳"},
+    {"name": "腾讯研究院AI速递", "url": "https://mp.sohu.com/profile?xpt=bGl1amluc29uZzIwMDBAMTI2LmNvbQ==",
+     "status": "active", "description": "双模式爬虫 + LLM 提取，文章自带日期天然时间锚定"},
+    {"name": "HuggingFace", "url": "https://huggingface.co", "status": "active",
+     "description": "API createdAt 字段精确到秒，时间过滤可靠"},
+    {"name": "平台模型目录（12平台）", "url": "", "status": "suspended",
+     "description": "灌入旧模型根因未解决（created=0 + LLM降级查错）"},
+    {"name": "LM Arena 排行榜", "url": "https://lmarena.ai", "status": "suspended",
+     "description": "排行榜无发布时间，全量灌入无法过滤"},
+]
+
+
+def _clean_value(value) -> str:
+    """将 pandas 单元格值转为干净的字符串（处理 NaN、NaT、None）。"""
+    if value is None:
+        return ""
+    s = str(value)
+    if s in ("nan", "NaN", "NaT", "None", "nat"):
+        return ""
+    return s.strip()
+
+
+def _normalize_date(value) -> str:
+    """将日期值统一为 YYYY-MM-DD 格式（去掉时间部分）。"""
+    if value is None:
+        return ""
+    # pandas Timestamp / datetime
+    if hasattr(value, "strftime"):
+        return value.strftime("%Y-%m-%d")
+    s = str(value).strip()
+    if s in ("nan", "NaN", "NaT", "None", "nat", ""):
+        return ""
+    # 已经是 YYYY-MM-DD 格式
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", s):
+        return s
+    # YYYY-MM-DD HH:MM:SS 格式，截取日期部分
+    if re.match(r"^\d{4}-\d{2}-\d{2}\s", s):
+        return s[:10]
+    # 尝试解析其他格式
+    try:
+        dt = pd.to_datetime(s)
+        if pd.notna(dt):
+            return dt.strftime("%Y-%m-%d")
+    except (ValueError, TypeError):
+        pass
+    return s
 
 
 def load_master_table() -> pd.DataFrame:
@@ -42,6 +95,28 @@ def load_master_table() -> pd.DataFrame:
     return pd.read_excel(EXCEL_PATH, engine="openpyxl")
 
 
+def _row_to_model(row) -> dict:
+    """将 DataFrame 行转为标准模型字典（包含所有 Excel 列）。"""
+    return {
+        "name": _clean_value(row.get("模型名称")),
+        "connected": _clean_value(row.get("是否接入")),
+        "workflow_progress": _clean_value(row.get("workflow接入进展")),
+        "company": _clean_value(row.get("公司")),
+        "domestic": _clean_value(row.get("国内外")),
+        "open_source": _clean_value(row.get("开闭源")),
+        "size": _clean_value(row.get("尺寸")),
+        "type": _clean_value(row.get("类型")),
+        "reasoning": _clean_value(row.get("能否推理")),
+        "task_type": _clean_value(row.get("任务类型")),
+        "website": _clean_value(row.get("官网")),
+        "note": _clean_value(row.get("备注")),
+        "release_date": _normalize_date(row.get("模型发布时间")),
+        "created_date": _normalize_date(row.get("记录创建时间")),
+        "is_new": _clean_value(row.get("是否新增")),
+        "status": _clean_value(row.get("核实情况")),
+    }
+
+
 def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> dict:
     """生成日报 JSON 数据。"""
     since_dash = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
@@ -50,24 +125,12 @@ def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> di
     if "模型发布时间" not in dataframe.columns:
         return {"models": [], "meta": {"since": since_dash, "until": until_dash, "count": 0}}
 
-    date_col = dataframe["模型发布时间"].astype(str)
-    mask = (date_col >= since_dash) & (date_col <= until_dash + "z")
+    # 统一日期格式后再筛选
+    normalized_dates = dataframe["模型发布时间"].apply(_normalize_date)
+    mask = (normalized_dates >= since_dash) & (normalized_dates <= until_dash)
     filtered = dataframe[mask].copy()
 
-    models = []
-    for _, row in filtered.iterrows():
-        models.append({
-            "name": str(row.get("模型名称", "")),
-            "company": str(row.get("公司", "")),
-            "domestic": str(row.get("国内外", "")),
-            "open_source": str(row.get("开闭源", "")),
-            "size": str(row.get("尺寸", "")),
-            "type": str(row.get("类型", "")),
-            "reasoning": str(row.get("能否推理", "")),
-            "release_date": str(row.get("模型发布时间", "")),
-            "note": str(row.get("备注", "")),
-            "website": str(row.get("官网", "")),
-        })
+    models = [_row_to_model(row) for _, row in filtered.iterrows()]
 
     return {
         "models": models,
@@ -153,24 +216,8 @@ def main():
         json.dump(dashboard, f, ensure_ascii=False, indent=2)
     print(f"[OK] dashboard: {dashboard_path.name} (total {dashboard['total']} models)")
 
-    # 3. 全量模型数据（供前端交互式表格）
-    all_models_list = []
-    for _, row in dataframe.iterrows():
-        all_models_list.append({
-            "name": str(row.get("模型名称", "")),
-            "company": str(row.get("公司", "")),
-            "domestic": str(row.get("国内外", "")),
-            "open_source": str(row.get("开闭源", "")),
-            "size": str(row.get("尺寸", "")),
-            "type": str(row.get("类型", "")),
-            "reasoning": str(row.get("能否推理", "")),
-            "release_date": str(row.get("模型发布时间", "")),
-            "created_date": str(row.get("记录创建时间", "")),
-            "note": str(row.get("备注", "")),
-            "website": str(row.get("官网", "")),
-            "status": str(row.get("核实情况", "")),
-        })
-
+    # 3. 全量模型数据（含所有 Excel 列，供前端交互式表格）
+    all_models_list = [_row_to_model(row) for _, row in dataframe.iterrows()]
     all_models_data = {
         "models": all_models_list,
         "meta": {
@@ -182,6 +229,45 @@ def main():
     with open(all_models_path, "w", encoding="utf-8") as f:
         json.dump(all_models_data, f, ensure_ascii=False, indent=2)
     print(f"[OK] all_models: {all_models_path.name} ({len(all_models_list)} models)")
+
+    # 4. 历史日报索引（列出 history/ 下所有 JSON 文件供前端切换）
+    history_files = sorted(HISTORY_DIR.glob("*.json"), reverse=True)
+    history_index = []
+    for hf in history_files:
+        if hf.name == ".gitkeep":
+            continue
+        # 文件名格式: YYYYMMDD_YYYYMMDD.json
+        stem = hf.stem
+        parts = stem.split("_")
+        if len(parts) == 2:
+            since_str = f"{parts[0][:4]}-{parts[0][4:6]}-{parts[0][6:8]}"
+            until_str = f"{parts[1][:4]}-{parts[1][4:6]}-{parts[1][6:8]}"
+            history_index.append({
+                "file": f"history/{hf.name}",
+                "since": since_str,
+                "until": until_str,
+                "label": f"{since_str} ~ {until_str}",
+            })
+
+    history_index_path = DATA_DIR / "history_index.json"
+    with open(history_index_path, "w", encoding="utf-8") as f:
+        json.dump(history_index, f, ensure_ascii=False, indent=2)
+    print(f"[OK] history_index: {history_index_path.name} ({len(history_index)} entries)")
+
+    # 5. 站点元信息（数据源列表 + README 内容）
+    readme_content = ""
+    if README_PATH.exists():
+        readme_content = README_PATH.read_text(encoding="utf-8")
+
+    site_meta = {
+        "data_sources": ACTIVE_DATA_SOURCES,
+        "readme": readme_content,
+        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    site_meta_path = DATA_DIR / "site_meta.json"
+    with open(site_meta_path, "w", encoding="utf-8") as f:
+        json.dump(site_meta, f, ensure_ascii=False, indent=2)
+    print(f"[OK] site_meta: {site_meta_path.name} (readme {len(readme_content)} chars)")
 
 
 if __name__ == "__main__":
