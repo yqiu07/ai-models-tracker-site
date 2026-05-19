@@ -14,9 +14,7 @@
       "website": "",
       "note": "xAI发布的首个面向开发者任务的编程智能体，支持计划模式、并行子Agent机制与深度worktree集成，兼容AGENTS.md和MCP协议。",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-15",
-      "is_new": "否",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-15"
     },
     {
       "name": "MiniCPM-V 4.6",
@@ -32,9 +30,7 @@
       "website": "",
       "note": "面壁开源端侧多模态模型",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取"
+      "created_date": "2026-05-16"
     },
     {
       "name": "Mavis",
@@ -50,9 +46,7 @@
       "website": "",
       "note": "MiniMax升级Agent平台",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取"
+      "created_date": "2026-05-16"
     },
     {
       "name": "远征A3 全栈物理AI大模型（含多模态感知系统、全身运动控制模型）",
@@ -68,9 +62,7 @@
       "website": "",
       "note": "支撑第10000台通用具身机器人量产的全栈自研模型体系，覆盖视觉-语言-动作闭环，在汽车制造、3C装配等真实工业场景实现24小时稳定作业",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-16"
     },
     {
       "name": "DiscoRL（双层元强化学习框架）",
@@ -86,9 +78,7 @@
       "website": "",
       "note": "通过底层策略试错与上层元网络自主优化规则，实现AI算法的自我设计与跨游戏泛化，在57款游戏中超越MuZero等人工设计算法",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-16"
     },
     {
       "name": "GPT-5.6",
@@ -104,15 +94,13 @@
       "website": "",
       "note": "尚未正式发布，仅内测代号曝光（ember-alpha/beacon-alpha）；下月或升级发布",
       "release_date": "2026-05-15",
-      "created_date": "2026-05-18",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 官网→https://platform.openai.com/docs/models; 任务类型→通用对话；代码生成；多模态理解; 问题: 模型名称形式上符合规范，但需人工核验是否为 OpenAI 官方发布的真实模型版本; 当前备注为“内测曝光”，不等同于官方发布；模型发布时间 2026-05-15 需要核验是否为 OpenAI 官方公告日; 缺少可核验的官方发布链接或模型卡; 备注应补充模型自身能力指标，如上下文长度、多模态能力、推理能力、价格等；目前信息不足; 不建议因未核实而直接删除；按宽松保留原则，应保留并标记为低置信度，等待官方公告或模型文档确认。"
+      "created_date": "2026-05-18"
     }
   ],
   "meta": {
     "since": "2026-05-14",
     "until": "2026-05-19",
     "count": 6,
-    "generated_at": "2026-05-19 19:14:23"
+    "generated_at": "2026-05-19 19:51:32"
   }
 }

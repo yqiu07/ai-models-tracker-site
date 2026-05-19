@@ -63,7 +63,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .data-table th .sort-arrow { margin-left: 4px; font-size: 10px; color: #94a3b8; }
 .data-table td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top; line-height: 1.4; }
 .data-table tr:hover td { background: #f8fafc; }
-.data-table td.note-col { max-width: 200px; white-space: normal; word-break: break-all; }
+.note-cell { width: 180px; max-width: 180px; min-width: 180px; padding: 0 !important; }
+.note-scroll { max-height: 60px; overflow-y: auto; padding: 6px 8px; font-size: 11px; line-height: 1.3; word-break: break-all; }
+.note-scroll::-webkit-scrollbar { width: 4px; }
+.note-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
 .data-table a { color: var(--primary); text-decoration: none; }
 .data-table a:hover { text-decoration: underline; }
 .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
@@ -263,12 +266,22 @@ function loadDailyReport() {
 }
 
 function loadHistoryReport(url) {
-  fetch(url).then(function(r) { return r.json(); }).then(function(data) {
-    renderDailyReport(data);
-  }).catch(function() {
-    document.getElementById('daily-grid').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无日报数据</p></div>';
-    document.getElementById('daily-meta').textContent = '';
-  });
+  if (url.endsWith('.md')) {
+    fetch(url).then(function(r) { return r.text(); }).then(function(mdText) {
+      document.getElementById('daily-meta').textContent = '';
+      document.getElementById('daily-grid').innerHTML = '<div class="readme-content">' + marked.parse(mdText) + '</div>';
+    }).catch(function() {
+      document.getElementById('daily-grid').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>加载历史日报失败</p></div>';
+      document.getElementById('daily-meta').textContent = '';
+    });
+  } else {
+    fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+      renderDailyReport(data);
+    }).catch(function() {
+      document.getElementById('daily-grid').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无日报数据</p></div>';
+      document.getElementById('daily-meta').textContent = '';
+    });
+  }
 }
 
 function renderDailyReport(data) {
@@ -301,7 +314,7 @@ function renderDailyReport(data) {
     if (safe(m.domestic)) html += '<span class="badge ' + (safe(m.domestic) === '国内' ? 'badge-domestic' : 'badge-foreign') + '">' + escapeHtml(safe(m.domestic)) + '</span>';
     if (safe(m.open_source)) html += '<span class="badge ' + (safe(m.open_source) === '开源' ? 'badge-open' : 'badge-closed') + '">' + escapeHtml(safe(m.open_source)) + '</span>';
     if (safe(m.type)) html += '<span class="badge badge-type">' + escapeHtml(safe(m.type)) + '</span>';
-    if (safe(m.is_new) === '是') html += '<span class="badge badge-new">新增</span>';
+    if (safe(m.size)) html += '<span class="badge badge-type">' + escapeHtml(safe(m.size)) + '</span>';
     html += '</div>';
     if (safe(m.release_date)) html += '<div class="meta-line">发布: ' + escapeHtml(safe(m.release_date)) + '</div>';
     if (safe(m.size)) html += '<div class="meta-line">尺寸: ' + escapeHtml(safe(m.size)) + '</div>';
@@ -421,9 +434,7 @@ var TABLE_COLUMNS = [
   { key: 'website', label: '官网' },
   { key: 'note', label: '备注' },
   { key: 'release_date', label: '发布时间' },
-  { key: 'created_date', label: '创建时间' },
-  { key: 'is_new', label: '是否新增' },
-  { key: 'status', label: '核实情况' }
+  { key: 'created_date', label: '创建时间' }
 ];
 
 function renderAllTable() {
@@ -462,11 +473,9 @@ function renderAllTable() {
     html += '<td>' + escapeHtml(safe(m.reasoning)) + '</td>';
     html += '<td>' + escapeHtml(safe(m.task_type)) + '</td>';
     html += '<td>' + renderWebsiteLink(safe(m.website)) + '</td>';
-    html += '<td class="note-col">' + escapeHtml(safe(m.note)) + '</td>';
+    html += '<td class="note-cell"><div class="note-scroll">' + escapeHtml(safe(m.note)) + '</div></td>';
     html += '<td>' + escapeHtml(safe(m.release_date)) + '</td>';
     html += '<td>' + escapeHtml(safe(m.created_date)) + '</td>';
-    html += '<td>' + (safe(m.is_new) === '是' ? '<span class="badge badge-new">是</span>' : escapeHtml(safe(m.is_new))) + '</td>';
-    html += '<td>' + escapeHtml(safe(m.status)) + '</td>';
     html += '</tr>';
   }
   html += '</tbody></table>';

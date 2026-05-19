@@ -14,9 +14,7 @@
       "website": "https://github.com/deepseek-ai",
       "note": "多模态技术报告发布；284B参数/13B激活；基座DeepSeek-V4-Flash；语言逻辑+空间坐标双轨思维；KV缓存视觉条目压缩7000余倍；多项视觉QA超越GPT-5.4/Claude Sonnet 4.6",
       "release_date": "2026-04-30",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "GenSpark 4.0",
@@ -32,9 +30,7 @@
       "website": "https://www.genspark.ai/blog/genspark-ai-workspace-4",
       "note": "从AI搜索转型到AI员工；ARR突破$2亿/估值$16亿；原生打通桌面/Office/日历/Notion/邮件/GitHub；Skill沉淀工作经验可复用；集成MyClaw无需配置",
       "release_date": "2026-04-08",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "GPT-5.5 Instant",
@@ -50,9 +46,7 @@
       "website": "https://openai.com/index/gpt-5-5-instant/",
       "note": "取代GPT-5.3 Instant为ChatGPT默认模型；幻觉率降52.5%；回答字数减30.2%；记忆来源功能全系上线；医学/法律/金融领域提升显著",
       "release_date": "2026-05-05",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "Grok 4.3",
@@ -68,9 +62,7 @@
       "website": "https://x.ai/",
       "note": "xAI旗舰API模型；Intelligence Index 53分超Claude Sonnet 4.6；输入.25/M输出.50/M比上代降40-60%；输出速度196 tok/s；准确率提升但非幻觉率下降；仍落后GPT-5.5与Opus 4.7",
       "release_date": "2026-05-06",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "Hy-MT1.5-1.8B-1.25bit",
@@ -86,9 +78,7 @@
       "website": "",
       "note": "手机端离线翻译模型，支持33种语言 [重要性:中|腾讯属于国内重点关注公司，但该模型是机器翻译领域的非旗舰专用模型。]",
       "release_date": "2026-04-30",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "LDA-1B",
@@ -104,9 +94,7 @@
       "website": "https://pku-epic.github.io/LDA/",
       "note": "跨本体世界-动作基础模型 [重要性:低|银河通用不在重点/优秀关注公司清单中，且该模型属于具身智能领域的垂直模型。]",
       "release_date": "2026-04-30",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "Luma Uni-1.1",
@@ -122,9 +110,7 @@
       "website": "https://lumalabs.ai/news/uni-1-1-api",
       "note": "Uni-1升级到1.1并开放API；LMArena图像榜单全球前三；单图最低$0.0404；decoder-only自回归架构；支持9张参考图融合与多轮按句编辑；团队仅15人",
       "release_date": "2026-05-07",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "MiMo-V2.5",
@@ -140,9 +126,7 @@
       "website": "https://mimo.xiaomi.com/",
       "note": "小米开源万亿参数MoE基座模型",
       "release_date": "2026-04-29",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "Motubrain",
@@ -158,9 +142,7 @@
       "website": "https://www.shengshu.com/zh/motubrain",
       "note": "通用世界行动模型，多本体适配",
       "release_date": "2026-04-30",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "Orbit (Claude Cowork)",
@@ -176,9 +158,7 @@
       "website": "https://www.anthropic.com/",
       "note": "主动式简报与洞察系统（功能曝光/未正式发布）；集成Gmail/Slack/GitHub/Calendar/Drive/Figma六大连接器；每日生成跨工具个性化简报；从被动prompt切换到主动推送；瞄准开发者和产品经理",
       "release_date": "",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "SenseNova U1",
@@ -194,9 +174,7 @@
       "website": "https://github.com/SenseTime/SenseNova, https://huggingface.co/SenseTime",
       "note": "商汤开源理解生成统一多模态模型",
       "release_date": "2026-04-29",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "SenseNova U1 Lite",
@@ -212,9 +190,7 @@
       "website": "https://github.com/SenseTime/SenseNova, https://huggingface.co/SenseTime",
       "note": "SenseNova U1轻量版多模态模型",
       "release_date": "2026-04-29",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "SenseNova U1 Lite 8B-MoT",
@@ -230,9 +206,7 @@
       "website": "",
       "note": "U1轻量版8B规格 [重要性:低|商汤不在重点关注清单内，且该模型为U1轻量子变体，重要性低于主模型。]",
       "release_date": "2026-04-29",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "SenseNova U1 Lite A3B-MoT",
@@ -248,9 +222,7 @@
       "website": "",
       "note": "U1轻量版A3B规格 [重要性:低|商汤不在重点关注清单内，且该模型为U1轻量子变体，属于细分规格版本。]",
       "release_date": "2026-04-29",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "Step Image Edit 2",
@@ -266,9 +238,7 @@
       "website": "https://platform.stepfun.com",
       "note": "轻量级图像生成编辑模型 [重要性:低|阶跃星辰不在重点/优秀关注公司清单中，且该模型属于图像编辑方向的轻量级增量模型。]",
       "release_date": "2026-04-30",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "SubQ",
@@ -284,9 +254,7 @@
       "website": "https://subquadratic.ai/",
       "note": "全球首个亚二次方稀疏注意力SSA架构模型；12M Token上下文；100万Token下比FlashAttention快52倍；1200万Token FLOP暴减近1000倍；RULER 128K得分95%；SWE-Bench 81.8%；13人团队；存争议：可能基于Kimi/DeepSeek稀疏注意力微调",
       "release_date": "2026-05-05",
-      "created_date": "2026-05-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-05-09"
     },
     {
       "name": "混元3D世界模型2.0",
@@ -302,9 +270,7 @@
       "website": "",
       "note": "多模态输入生成可编辑3D资产",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "可灵AI视频3.0",
@@ -320,9 +286,7 @@
       "website": "",
       "note": "支持原生4K视频直出 [重要性:中|快手/可灵属于国内优秀关注方向，视频生成3.0版本值得关注。]",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "ABot-World",
@@ -338,9 +302,7 @@
       "website": "",
       "note": "具身智能世界模型 [重要性:中]",
       "release_date": "2026-04-20",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "ChatGPT Images 2.0",
@@ -356,9 +318,7 @@
       "website": "",
       "note": "支持多语言思考的图像生成模型",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Claude Design",
@@ -374,9 +334,7 @@
       "website": "",
       "note": "对话生成可交互原型与视觉作品",
       "release_date": "2026-04-20",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Deep Research Max",
@@ -392,9 +350,7 @@
       "website": "",
       "note": "谷歌高阶自主研究智能体",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "DeepSeek-V4-Flash-Max",
@@ -410,9 +366,7 @@
       "website": "https://llm-stats.com/models/deepseek-v4-flash-max",
       "note": "MoE架构；284B参数；1048k上下文；强推理能力；顶级编码能力；低成本；MIT [重要性:中|若属DeepSeek主线的Flash/低成本变体，属于重点模型的非旗舰子变体。]",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "DeepSeek-V4-Pro-Max",
@@ -428,9 +382,7 @@
       "website": "https://llm-stats.com/models/deepseek-v4-pro-max",
       "note": "MoE架构；2T参数；1048k上下文；顶级推理能力；顶级编码能力；MIT [重要性:高|若属DeepSeek主线旗舰重大版本，则具备高行业关注度。]",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Gemini 3.1 Flash TTS",
@@ -446,9 +398,7 @@
       "website": "",
       "note": "支持70种语言语音合成 [重要性:高]",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "gemma-4-27b-it",
@@ -464,9 +414,7 @@
       "website": "https://ai.google.dev/gemma/docs/core",
       "note": "Gemma 4系列；Apache 2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA 82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "GPT-Image-2",
@@ -482,9 +430,7 @@
       "website": "",
       "note": "OpenAI图像生成模型全量开放",
       "release_date": "2026-04-22",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "GPT-Rosalind",
@@ -500,9 +446,7 @@
       "website": "",
       "note": "专攻生命科学的推理模型 [重要性:高]",
       "release_date": "2026-04-20",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "HappyOyster",
@@ -518,9 +462,7 @@
       "website": "",
       "note": "开放式世界模型支持实时交互",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Hey Tuya",
@@ -536,9 +478,7 @@
       "website": "",
       "note": "全屋智能AI生活助手",
       "release_date": "2026-04-27",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Hunyuan Hy3 preview",
@@ -554,9 +494,7 @@
       "website": "https://huggingface.co/tencent",
       "note": "腾讯混元MoE开源模型",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Hy3 preview",
@@ -572,9 +510,7 @@
       "website": "",
       "note": "腾讯混元重建后首个开源MoE模型 [重要性:高|若确为腾讯混元重建后的首个开源MoE模型，属于重点关注公司的重大版本。]",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "LingBot-Map",
@@ -590,9 +526,7 @@
       "website": "",
       "note": "RGB摄像头实时三维重建",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "MaxHermes",
@@ -608,9 +542,7 @@
       "website": "",
       "note": "云端沙箱自进化AI助手",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "MiMo-ASR",
@@ -626,9 +558,7 @@
       "website": "",
       "note": "小米语音识别模型",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "MiMo-TTS",
@@ -644,9 +574,7 @@
       "website": "",
       "note": "小米语音合成模型",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "MiMo-V2.5-Pro",
@@ -662,9 +590,7 @@
       "website": "",
       "note": "小米旗舰智能体模型 [重要性:中|小米/MiMo属于国内优秀关注公司，Pro为同代高端变体但非重点公司旗舰。]",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Mythos Preview",
@@ -680,9 +606,7 @@
       "website": "https://llm-stats.com/models/claude-mythos-preview",
       "note": "SWE-bench 93.9%仅限安全伙伴 [重要性:高|若确为Anthropic面向代码的高性能预览模型，来自国外重点公司且指标突出。]",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "NeuroVLA",
@@ -698,9 +622,7 @@
       "website": "",
       "note": "类脑VLA具身智能开源模型",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Sage",
@@ -716,9 +638,7 @@
       "website": "",
       "note": "端侧MoE多模态智能体基座模型",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Seed3D 2.0",
@@ -734,9 +654,7 @@
       "website": "",
       "note": "单图生成高质量3D模型 [重要性:中|字节跳动/Seed为国内重点关注公司，但该条目属于垂直3D生成模型。]",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "StepAudio 2.5 ASR",
@@ -752,9 +670,7 @@
       "website": "",
       "note": "30分钟音频秒级转写 [重要性:低|StepFun属于其他关注公司，且该模型为语音识别垂直任务模型。]",
       "release_date": "2026-04-27",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "StepAudio 2.5 TTS",
@@ -770,9 +686,7 @@
       "website": "",
       "note": "自然语言控制语音生成",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "TPU 8i",
@@ -788,9 +702,7 @@
       "website": "",
       "note": "谷歌第八代推理TPU",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "TPU 8t",
@@ -806,9 +718,7 @@
       "website": "",
       "note": "谷歌第八代训练TPU",
       "release_date": "2026-04-24",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "uAI Nexus MedVLM",
@@ -824,9 +734,7 @@
       "website": "",
       "note": "全球最大医疗视频理解大模型 [重要性:低|联影智能属于其他公司，该模型为医疗视频理解垂直领域模型。]",
       "release_date": "2026-04-27",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Vision Banana",
@@ -842,9 +750,7 @@
       "website": "",
       "note": "生成模型胜任视觉理解",
       "release_date": "2026-04-27",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "π0.7",
@@ -860,9 +766,7 @@
       "website": "",
       "note": "VLA模型，机器人组合泛化 [重要性:高]",
       "release_date": "2026-04-20",
-      "created_date": "2026-04-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-28"
     },
     {
       "name": "Imagen 4 Standard",
@@ -878,9 +782,7 @@
       "website": "https://deepmind.google/models/imagen/",
       "note": "Google最新图像生成模型；支持2K分辨率；$0.05/img",
       "release_date": "",
-      "created_date": "2026-04-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-24"
     },
     {
       "name": "GPT-5.4-Cyber",
@@ -896,9 +798,7 @@
       "website": "https://openai.com/index/scaling-trusted-access-for-cyber-defense/",
       "note": "面向网络安全的微调模型；基于GPT-5.4",
       "release_date": "2026-04-14",
-      "created_date": "2026-04-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-24"
     },
     {
       "name": "gemma-4-31B",
@@ -914,9 +814,7 @@
       "website": "https://ai.google.dev/gemma/docs/core",
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
-      "created_date": "2026-04-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-24"
     },
     {
       "name": "NemoClaw",
@@ -932,9 +830,7 @@
       "website": "",
       "note": "英伟达开源Agent软件栈",
       "release_date": "",
-      "created_date": "2026-04-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-24"
     },
     {
       "name": "MaxClaw",
@@ -950,9 +846,7 @@
       "website": "https://platform.minimaxi.com",
       "note": "MiniMax龙虾智能体",
       "release_date": "2026-02-26",
-      "created_date": "2026-04-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-24"
     },
     {
       "name": "Revo 3",
@@ -968,9 +862,7 @@
       "website": "https://www.brainco.cn/",
       "note": "灵巧手硬件+算法；具身智能",
       "release_date": "",
-      "created_date": "2026-04-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-24"
     },
     {
       "name": "StepClaw",
@@ -986,9 +878,7 @@
       "website": "https://www.ifanr.com/1657960",
       "note": "阶跃星辰龙虾智能体；桌面端",
       "release_date": "2026-03-12",
-      "created_date": "2026-04-20",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-20"
     },
     {
       "name": "Vidu Q3",
@@ -1004,9 +894,7 @@
       "website": "https://baike.baidu.com/item/Vidu%20Q3/67330811",
       "note": "视频生成模型升级版",
       "release_date": "2026-01-30",
-      "created_date": "2026-04-20",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-20"
     },
     {
       "name": "LobsterAI",
@@ -1022,9 +910,7 @@
       "website": "https://baike.baidu.com/item/%E6%9C%89%E9%81%93%E9%BE%99%E8%99%BE/67370249",
       "note": "网易有道龙虾智能体",
       "release_date": "2026-02-11",
-      "created_date": "2026-04-20",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-20"
     },
     {
       "name": "Kimi Linear",
@@ -1040,9 +926,7 @@
       "website": "",
       "note": "底层架构创新；线性注意力",
       "release_date": "2025-10-31",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Antigravity",
@@ -1058,9 +942,7 @@
       "website": "https://deepmind.google/",
       "note": "谷歌编码Agent；收购Windsurf后推出；定位编程助手",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Being-H 0.7",
@@ -1076,9 +958,7 @@
       "website": "https://beingbeyond.com/",
       "note": "通用具身世界模型；6项国际评测综合全球第一（4项登顶）；20万小时人类视频训练；基于潜空间推理",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Claude Managed Agents",
@@ -1094,9 +974,7 @@
       "website": "https://www.anthropic.com/products/managed-agents",
       "note": "全托管智能体运行环境；开发周期从数月压缩至数天；按使用量计费$0.08/活跃会话小时",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Claude Opus 4.7",
@@ -1112,9 +990,7 @@
       "website": "",
       "note": "1000k上下文；顶级推理能力；顶级编码能力；高端定价",
       "release_date": "2026-04-16",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "claude-mythos-preview",
@@ -1130,9 +1006,7 @@
       "website": "https://red.anthropic.com/2026/mythos-preview/",
       "note": "Anthropic最强模型；可自主发现零日漏洞；超越Opus\n4.6；API定价为前代5倍；暂不全面开放",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "ClawBot",
@@ -1148,9 +1022,7 @@
       "website": "https://www.ithome.com/0/931/431.htm",
       "note": "微信官方龙虾插件",
       "release_date": "2026-03-22",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Composer 2",
@@ -1166,9 +1038,7 @@
       "website": "https://www.cursor.com/",
       "note": "Cursor内置编程模型；Terminal-Bench\n2.0超越Opus 4.6；价格降低80%",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Conway",
@@ -1184,9 +1054,7 @@
       "website": "https://www.anthropic.com/",
       "note": "Always-On智能体；侧边栏常驻+Webhook外部唤醒；深度集成Chrome；配合Cowork面向非技术职场人士",
       "release_date": "2026-04-01",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Cowork",
@@ -1202,9 +1070,7 @@
       "website": "https://www.anthropic.com/product/claude-cowork",
       "note": "通用智能体协作产品；面向95%非技术职场人士；与Conway配合使用",
       "release_date": "2026-02-17",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Cursor 3",
@@ -1220,9 +1086,7 @@
       "website": "https://www.cursor.com/",
       "note": "编辑器围绕Agent重构；支持多Agent并行；设计模式可框选UI修改；/best-of-n多模型同时执行",
       "release_date": "2026-04-01",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Deepgram Nova 3",
@@ -1238,9 +1102,7 @@
       "website": "https://deepgram.com/",
       "note": "Deepgram语音转文字模型；STT Arena排名第5；ELO\n294",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Dispatch",
@@ -1256,9 +1118,7 @@
       "website": "https://www.anthropic.com/",
       "note": "远程Agent产品；支持远程控制和多Agent编排",
       "release_date": "2026-03-17",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "EchoZ-1.0",
@@ -1274,9 +1134,7 @@
       "website": "",
       "note": "预测专用模型；General AI Prediction\nLeaderboard Elo 1034.2排名第一；政治治理领域对人类胜率63.2%",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "EdgeClaw Box",
@@ -1292,9 +1150,7 @@
       "website": "https://modelbest.cn/",
       "note": "本地Agent硬件+软件一体方案",
       "release_date": "2026-03-19",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Flux 2 Max",
@@ -1310,9 +1166,7 @@
       "website": "https://bfl.ai/models/flux-2-max",
       "note": "FLUX.2系列最高质量版；4MP输出；支持10张参考图；$0.06/img",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Flux 2 Pro",
@@ -1328,9 +1182,7 @@
       "website": "https://bfl.ai/models/flux-2",
       "note": "FLUX.2系列专业版；$0.02/img",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Gemini Robotics-ER 1.6",
@@ -1346,9 +1198,7 @@
       "website": "https://deepmind.google/",
       "note": "具身机器人模型；Gemini Robotics系列升级版",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "gemini-3.1-flash-live-preview",
@@ -1364,9 +1214,7 @@
       "website": "https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview",
       "note": "实时语音+视觉Agent模型；低延迟audio-to-audio；支持WebSocket连续音视频流；支持工具调用和Google\nSearch",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "gemma-4-26B-A4B",
@@ -1382,9 +1230,7 @@
       "website": "https://ai.google.dev/gemma/docs/core",
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "gemma-4-E2B",
@@ -1400,9 +1246,7 @@
       "website": "https://ai.google.dev/gemma/docs/core",
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "gemma-4-E4B",
@@ -1418,9 +1262,7 @@
       "website": "https://ai.google.dev/gemma/docs/core",
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Gen-4 Aleph",
@@ -1436,9 +1278,7 @@
       "website": "https://runwayml.com/research/introducing-runway-aleph",
       "note": "Runway旗舰视频模型；in-context video\nmodel；支持多任务视觉生成；角色/场景一致性",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "GLM-5.1",
@@ -1454,9 +1294,7 @@
       "website": "https://docs.bigmodel.cn/cn/update/new-releases",
       "note": "智谱旗舰开源模型；MIT许可；200K上下文；可持续工作8小时；SWE-bench\nPro国产和开源第一；与Opus 4.6仅差2.6分；Code Arena 1234；GPQA 86.2%；200K上下文；$1.4/$4.4 per M\ntokens；754B参数",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "GLM-5V-Turbo",
@@ -1472,9 +1310,7 @@
       "website": "https://docs.bigmodel.cn/cn/update/new-releases",
       "note": "实现从设计稿、网页截图直接生成可运行代码的视觉到代码（Design2Code）范式跃迁，Design2Code测试得分达94.8分 [重要性:高|智谱AI属于国内重点关注公司，GLM-5V若为新一代视觉模型则属于重要版本更新。]",
       "release_date": "2026-05-05",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": "待核实（LLM交叉巡检发现）; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 公司→智谱AI; 类型→多模态模型; 开闭源→闭源; 任务类型→多模态理解/代码生成; 备注→视觉到代码；Design2Code；网页截图生成可运行代码；设计稿转代码; 问题: 原类型“多模态编程基座模型”表述过窄，建议归为多模态模型; 备注含有来源性前缀“[LLM巡检]”，建议改为模型能力标签; 核实情况为待核实，发布时间和Design2Code分数需官方来源确认; 名称含GLM系列、版本号5V与Turbo变体，符合规范。"
+      "created_date": "2026-04-17"
     },
     {
       "name": "GPT-5 High",
@@ -1490,9 +1326,7 @@
       "website": "https://openai.com/index/introducing-gpt-5/",
       "note": "GPT-5高配版；Code Arena 1301；Chat Arena\n1037；GPQA 87.3%；400K上下文；$1.25/$10.00 per M tokens",
       "release_date": "2025-08-07",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "GPT-5.1 High",
@@ -1508,9 +1342,7 @@
       "website": "https://openai.com/index/gpt-5-1/",
       "note": "GPT-5.1高配版；Code Arena 1137；Chat\nArena 1132；GPQA 88.1%；400K上下文；$1.25/$10.00 per M tokens",
       "release_date": "2025-11-12",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "GPT-5.2 Codex",
@@ -1526,9 +1358,7 @@
       "website": "https://openai.com/index/introducing-gpt-5-2-codex/",
       "note": "OpenAI代码专用模型；Code Arena\n1149；400K上下文；$1.75/$14.00 per M tokens",
       "release_date": "2026-01-14",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "GPT-5.5",
@@ -1544,9 +1374,7 @@
       "website": "",
       "note": "1000k上下文；顶级推理能力；高端定价",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "GPT-5.5 Pro",
@@ -1562,9 +1390,7 @@
       "website": "",
       "note": "1000k上下文；高端定价",
       "release_date": "2026-04-23",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Grok Imagine Image",
@@ -1580,9 +1406,7 @@
       "website": "https://grok.com/imagine",
       "note": "xAI图像生成模型；Image\nArena排名第5；$0.02/img；另有Pro版$0.07/img",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Grok Imagine Video",
@@ -1598,9 +1422,7 @@
       "website": "https://docs.x.ai/developers/model-capabilities/video/generation",
       "note": "xAI视频生成模型；Video\nArena排名第1；支持文本转视频和图像转视频；$0.05/s",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "HappyHorse-1.0",
@@ -1616,9 +1438,7 @@
       "website": "",
       "note": "匿名模型登顶Video Arena；Elo\n1332/1391；疑似阿里淘天未来生活实验室团队；可能采用Transfusion架构",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Hermes Agent",
@@ -1634,9 +1454,7 @@
       "website": "https://nousresearch.com/",
       "note": "开源Agent；内置学习循环机制；可从交互中持续学习",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "HY-Embodied-0.5",
@@ -1652,9 +1470,7 @@
       "website": "",
       "note": "腾讯混元+Robotics\nX具身基础模型；混合Transformer架构；22项评测16项最佳；超100M具身专属数据；代码和权重已开源",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Imagen 4 Ultra",
@@ -1670,9 +1486,7 @@
       "website": "https://deepmind.google/models/imagen/",
       "note": "Google最高保真图像生成模型；超高画质；$0.10/img",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Ising",
@@ -1688,9 +1502,7 @@
       "website": "",
       "note": "全球首个开源量子AI模型系列",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "JoyAI-Image-Edit",
@@ -1706,9 +1518,7 @@
       "website": "",
       "note": "京东开源图像编辑模型；240B参数",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "JoyStreamer",
@@ -1724,9 +1534,7 @@
       "website": "https://jdai.jd.com/portal",
       "note": "数字人大模型；支持分钟级长视频生成；唇形同步；已服务超7万家商家；另有Flash轻量版",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Kimi Claw",
@@ -1742,9 +1550,7 @@
       "website": "https://www.kimi.com",
       "note": "月之暗面龙虾智能体",
       "release_date": "2026-02-18",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Kimi K2.6",
@@ -1760,9 +1566,7 @@
       "website": "",
       "note": "MoE架构；1T参数；262k上下文；顶级推理能力；顶级编码能力；MIT (modified)",
       "release_date": "2026-04-20",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Lantay",
@@ -1778,9 +1582,7 @@
       "website": "https://modelbest.cn/",
       "note": "文档智能体工作台",
       "release_date": "2026-04-14",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "LibTV",
@@ -1796,9 +1598,7 @@
       "website": "https://www.liblib.art/",
       "note": "AI视频创作平台",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "LongCat-AudioDiT",
@@ -1814,9 +1614,7 @@
       "website": "https://github.com/AnyaCoder/LongCat",
       "note": "语音克隆模型；波形潜空间直接建模；零样本音色克隆SOTA；MIT开源；提供1B和3.5B两版",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "lyria-3-pro",
@@ -1832,9 +1630,7 @@
       "website": "https://deepmind.google/models/lyria/",
       "note": "AI音乐生成模型；最长3分钟完整歌曲；支持结构化编排（前奏/主歌/副歌）；可精确控制节奏与歌词时间轴",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "MAI-Image-2",
@@ -1850,9 +1646,7 @@
       "website": "https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/introducing-mai-transcribe-1-mai-voice-1-and-mai-image-2-in-microsoft-foundry/4507787",
       "note": "微软自研图像生成模型；Arena.ai文本转图像排行榜第三；已集成至Copilot/Bing/PowerPoint",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "MAI-Transcribe-1",
@@ -1868,9 +1662,7 @@
       "website": "https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/introducing-mai-transcribe-1-mai-voice-1-and-mai-image-2-in-microsoft-foundry/4507787",
       "note": "微软自研语音转写模型；批量转录速度是Azure\nFast的2.5倍；支持25种语言；Mustafa Suleyman团队",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "MAI-Voice-1",
@@ -1886,9 +1678,7 @@
       "website": "https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/introducing-mai-transcribe-1-mai-voice-1-and-mai-image-2-in-microsoft-foundry/4507787",
       "note": "微软自研语音生成模型；1秒可产出60秒音频；Mustafa\nSuleyman团队",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Mamba-3",
@@ -1904,9 +1694,7 @@
       "website": "https://arxiv.org/abs/2603.15569",
       "note": "CMU+Princeton；SSM架构；ICLR\n2026；2x更小状态；超长文本和低延时优于Transformer",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Marble 1.1",
@@ -1922,9 +1710,7 @@
       "website": "https://www.worldlabs.ai/",
       "note": "李飞飞团队世界模型；照片生成可探索3D空间；光照和对比度优化",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Marble 1.1-Plus",
@@ -1940,9 +1726,7 @@
       "website": "https://www.worldlabs.ai/",
       "note": "李飞飞团队世界模型增强版；专为大规模场景；自动补出更大范围3D世界",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Meoo/秒悟",
@@ -1958,9 +1742,7 @@
       "website": "https://www.ithome.com/0/939/475.htm",
       "note": "阿里ATH团队AI开发工具；集成多模型",
       "release_date": "2026-04-15",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Midjourney V8 Alpha",
@@ -1976,9 +1758,7 @@
       "website": "https://updates.midjourney.com/v8-alpha/",
       "note": "2026年3月17日发布Alpha；生成速度5x提升；原生2K分辨率；文字渲染改进",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "MiMo-V2-Omni",
@@ -1994,9 +1774,7 @@
       "website": "https://github.com/XiaoMi/MiMo",
       "note": "小米全模态Agent基座模型；262k上下文；与MiMo-V2-Pro同期发布",
       "release_date": "2026-03-19",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "MiMo-V2-Pro",
@@ -2012,9 +1790,7 @@
       "website": "https://www.ithome.com/0/930/440.htm",
       "note": "小米旗舰基座模型；MoE+混合注意力架构；1M超长上下文；全球排名第八国内第二；专为Agent工作场景",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "MiniMax Music 2.6",
@@ -2030,9 +1806,7 @@
       "website": "https://www.minimaxi.com/news/music-26",
       "note": "MiniMax音乐生成模型",
       "release_date": "2026-04-10",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "mistral-small-4-119b-2603",
@@ -2048,9 +1822,7 @@
       "website": "https://mistral.ai/news/mistral-small-4",
       "note": "Mistral Small 4；MoE\n128专家4激活；256k上下文；统一instruct/reasoning/coding/多模态；Apache 2.0；GPQA 71.2%；AIME\n83.8%；MMMLU 60.0%；256K上下文；$0.15/$0.6 per M tokens；119B参数",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "MuonClip",
@@ -2066,9 +1838,7 @@
       "website": "https://www.moonshot.cn/about",
       "note": "开源优化器",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Muse Spark",
@@ -2084,9 +1854,7 @@
       "website": "https://ai.meta.com/blog/introducing-muse-spark-msl/",
       "note": "Meta超级智能实验室(MSL)首个模型；Alexandr\nWang领导；多模态感知+工具调用+视觉思维链+多智能体协同；HLE测试58%；尚未开源",
       "release_date": "2026-04-08",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "OneClaw",
@@ -2102,9 +1870,7 @@
       "website": "",
       "note": "月之暗面本地部署方案",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "PixVerse C1",
@@ -2120,9 +1886,7 @@
       "website": "https://pixverse.ai/",
       "note": "全球首个影视行业大模型；最高15秒1080P音画同步；支持多宫格智能分镜；多角色运动精准调度",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "PixVerse R1",
@@ -2138,9 +1902,7 @@
       "website": "https://pixverse.ai/",
       "note": "实时世界模型",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "PixVerse V6",
@@ -2156,9 +1918,7 @@
       "website": "https://pixverse.ai/",
       "note": "通用视频模型V6；1080P几十秒生成；新增Team Plan协同功能",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Psi-R2",
@@ -2174,9 +1934,7 @@
       "website": "",
       "note": "策略模型；登顶MolmoSpaces",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Psi-W0",
@@ -2192,9 +1950,7 @@
       "website": "",
       "note": "世界模型",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "QBotClaw",
@@ -2210,9 +1966,7 @@
       "website": "https://news.aibase.com/zh/news/26930",
       "note": "QQ浏览器内置AI智能体；免安装；支持跨软件任务；安全沙箱隔离",
       "release_date": "2026-04-08",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "QClaw V2",
@@ -2228,9 +1982,7 @@
       "website": "https://cloud.tencent.com/developer/news/3807147",
       "note": "腾讯智能体V2；多Agent并行（最多3个）；跨应用连接器；龙虾管家安全防护",
       "release_date": "2026-04-09",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Qwen Image 2.0",
@@ -2246,9 +1998,7 @@
       "website": "https://help.aliyun.com/zh/model-studio/qwen-image-api",
       "note": "阿里通义图像生成模型；$0.03/img",
       "release_date": "2026-02-10",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Qwen3.6-27B",
@@ -2264,9 +2014,7 @@
       "website": "",
       "note": "强推理能力；顶级编码能力；Apache 2.0",
       "release_date": "2026-04-21",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Qwen3.6-35B-A3B",
@@ -2282,9 +2030,7 @@
       "website": "",
       "note": "MoE架构；35B参数；强推理能力；顶级编码能力；Apache 2.0",
       "release_date": "2026-04-16",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "qwen3.6-plus",
@@ -2300,9 +2046,7 @@
       "website": "https://help.aliyun.com/zh/model-studio/models",
       "note": "千问3.6-Plus；100万上下文窗口；智能体编程能力领先；多模态推理升级；兼容OpenClaw/Claude\nCode；GPQA 90.4%；AIME 78.8%；MMMLU 89.5%",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Reve",
@@ -2318,9 +2062,7 @@
       "website": "https://www.reve.com/",
       "note": "Luma AI旗下图像生成+编辑模型；拖拽式编辑器；Image\nArena排名第16；$0.18/img",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Sarvam-30B",
@@ -2336,9 +2078,7 @@
       "website": "",
       "note": "印度AI实验室；GPQA 96.7%；与105B同期发布",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Sarvam-105B",
@@ -2354,9 +2094,7 @@
       "website": "",
       "note": "印度AI实验室；GPQA 96.7%；MoE架构；超越DeepSeek\nR1和Gemini Flash",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Seedream 4.5",
@@ -2372,9 +2110,7 @@
       "website": "https://seed.bytedance.com/zh/seedream4_5",
       "note": "字节Seed团队图像生成模型；多图组合一致性；海报排版+Logo设计；最高4K；支持最多14张参考图",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Seeduplex",
@@ -2390,9 +2126,7 @@
       "website": "https://seed.bytedance.com/zh/seeduplex",
       "note": "原生全双工语音大模型；边听边说；已上线豆包App；误回复率和误打断率降低一半；通话满意度提升8.34%",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Spark 2.0",
@@ -2408,9 +2142,7 @@
       "website": "",
       "note": "开源3D高斯溅射渲染引擎；配合Marble世界模型使用",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "step-3.5-flash",
@@ -2426,9 +2158,7 @@
       "website": "https://platform.stepfun.com/step-plan",
       "note": "MoE架构；最高推理速度350\nTPS；专为Agent场景优化；新增low think mode降低56% token消耗；预训练权重+训练框架全开源",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "TRAE SOLO",
@@ -2444,9 +2174,7 @@
       "website": "https://www.trae.ai/",
       "note": "桌面端+网页端双端协同；双模式智能体；支持通用任务与开发场景；云端算力多任务并行",
       "release_date": "2026-03-31",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "veo-3.1-lite",
@@ -2462,9 +2190,7 @@
       "website": "https://deepmind.google/models/model-cards/veo-3-1-lite/",
       "note": "Veo 3系列成本优化版；成本减半；720p\n$0.05/秒；支持文本转视频和图像转视频；4-8秒",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "VoxCPM 2",
@@ -2480,9 +2206,7 @@
       "website": "https://voxcpm.com/zh/",
       "note": "语音基础模型；基于MiniCPM-4基座；48kHz高保真；30种语言+9种中文方言；支持音色设计和克隆；MIT开源",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Voxtral Mini",
@@ -2498,9 +2222,7 @@
       "website": "",
       "note": "Mistral语音转文字模型；STT Arena排名第8；ELO\n-517",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Wan2.7-Image",
@@ -2516,9 +2238,7 @@
       "website": "https://www.aliyun.com/benefit/scene/wan",
       "note": "通义万相2.7图像生成与编辑统一模型；千人千面捏脸；调色盘精准色彩控制；3K\ntoken超长文本渲染；支持12种语言",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Whisper Large V3 Turbo",
@@ -2534,9 +2254,7 @@
       "website": "",
       "note": "OpenAI语音转文字模型；STT Arena排名第1；ELO\n2262；$0.35/min",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "XChat",
@@ -2552,9 +2270,7 @@
       "website": "https://x.ai/",
       "note": "集成Grok AI的社交应用；马斯克/X Corp.",
       "release_date": "2026-04-17",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "YOYO Claw",
@@ -2570,9 +2286,7 @@
       "website": "https://www.ithome.com/0/938/586.htm",
       "note": "荣耀端侧智能体",
       "release_date": "2026-04-13",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "Ψ₀",
@@ -2588,9 +2302,7 @@
       "website": "",
       "note": "南加州大学；人形机器人基座模型；具身智能",
       "release_date": "",
-      "created_date": "2026-04-17",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-04-17"
     },
     {
       "name": "gemini-embedding-2-preview",
@@ -2606,9 +2318,7 @@
       "website": "",
       "note": "集合了多模态向量嵌入的过程，在召回阶段可以大幅降低损失",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "SkillHub",
@@ -2624,9 +2334,7 @@
       "website": "https://skillhub.tencent.com",
       "note": "龙虾技能市场，一键接入+改造本地环境",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "Nemotron 3 Super",
@@ -2642,9 +2350,7 @@
       "website": "https://developer.nvidia.com/blog/introducing-nemotron-3-super-an-open-hybrid-mamba-transformer-moe-for-agentic-reasoning/",
       "note": "NVIDIA；针对agent的复杂任务规划和精准工具调用",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "LabClaw",
@@ -2660,9 +2366,7 @@
       "website": "https://labclaw-ai.github.io",
       "note": "生物医学科研领域的skills",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "MiroThinker-1.7",
@@ -2678,9 +2382,7 @@
       "website": "https://huggingface.co/miromind-ai/MiroThinker-1.7",
       "note": "基于qwen3-235B",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "MiroThinker-H3",
@@ -2696,9 +2398,7 @@
       "website": "https://dr.miromind.ai",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "GLM-5-Turbo",
@@ -2714,9 +2414,7 @@
       "website": "",
       "note": "增强持续性的工具调用",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "悟空",
@@ -2732,9 +2430,7 @@
       "website": "内侧中",
       "note": "沙盒部署+强可视化；可自定义标准化skill，用于标准化经验沉淀",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "DuMeta+DuClaw+RedClaw",
@@ -2750,9 +2446,7 @@
       "website": "",
       "note": "软硬件协同的全链安全机制",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "Desktop App",
@@ -2768,9 +2462,7 @@
       "website": "https://manus.im/desktop",
       "note": "基于Manus；全本地资源调用+云端智能规划；强制人审",
       "release_date": "",
-      "created_date": "2026-03-18",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-18"
     },
     {
       "name": "doubao-seed1.8",
@@ -2786,9 +2478,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-11",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-11"
     },
     {
       "name": "AutoClaw",
@@ -2804,9 +2494,7 @@
       "website": "https://autoglm.zhipuai.cn/autoclaw/",
       "note": "功能：一键部署openclaw；使用方式：PC端安装",
       "release_date": "",
-      "created_date": "2026-03-11",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-11"
     },
     {
       "name": "qwen3.5-0.8B",
@@ -2822,9 +2510,7 @@
       "website": "https://huggingface.co/collections/Qwen/qwen35",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-11",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-11"
     },
     {
       "name": "qwen3.5-2B",
@@ -2840,9 +2526,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-11",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-11"
     },
     {
       "name": "qwen3.5-4B",
@@ -2858,9 +2542,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-11",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-11"
     },
     {
       "name": "qwen3.5-9B",
@@ -2876,9 +2558,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-11",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-11"
     },
     {
       "name": "Grok Imagine Image Pro",
@@ -2894,9 +2574,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-10"
     },
     {
       "name": "UniScientist-30B-A3B",
@@ -2912,9 +2590,7 @@
       "website": "https://unipat.ai/blog/UniScientist",
       "note": "UniPat AI; 自主科研模型",
       "release_date": "",
-      "created_date": "2026-03-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-10"
     },
     {
       "name": "FireRed-Image-Edit-1.1",
@@ -2930,9 +2606,7 @@
       "website": "https://modelscope.cn/models/FireRedTeam/FireRed-Image-Edit-1.1",
       "note": "小红书；通用图像编辑基座模型；1.1版人像、化妆功能升级",
       "release_date": "",
-      "created_date": "2026-03-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-10"
     },
     {
       "name": "ArkClaw",
@@ -2948,9 +2622,7 @@
       "website": "https://www.volcengine.com/docs/82379/2229107?lang=en",
       "note": "功能：一键部署openclaw；使用方式：API",
       "release_date": "",
-      "created_date": "2026-03-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-10"
     },
     {
       "name": "WorkBuddy",
@@ -2966,9 +2638,7 @@
       "website": "",
       "note": "腾讯；个人工作助手；使用方式：APP",
       "release_date": "",
-      "created_date": "2026-03-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-10"
     },
     {
       "name": "Tabbit",
@@ -2984,9 +2654,7 @@
       "website": "https://www.tabbit-ai.com/",
       "note": "AI浏览器",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "Fun-CosyVoice3-0.5B-2512",
@@ -3002,9 +2670,7 @@
       "website": "",
       "note": "text-to-speech；零样本多语种生成",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "大圣",
@@ -3020,9 +2686,7 @@
       "website": "https://aistudio.ai4s.com.cn/",
       "note": "上智、复旦、无限光年联合发布；科研助手agent；内置于“星河启智平台”",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "GPT 5.3-instant",
@@ -3038,9 +2702,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "Gemini 3.1 Flash-Lite",
@@ -3056,9 +2718,7 @@
       "website": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-flash-lite/",
       "note": "0.25$/M",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "MiniMax Music 2.5+",
@@ -3074,9 +2734,7 @@
       "website": "https://www.minimax.io/news/music-25-unlock-instrumental-music",
       "note": "全场景音乐生成",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "miclaw",
@@ -3092,9 +2750,7 @@
       "website": "",
       "note": "移动端app；推理llm为Mimo",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "autoresearch",
@@ -3110,9 +2766,7 @@
       "website": "",
       "note": "Karparthy(个人)；无人工干预agent",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "Solaris",
@@ -3128,9 +2782,7 @@
       "website": "https://solaris-wm.github.io/",
       "note": "(我的世界多人模式)多人视频世界模型(类似mod)",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "GPT-5.4",
@@ -3146,9 +2798,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-03-09",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-03-09"
     },
     {
       "name": "dola-seed-2.0-preview",
@@ -3164,9 +2814,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-28"
     },
     {
       "name": "Nano Banana 2/Gemini 3.1 Flash Image",
@@ -3182,9 +2830,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-28"
     },
     {
       "name": "Skyreels V4",
@@ -3200,9 +2846,7 @@
       "website": "",
       "note": "SkyworkAI; 视频生成模型",
       "release_date": "",
-      "created_date": "2026-02-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-28"
     },
     {
       "name": "qwen3.5-27b",
@@ -3218,9 +2862,7 @@
       "website": "",
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "qwen3.5-122b-a10b",
@@ -3236,9 +2878,7 @@
       "website": "",
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "qwen3.5-35b-a3b",
@@ -3254,9 +2894,7 @@
       "website": "",
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Mercury 2",
@@ -3272,9 +2910,7 @@
       "website": "",
       "note": "Inception AI (USA)；聚焦提速",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Abot-N0",
@@ -3290,9 +2926,7 @@
       "website": "",
       "note": "VLA模型；具身智能基座类；暂未完全开源；导航",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "ABot-M0",
@@ -3308,9 +2942,7 @@
       "website": "",
       "note": "VLA模型；具身智能基座类；暂未完全开源",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Seedream 5.0",
@@ -3326,9 +2958,7 @@
       "website": "",
       "note": "“4K AI Image Editor” 摄影级超清图片生成",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Ming-flash-omni-2.0",
@@ -3344,9 +2974,7 @@
       "website": "",
       "note": "inclusionAI（蚂蚁）；图像、音频...",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "HY-1.8B-2Bit",
@@ -3362,9 +2990,7 @@
       "website": "",
       "note": "腾讯混元；主打on-device，边缘计算",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Seedance 2.0 Pro",
@@ -3380,9 +3006,7 @@
       "website": "",
       "note": "视频生成",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Ace-Step 1.5",
@@ -3398,9 +3022,7 @@
       "website": "",
       "note": "AMD；音乐生成",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "PaperBanana",
@@ -3416,9 +3038,7 @@
       "website": "",
       "note": "google+Peking University；",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "GPT-5.3-Codex-Spark",
@@ -3434,9 +3054,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Kling 3.0 series (video, image, etc.,)",
@@ -3452,9 +3070,7 @@
       "website": "",
       "note": "可灵（快手）；视频生成世界模型",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "ernie-5.0-0110",
@@ -3470,9 +3086,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-27",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-27"
     },
     {
       "name": "Xiaomi-Robotics-0 series",
@@ -3488,9 +3102,7 @@
       "website": "",
       "note": "VLA模型；具身智能基座类",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "Qwen3-Coder-Next",
@@ -3506,9 +3118,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "GLM-OCR",
@@ -3524,9 +3134,7 @@
       "website": "",
       "note": "VL模型，用于文字提取识别等文档分析",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "stormcast-v1-era5-hrrr",
@@ -3542,9 +3150,7 @@
       "website": "",
       "note": "NVIDIA；earth-2系列最新模型，用于极端天气预测",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "Emu3.5",
@@ -3560,9 +3166,7 @@
       "website": "",
       "note": "智源；世界模型",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "Genie 3",
@@ -3578,9 +3182,7 @@
       "website": "",
       "note": "互动类世界模型",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "lingbot-world-base-cam",
@@ -3596,9 +3198,7 @@
       "website": "",
       "note": "蚂蚁；世界模型",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "UniFolM-VLA-0",
@@ -3614,9 +3214,7 @@
       "website": "",
       "note": "宇树科技；VLA模型；具身智能基座类",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "SkyReels-V3-A2V-19B",
@@ -3632,9 +3230,7 @@
       "website": "",
       "note": "Skywork AI/昆仑万维；视频生成模型",
       "release_date": "",
-      "created_date": "2026-02-25",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-25"
     },
     {
       "name": "FireRed-Image-Edit-1.0",
@@ -3650,9 +3246,7 @@
       "website": "",
       "note": "小红书；通用图像编辑模型",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "doubao-seed-2.0",
@@ -3668,9 +3262,7 @@
       "website": "https://www.volcengine.com/docs/6492/2250683?lang=zh",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "qwen3.5-397b-a17b",
@@ -3686,9 +3278,7 @@
       "website": "",
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "claude-opus-4-6-thinking",
@@ -3704,9 +3294,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "MiniMax Music 2.5",
@@ -3722,9 +3310,7 @@
       "website": "",
       "note": "音乐生成模型",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "claude-sonnet-4-6",
@@ -3740,9 +3326,7 @@
       "website": "",
       "note": "adaptive thinking",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "Grok 4.20 Beta",
@@ -3758,9 +3342,7 @@
       "website": "",
       "note": "多模态通用",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "Gemini 3.1 pro",
@@ -3776,9 +3358,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "MiniMax M2.5",
@@ -3794,9 +3374,7 @@
       "website": "https://platform.minimaxi.com/docs/api-reference/api-overview",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "Protenix-v1",
@@ -3812,9 +3390,7 @@
       "website": "",
       "note": "医药领域",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "X2",
@@ -3830,9 +3406,7 @@
       "website": "",
       "note": "主打小语种、多语种能力",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "GLM-5",
@@ -3848,9 +3422,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "claude-opus-4-6",
@@ -3866,9 +3438,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "Intern-S1-Pro",
@@ -3884,9 +3454,7 @@
       "website": "",
       "note": "AI Lab；科学领域多模态大模型",
       "release_date": "",
-      "created_date": "2026-02-24",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-02-24"
     },
     {
       "name": "qwen-flash-no-guard",
@@ -3902,9 +3470,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "qwen-long-no-guard",
@@ -3920,9 +3486,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "qwen-plus-no-guard",
@@ -3938,9 +3502,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "qwen-plus-character-no-guard",
@@ -3956,9 +3518,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "qwen2.5-0.5b-instruct-no-guard",
@@ -3974,9 +3534,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "qwen2.5-1.5b-instruct-no-guard",
@@ -3992,9 +3550,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "qwen2.5-14b-instruct-1m-no-guard",
@@ -4010,9 +3566,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "qwen2.5-3b-instruct-no-guard",
@@ -4028,9 +3582,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "GLM-4.7-Flash",
@@ -4046,9 +3598,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-30"
     },
     {
       "name": "kimi-k2.5-thinking",
@@ -4064,9 +3614,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-28"
     },
     {
       "name": "qwen3-max-thinking",
@@ -4082,9 +3630,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-28",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-28"
     },
     {
       "name": "Baichuan-M3",
@@ -4100,9 +3646,7 @@
       "website": "",
       "note": "医疗模型",
       "release_date": "",
-      "created_date": "2026-01-19",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-19"
     },
     {
       "name": "LongCat-Flash-Thinking-2601",
@@ -4118,9 +3662,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-19",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-19"
     },
     {
       "name": "qwen-long",
@@ -4136,9 +3678,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen-plus",
@@ -4154,9 +3694,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen-turbo",
@@ -4172,9 +3710,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-0.5b-instruct",
@@ -4190,9 +3726,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-1.5b-instruct",
@@ -4208,9 +3742,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-3b-instruct",
@@ -4226,9 +3758,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-7b-instruct",
@@ -4244,9 +3774,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-7b-instruct-1m",
@@ -4262,9 +3790,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-14b-instruct",
@@ -4280,9 +3806,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-14b-instruct-1m",
@@ -4298,9 +3822,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen2.5-omni-7b",
@@ -4316,9 +3838,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-0.6b",
@@ -4334,9 +3854,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-1.7b",
@@ -4352,9 +3870,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-4b",
@@ -4370,9 +3886,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-8b",
@@ -4388,9 +3902,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-30b-a3b",
@@ -4406,9 +3918,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-30b-a3b-instruct-2507",
@@ -4424,9 +3934,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-30b-a3b-thinking-2507",
@@ -4442,9 +3950,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-235b-a22b-instruct-2507",
@@ -4460,9 +3966,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-235b-a22b-thinking-2507",
@@ -4478,9 +3982,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-max-preview",
@@ -4496,9 +3998,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-next-80b-a3b-instruct",
@@ -4514,9 +4014,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-next-80b-a3b-thinking",
@@ -4532,9 +4030,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen3-omni-flash",
@@ -4550,9 +4046,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwq-32b",
@@ -4568,9 +4062,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwq-plus",
@@ -4586,9 +4078,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "qwen-flash",
@@ -4604,9 +4094,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-13",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-13"
     },
     {
       "name": "ERNIE-5.0-Preview-1203",
@@ -4622,9 +4110,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-10"
     },
     {
       "name": "K-EXAONE-236B-A23B",
@@ -4640,9 +4126,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-10"
     },
     {
       "name": "MiniMax M2.1",
@@ -4658,9 +4142,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2026-01-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2026-01-04"
     },
     {
       "name": "MiMo-V2-Flash",
@@ -4676,9 +4158,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "Llama-3.3-70B-Instruct",
@@ -4694,9 +4174,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "kimi-k2-thinking",
@@ -4712,9 +4190,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "doubao-seed-1-6-251015",
@@ -4730,9 +4206,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "GLM-4.6",
@@ -4748,9 +4222,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "gpt-oss-120b",
@@ -4766,9 +4238,7 @@
       "website": "",
       "note": "逻辑层级上与 OpenAI 自家的 o-series （如 o1、o3）属同类，但权重开放",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "gpt-5.2-1211-global",
@@ -4784,9 +4254,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "qwen3-235b-a22b",
@@ -4802,9 +4270,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-12-23",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-12-23"
     },
     {
       "name": "deepseek-r1",
@@ -4820,9 +4286,7 @@
       "website": "",
       "note": "对标GPT-o1 / Gemini 2.5 Flash Thinking",
       "release_date": "",
-      "created_date": "2025-11-11",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-11"
     },
     {
       "name": "GPT 4o",
@@ -4838,9 +4302,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-10",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-10"
     },
     {
       "name": "qwen2.5-14b",
@@ -4856,9 +4318,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-07",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-07"
     },
     {
       "name": "Claude 4.5 Sonnet",
@@ -4874,9 +4334,7 @@
       "website": "",
       "note": "官方目前认为对齐结果最好的模型",
       "release_date": "",
-      "created_date": "2025-11-06",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-06"
     },
     {
       "name": "DeepSeek-V3",
@@ -4892,9 +4350,7 @@
       "website": "",
       "note": "对标GPT-4-turbo / Claude 3 Opus",
       "release_date": "",
-      "created_date": "2025-11-06",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-06"
     },
     {
       "name": "GPT 4.1",
@@ -4910,9 +4366,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-06",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-06"
     },
     {
       "name": "Meta-Llama-3-1-405B-Instruct",
@@ -4928,9 +4382,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "qwen-plus-character",
@@ -4946,9 +4398,7 @@
       "website": "",
       "note": "通义星尘",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "GLM-4.7",
@@ -4964,9 +4414,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "qwen3-14b",
@@ -4982,9 +4430,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "llama-4-maverick-17b-128e-instruct",
@@ -5000,9 +4446,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "Seed-OSS-36B-Base",
@@ -5018,9 +4462,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "Gemini 2.5 pro",
@@ -5036,9 +4478,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "Gemini 3 Flash",
@@ -5054,9 +4494,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "doubao-seed-1-6-thinking-250715",
@@ -5072,9 +4510,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "qwen2.5-72b-instruct",
@@ -5090,9 +4526,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "Minimax M2",
@@ -5108,9 +4542,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "qwen2.5-32b-instruct",
@@ -5126,9 +4558,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "Gemini 3 Pro",
@@ -5144,9 +4574,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "x-ai/grok-4",
@@ -5162,9 +4590,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-11-04",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-11-04"
     },
     {
       "name": "Oyster_7B_dpo",
@@ -5180,9 +4606,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-31",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-31"
     },
     {
       "name": "qwen2.5-72b",
@@ -5198,9 +4622,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-31",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-31"
     },
     {
       "name": "claude37_sonnet",
@@ -5216,9 +4638,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "DeepSeek-V3.2",
@@ -5234,9 +4654,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "TBStars2.0-42B-A3.5B",
@@ -5252,9 +4670,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "doubao-1-5-thinking-pro-250415",
@@ -5270,9 +4686,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "qwen3-32b",
@@ -5288,9 +4702,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "qwen3-max",
@@ -5306,9 +4718,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "o4 mini",
@@ -5324,9 +4734,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "o3",
@@ -5342,9 +4750,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "Claude 3.5 Sonnet",
@@ -5360,9 +4766,7 @@
       "website": "",
       "note": "官方认为目前moral对齐最好的模型",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "Claude 4 Opus",
@@ -5378,9 +4782,7 @@
       "website": "",
       "note": "推理链更长、策略更多",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "Claude 3 Opus",
@@ -5396,9 +4798,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "GPT 5",
@@ -5414,9 +4814,7 @@
       "website": "",
       "note": "",
       "release_date": "",
-      "created_date": "2025-10-30",
-      "is_new": "",
-      "status": ""
+      "created_date": "2025-10-30"
     },
     {
       "name": "qwen-image-2.0-pro-2026-04-22",
@@ -5432,9 +4830,7 @@
       "website": "https://bailian.console.aliyun.com/",
       "note": "画面质感跃升（纹理细节、光影、材质）；支持多语种图内文字生成；艺术风格表现更均衡；融合图像生成与编辑 [重要性:高|阿里巴巴/Qwen 体系的图像生成重大版本更新，属于重点关注公司的重要多模态模型。]",
       "release_date": "2026-04-22",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 类型→图像生成; 任务类型→图像生成/图像编辑; 官网→https://qwen.ai; 问题: 官网为阿里云控制台入口，建议替换为模型提供方官方页面; 类型标为“基座”不够准确，该模型更适合归类为图像生成/图像编辑; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称包含具体产品线、版本与日期，非产品泛称。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.6-max-preview",
@@ -5450,9 +4846,7 @@
       "website": "https://qwen.ai",
       "note": "定位为智能体基座模型；智能体编程、世界知识与指令遵循能力显著提升；支持preserve_thinking功能 [重要性:高|Qwen Max 系列通常代表阿里巴巴旗舰通用模型，属于重点关注公司的重大版本。]",
       "release_date": "2026-04-20",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 任务类型→通用对话/智能体/代码生成; 问题: preview 属于预览版标识，建议后续补充正式版名称或快照日期; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称包含具体版本与型号，不属于产品泛称。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.6-flash-2026-04-16",
@@ -5468,9 +4862,7 @@
       "website": "https://qwen.ai",
       "note": "采用稀疏MoE架构（总参350亿/激活30亿）；原生支持多模态与超长上下文（262K tokens，可扩展至100万）；支持智能体编程与思考/非思考双模式；兼容OpenAI与Anthropic API协议 [重要性:中|阿里巴巴重点模型系列的轻量/高性价比变体，属于重点公司的非旗舰版本。]",
       "release_date": "2026-04-16",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 尺寸→35B总参数/3B激活; 任务类型→通用对话/多模态理解/智能体/代码生成; 问题: 与“qwen3.6-flash”疑似同一模型的快照版/别名重复，建议统一保留一种命名; 能否推理标为 non-thinking，但备注称支持思考/非思考双模式，字段存在矛盾; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称规范，包含具体版本、变体和日期。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.6-flash",
@@ -5486,9 +4878,7 @@
       "website": "https://qwen.ai",
       "note": "采用混合专家架构（总参350亿/激活30亿）；原生支持多模态与思考模式切换；智能体编程与空间推理能力突出；新增preserve_thinking功能优化智能体任务",
       "release_date": "2026-04-17",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "⚠️ GPT-5.5建议删除(中置信)待人工确认 — 建议删除：与“qwen3.6-flash-2026-04-16”疑似重复/别名，建议保留带日期的快照版本; 能否推理标为 non-thinking，但备注称支持思考模式切换，字段存在矛盾; 模型发布时间与快照版记录不一致，建议人工核验"
+      "created_date": "2026-05-12"
     },
     {
       "name": "deepseek-ocr",
@@ -5504,9 +4894,7 @@
       "website": "",
       "note": "端到端OCR与文档解析视觉语言模型；采用DeepEncoder视觉编码器与MoE解码器架构；支持高分辨率输入与16倍视觉Token压缩；具备低激活成本与多分辨率模式 [重要性:中|DeepSeek-OCR 是具备视觉 Token 压缩与文档解析特色的专用模型，技术特征较突出。]",
       "release_date": "2026-04-02",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→DeepSeek; 类型→文档理解/OCR; 任务类型→OCR/文档解析/视觉语言理解; 官网→https://github.com/deepseek-ai/DeepSeek-OCR; 模型发布时间→2025-10-20; 开闭源→开源; 问题: 公司标注错误：DeepSeek-OCR 不属于阿里巴巴; 类型标为“基座”不准确，应归类为 OCR/文档理解/视觉语言模型; 开闭源标注疑似错误，公开资料显示其以开源模型形式发布; 原记录发布时间疑似不准确，建议核验 DeepSeek 官方发布页; 名称虽然未带数字版本号，但“DeepSeek-OCR”是具体模型名称，不是产品泛称。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-plus-realtime-2026-03-15",
@@ -5522,9 +4910,7 @@
       "website": "https://www.aliyun.com/product/tongyi",
       "note": "实时音视频聊天模型；支持流式音频与图像输入；端到端延迟1-2秒；支持113种语言识别；256K超长上下文；混合注意力MoE架构 [重要性:高|Qwen Omni Plus Realtime 属于阿里巴巴全模态实时交互方向的重要版本。]",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 类型→多模态实时交互; 任务类型→实时语音对话/多模态理解/音视频交互; 官网→https://qwen.ai; 问题: 模型名称日期为 2026-03-15，但模型发布时间填写为 2026-03-30，需确认快照日期与官方发布日期关系; 官网为通义产品入口，不是具体模型页面，建议替换为 Qwen 官方页面或官方公告; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称包含具体版本、变体、实时版本与日期，符合规范。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-plus-realtime",
@@ -5540,9 +4926,7 @@
       "website": "https://help.aliyun.com/zh/model-studio/realtime",
       "note": "端到端实时语音对话；支持文本/图像/音频/视频多模态输入与文本/音频输出；支持256k长上下文及超长音视频输入；支持自定义Function Calling与零样本音色克隆",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "⚠️ GPT-5.5建议删除(中置信)待人工确认 — 建议删除：与“qwen3.5-omni-plus-realtime-2026-03-15”疑似重复/别名，建议保留带日期的快照版本; 官网为阿里云帮助文档，虽属提供方文档但不是具体模型官方主页; 发布时间和型号为较新的未来信息，建议人工核验官方公告"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-plus-2026-03-15",
@@ -5558,9 +4942,7 @@
       "website": "https://qwen.ai/blog?id=qwen3.5-omni",
       "note": "采用混合注意力MoE架构；原生支持文本/图片/音频/视频全模态输入输出；支持256k长上下文；支持113种语言识别与36种语言生成；涌现Audio-Visual Vibe Coding能力 [重要性:高|Qwen Omni Plus 属于阿里巴巴全模态旗舰方向的重要版本。]",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 类型→多模态基座; 任务类型→全模态理解/语音生成/音视频理解; 问题: 模型名称日期为 2026-03-15，但模型发布时间填写为 2026-03-30，需确认快照日期与官方发布日期关系; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称规范，包含具体版本、变体和日期。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-plus",
@@ -5576,9 +4958,7 @@
       "website": "https://qwenlm.github.io/",
       "note": "采用Hybrid-Attention MoE架构；支持256K长上下文；支持113种语种语音识别与36种语音生成；具备音视频Caption与Audio-Visual Vibe Coding能力；在215项音频/音视频任务取得SOTA",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "⚠️ GPT-5.5建议删除(中置信)待人工确认 — 建议删除：与“qwen3.5-omni-plus-2026-03-15”疑似重复/别名，建议保留带日期的快照版本; 官网 qwenlm.github.io 偏旧，建议统一为 qwen.ai 或官方公告页; 发布时间和型号为较新的未来信息，建议人工核验官方公告"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-flash-realtime-2026-03-15",
@@ -5594,9 +4974,7 @@
       "website": "https://tongyi.aliyun.com/",
       "note": "支持256k超长上下文；支持超10小时音频及400秒720P视频输入；支持113种语种语音识别与36种语音生成；采用Hybrid-Attention MoE与Thinker-Talker架构；支持实时低延迟音视频交互 [重要性:中|阿里巴巴重点模型系列的实时轻量变体，适合成本敏感场景但非旗舰。]",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 类型→多模态实时交互; 任务类型→实时语音对话/多模态理解/音视频交互; 官网→https://qwen.ai; 问题: 模型名称日期为 2026-03-15，但模型发布时间填写为 2026-03-30，需确认快照日期与官方发布日期关系; 官网为通义产品入口，不是具体模型页面，建议替换为 Qwen 官方页面或官方公告; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称规范，包含具体版本、变体、实时版本和日期。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-flash-realtime",
@@ -5612,9 +4990,7 @@
       "website": "https://bailian.console.aliyun.com/",
       "note": "实时音视频交互模型；支持流式音视频输入与文本音频实时输出；256k超长上下文；支持113种语音识别与36种语音生成；具备语义打断与音色克隆能力；采用Hybrid-Attention MoE架构",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "⚠️ GPT-5.5建议删除(中置信)待人工确认 — 建议删除：与“qwen3.5-omni-flash-realtime-2026-03-15”疑似重复/别名，建议保留带日期的快照版本; 官网为阿里云控制台入口，建议替换为模型提供方官方页面; 发布时间和型号为较新的未来信息，建议人工核验官方公告"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-flash-2026-03-15",
@@ -5630,9 +5006,7 @@
       "website": "https://qwen.ai",
       "note": "采用Hybrid-Attention MoE架构；支持文本/图像/音频/视频原生全模态输入输出；在215项任务中取得SOTA；支持256K长上下文；支持113种语言识别与36种语音生成；具备音视频Vibe Coding能力 [重要性:中|阿里巴巴重点模型系列的轻量全模态变体，具有应用价值但非旗舰。]",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 类型→多模态基座; 任务类型→全模态理解/语音生成/音视频理解; 问题: 模型名称日期为 2026-03-15，但模型发布时间填写为 2026-03-30，需确认快照日期与官方发布日期关系; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称规范，包含具体版本、变体和日期。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.5-omni-flash",
@@ -5648,9 +5022,7 @@
       "website": "https://www.aliyun.com/product/bailian",
       "note": "适用于短视频分析与成本敏感场景；支持思考模式；输入限制150秒以内音视频；仅支持文本与单一其他模态组合输入",
       "release_date": "2026-03-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "⚠️ GPT-5.5建议删除(中置信)待人工确认 — 建议删除：与“qwen3.5-omni-flash-2026-03-15”疑似重复/别名，建议保留带日期的快照版本; 官网为阿里云百炼产品页，不是具体模型官方主页; 能否推理标为 non-thinking，但备注称支持思考模式，字段存在矛盾; 发布时间和型号为较新的未来信息，建议人工核验官方公告"
+      "created_date": "2026-05-12"
     },
     {
       "name": "qwen3.6-plus-2026-04-02",
@@ -5666,9 +5038,7 @@
       "website": "https://tongyi.aliyun.com/",
       "note": "原生多模态理解与推理能力显著提升；支持100万词元超长上下文窗口；智能体编程（Agentic Coding）能力突出，可自主拆解任务与测试修改；兼容OpenAI与Anthropic API规范 [重要性:高|Qwen Plus 系列是阿里巴巴重点通用模型版本，具备长上下文与智能体能力升级。]",
       "release_date": "2026-04-02",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 任务类型→通用对话/多模态理解/智能体/代码生成; 官网→https://qwen.ai; 问题: 官网为通义产品入口，不是具体模型页面，建议替换为 Qwen 官方页面或官方公告; 能否推理标为 non-thinking，但备注强调推理能力提升，建议确认是否支持 thinking 模式; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称规范，包含具体版本、变体和日期。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "wan2.7-image-pro",
@@ -5684,9 +5054,7 @@
       "website": "https://tongyi.aliyun.com/wan/",
       "note": "4K分辨率文生图与编辑；千人千面骨相级捏脸；首创调色盘精准控色；3K Token超长文本印刷级渲染；像素级交互式编辑；多主体一致性组图生成 [重要性:高|阿里巴巴 Wan 系列图像生成 Pro 版本，属于重点公司在生成式视觉方向的重要更新。]",
       "release_date": "2026-04-01",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→阿里巴巴; 类型→图像生成; 任务类型→图像生成/图像编辑; 问题: 分类错误：名称和备注均指向图像生成/编辑，但类型被标为“视频”; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称包含具体版本和 Pro 型号，符合规范。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "MiniMax-M2.7",
@@ -5702,9 +5070,7 @@
       "website": "https://platform.minimax.io",
       "note": "首次展示模型自我进化路径；构建Agent Harness体系参与自身训练优化；支持100万token超长上下文；强化多智能体协作与端到端项目交付能力 [重要性:高|MiniMax 属于国内重点关注公司，M 系列大版本具备智能体与长上下文能力升级。]",
       "release_date": "2026-03-18",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 任务类型→通用对话/智能体/代码生成; 问题: 官网为平台入口，建议补充具体模型公告或模型文档页; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称包含具体模型系列与版本号，非产品泛称。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "doubao-seed-2-0-mini-260428",
@@ -5720,9 +5086,7 @@
       "website": "https://www.volcengine.com",
       "note": "支持文本/图像/视频/音频多模态输入；轻量级小体量版本；优化多步推理效率与成本控制 [重要性:中|字节跳动/Seed 属于国内重点关注公司，但 mini 通常是非旗舰轻量变体。]",
       "release_date": "2026-04-28",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 类型→多模态基座; 任务类型→通用对话/多模态理解; 官网→https://www.volcengine.com/product/ark; 问题: 类型为“未知”，建议修正为多模态基座或通用多模态模型; 官网为火山引擎首页，建议替换为火山方舟或 Doubao 模型官方页面; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称包含 Seed 2.0、mini 与日期编码，符合具体模型命名要求。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "doubao-seed-2-0-lite-260428",
@@ -5738,9 +5102,7 @@
       "website": "",
       "note": "高性价比均衡模型；支持长上下文与多模态理解；多步推理Token效率高；存在一定幻觉问题 [重要性:中|字节跳动/Seed 属于国内重点关注公司，但 lite 是非旗舰高性价比变体。]",
       "release_date": "2026-04-28",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 类型→多模态基座; 任务类型→通用对话/多模态理解; 官网→https://www.volcengine.com/product/ark; 问题: 类型为“未知”，建议修正为多模态基座或通用多模态模型; 缺少官网，建议补充火山方舟或 Doubao 模型官方页面; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称包含 Seed 2.0、lite 与日期编码，符合具体模型命名要求。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "ring-2.6-1t:free",
@@ -5756,9 +5118,7 @@
       "website": "",
       "note": "引入可调节Reasoning Effort机制支持high与xhigh两档推理强度；万亿参数旗舰思考模型；针对高频Agent工作流与高难推理任务优化；具备低Token开销与高效多步执行能力 [重要性:中|若确为 1T 级推理模型则具备技术关注价值，但公司与官方来源不明。]",
       "release_date": "2026-05-09",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 尺寸→1T; 任务类型→通用对话/复杂推理/智能体; 问题: 公司为未知，需补充模型提供方; 类型为“未知”，建议修正为通用推理模型或智能体模型; 名称包含“:free”后缀，疑似第三方路由/计费标识，不像提供方官方模型名，建议使用官方模型名称; 缺少官网，无法核验官方发布时间与开闭源信息; 发布时间和型号为较新的未来信息，建议人工核验官方公告; 名称含版本号和规模信息，但官方性存疑。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "granite-4.1-8b",
@@ -5774,9 +5134,7 @@
       "website": "https://www.ibm.com/granite",
       "note": "8B密集型纯解码器架构；性能媲美32B MoE模型；支持512K超长上下文；Apache 2.0开源；针对企业工作流优化 [重要性:低|IBM Granite 是企业开源模型系列，但 IBM 不在重点/优秀关注清单内，8B 版本影响力相对有限。]",
       "release_date": "2026-04-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→IBM; 类型→语言模型; 任务类型→通用对话/企业工作流/代码与文本生成; 开闭源→开源; 问题: 公司为未知，应补充为 IBM; 类型为“未知”，建议修正为语言模型或企业通用模型; 发布时间和型号为较新的未来信息，建议人工核验 IBM 官方公告; 名称包含具体版本与参数规模，符合规范；开源标注与 Apache 2.0 备注一致。"
+      "created_date": "2026-05-12"
     },
     {
       "name": "mistral-medium-3-5",
@@ -5792,9 +5150,7 @@
       "website": "https://mistral.ai/news/vibe-remote-agents-mistral-medium-3-5",
       "note": "128B参数稠密架构；256k上下文窗口；融合指令遵循、推理与编程能力；支持可配置推理强度；原生多模态视觉能力；开源权重（修改版MIT协议）",
       "release_date": "2026-04-30",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "owl-alpha",
@@ -5810,9 +5166,7 @@
       "website": "",
       "note": "百万超长上下文；工具调用能力突出；支持长任务链；OpenRouter隐身模型",
       "release_date": "2026-04-28",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "nemotron-3-nano-omni-30b-a3b-reasoning:free",
@@ -5828,9 +5182,7 @@
       "website": "https://build.nvidia.com/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
       "note": "采用30B-A3B混合MoE架构；原生支持文本/图像/音频/视频全模态统一推理；结合Mamba与Transformer层；推理吞吐量较同类模型提升约9倍",
       "release_date": "2026-04-28",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "gpt-mini-latest",
@@ -5846,9 +5198,7 @@
       "website": "https://openai.com/index/gpt-5-4-mini-and-nano/",
       "note": "针对高频工作负载优化；运行速度较上一代提升两倍以上；在编码、推理、多模态理解和工具调用方面表现优异；适用于AI智能体架构中的执行者角色",
       "release_date": "2026-03-17",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "ling-2.6-1t",
@@ -5864,9 +5214,7 @@
       "website": "https://ling.tbox.cn",
       "note": "万亿参数规模；采用MLA与Linear Attention混合架构；主打快思考机制降低Token开销；强化Agent与代码生成多步执行能力；高度兼容主流Agent框架",
       "release_date": "2026-04-24",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "gpt-5.4-image-2",
@@ -5882,9 +5230,7 @@
       "website": "",
       "note": "支持高精度多语言文字渲染；具备极强的指令遵循与构图理解能力；常作为GPT-5.4的图像生成工具调用",
       "release_date": "2026-04-21",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "ling-2.6-flash",
@@ -5900,9 +5246,7 @@
       "website": "",
       "note": "总参数104B激活7.4B的稀疏MoE架构；采用混合线性架构优化推理效率；主打极致Token效率；针对Agent场景定向增强",
       "release_date": "2026-04-22",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "claude-opus-latest",
@@ -5918,9 +5262,7 @@
       "website": "https://www.anthropic.com",
       "note": "高分辨率视觉解析（支持长边2576像素）；高级软件工程与自主编程能力；新增xhigh推理档位与任务预算机制；具备输出自我验证能力",
       "release_date": "2026-04-16",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "qianfan-ocr-fast:free",
@@ -5936,9 +5278,7 @@
       "website": "",
       "note": "端到端文档智能模型；40亿参数统一视觉语言架构；首创Layout-as-Thought版面即思维机制；支持192种语言；OmniDocBench v1.5评测第一",
       "release_date": "2026-03-19",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "gemma-4-26b-a4b-it:free",
@@ -5954,9 +5294,7 @@
       "website": "https://ai.google.dev/gemma",
       "note": "MoE混合专家架构(26B总参/4B激活)；256K超长上下文；原生多模态(文本+图像)；Apache 2.0开源协议；支持140+语言与强推理能力",
       "release_date": "2026-04-03",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "gemma-4-31b-it:free",
@@ -5972,9 +5310,7 @@
       "website": "https://deepmind.google/technologies/gemma/",
       "note": "原生多模态支持（文本/图像/视频/音频）；256K超长上下文窗口；混合注意力机制；支持140+种语言；原生函数调用与系统提示",
       "release_date": "2026-04-02",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "gemma-4-31b-it",
@@ -5990,9 +5326,7 @@
       "website": "https://ai.google.dev/gemma",
       "note": "多模态支持（文本/图像/视频/音频）；256K长上下文窗口；支持140+种语言；提供Dense与MoE双架构；原生支持推理模式与函数调用；Apache 2.0开源协议",
       "release_date": "2026-04-03",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "trinity-large-thinking:free",
@@ -6008,9 +5342,7 @@
       "website": "",
       "note": "398B参数稀疏MoE架构；单token激活仅13B；支持512k上下文窗口；Apache 2.0开源协议；显式推理追踪机制",
       "release_date": "2026-04-02",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "trinity-large-thinking",
@@ -6026,9 +5358,7 @@
       "website": "https://www.arcee.ai/blog/trinity-large-thinking",
       "note": "约3990亿参数稀疏MoE架构；每次推理仅激活130亿参数；引入显式思考阶段提升复杂推理与智能体任务表现；采用Apache 2.0协议完全开源",
       "release_date": "2026-04-06",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "lyria-3-pro-preview",
@@ -6044,9 +5374,7 @@
       "website": "",
       "note": "支持生成最长约3分钟完整音轨；精准控制前奏/主歌/副歌等编曲结构；支持图像转音乐与时间对齐歌词；嵌入SynthID数字水印",
       "release_date": "2026-03-26",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "lyria-3-clip-preview",
@@ -6062,9 +5390,7 @@
       "website": "https://blog.google/innovation-and-ai/technology/developers-tools/lyria-3-developers/",
       "note": "针对高并发优化；生成30秒短片段；适用于社交媒体和循环素材；侧重低延迟",
       "release_date": "2026-03-26",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "nemotron-climb-fasttext-classifiers",
@@ -6080,9 +5406,7 @@
       "website": "https://huggingface.co/nvidia/nemotron-climb-fasttext-classifiers",
       "note": "HuggingFace",
       "release_date": "2026-05-11",
-      "created_date": "2026-05-12",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-12"
     },
     {
       "name": "mimo-v2-tts",
@@ -6098,9 +5422,7 @@
       "website": "",
       "note": "基于自研Audio Tokenizer和多码本语音-文本联合建模架构；支持多粒度语音风格控制与单句内语气情感调节；支持多种方言及歌声合成",
       "release_date": "2026-03-19",
-      "created_date": "2026-05-13",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-13"
     },
     {
       "name": "mimo-v2.5-tts",
@@ -6116,9 +5438,7 @@
       "website": "",
       "note": "采用“语言即控制”范式支持自然语言指令调度；包含标准版、文本生成音色版及高保真音色复刻版三款模型；支持音频标签控制与分层导演剧本机制",
       "release_date": "2026-04-24",
-      "created_date": "2026-05-13",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-13"
     },
     {
       "name": "mimo-v2.5-tts-voiceclone",
@@ -6134,9 +5454,7 @@
       "website": "",
       "note": "仅需数秒参考音频即可高保真复刻真人音色；无需训练或微调；完整保留原始音色身份及气息、节奏等个人特征；支持叠加自然语言指令与音频标签进行精细控制",
       "release_date": "2026-04-24",
-      "created_date": "2026-05-13",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-13"
     },
     {
       "name": "mimo-v2.5-tts-voicedesign",
@@ -6152,9 +5470,7 @@
       "website": "",
       "note": "支持通过自然语言描述生成全新音色；无需参考音频即可从零定义声音特征；支持多维度（年龄/性别/口音/气质等）精细控制 [重要性:中|小米/Mimo属于国内优秀关注公司，该模型是语音合成方向的具体版本能力更新。]",
       "release_date": "2026-04-24",
-      "created_date": "2026-05-13",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 类型→语音合成; 任务类型→语音合成; 名称包含版本号与具体能力后缀，符合模型名称规范；发布时间与官网需以小米/MiMo官方公告进一步核验。"
+      "created_date": "2026-05-13"
     },
     {
       "name": "claude-opus-4.7-fast",
@@ -6170,9 +5486,7 @@
       "website": "https://www.anthropic.com/news/claude-opus-4-7",
       "note": "支持最高2576像素长边图像输入；新增xhigh推理档位与任务预算机制；指令遵循与智能体编程能力显著提升 [重要性:高|Anthropic Claude Opus系列属于国外重点公司的旗舰模型线，若属实为重大版本更新。]",
       "release_date": "2026-04-16",
-      "created_date": "2026-05-13",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→Anthropic; 任务类型→通用对话/多模态理解; 名称具备具体系列、版本号和变体标识，符合规范；但该版本发布时间与具体能力参数建议以Anthropic官方公告复核。"
+      "created_date": "2026-05-13"
     },
     {
       "name": "perceptron-mk1",
@@ -6188,9 +5502,7 @@
       "website": "",
       "note": "多模态视频与空间推理模型；专注物理世界动态与因果关系理解；具备极高成本效益 [重要性:低|公司与官方来源不明，虽描述涉及空间推理但当前缺乏可核验的行业影响力信息。]",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-13",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 任务类型→多模态理解/视频理解/空间推理; 备注→多模态视频理解；空间推理；物理世界动态建模；因果关系理解; 问题: 公司字段为未知，需补充模型提供方; 官网缺失，无法核验官方发布来源; 模型发布时间需人工核验; 名称包含型号mk1，形式上符合具体模型/产品型号要求，但公开可信来源不足。"
+      "created_date": "2026-05-13"
     },
     {
       "name": "Dreaming System",
@@ -6206,9 +5518,7 @@
       "website": "",
       "note": "首创‘做梦’机制，使AI智能体能通过模拟回放与自我反思从错误中自主学习，提升任务成功率与鲁棒性",
       "release_date": "2026-05-07",
-      "created_date": "2026-05-14",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）; ⚠️ GPT-5.5建议删除(中置信)待人工确认 — 建议删除：产品泛称无版本号; 该条目不是具体模型名称，而是系统/框架名称; 备注含有来源性前缀“[LLM巡检]”，建议改为能力标签; 官网缺失，发布时间与归属需官方来源核验"
+      "created_date": "2026-05-14"
     },
     {
       "name": "MobileClaw",
@@ -6224,9 +5534,7 @@
       "website": "",
       "note": "面向移动端部署的模块化智能体框架，支持低延迟任务编排、本地-云端协同决策及Token级资源调度",
       "release_date": "2026-05-08",
-      "created_date": "2026-05-14",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）; ⚠️ GPT-5.5建议删除(中置信)待人工确认 — 建议删除：产品泛称无版本号; 该条目不是具体模型名称，而是智能体框架名称; 国内外字段错误：中国移动应为国内公司; 备注含有来源性前缀“[LLM巡检]”，建议改为能力标签; 官网缺失，发布时间需官方来源核验"
+      "created_date": "2026-05-14"
     },
     {
       "name": "ernie-5.1",
@@ -6242,9 +5550,7 @@
       "website": "https://yiyan.baidu.com/",
       "note": "LM Arena text榜第16名(ELO 1473); 百度文心大模型5.1版本",
       "release_date": "2026-05-09",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "TML-Interaction-Small",
@@ -6260,9 +5566,7 @@
       "website": "",
       "note": "翁荔创业首个实时交互模型 | 来源: 腾讯研究院AI速递 20260513 [重要性:中|高关注海外创业公司的首个实时多模态交互模型，如属实具有较高跟踪价值，但不在重点关注公司清单且需核验。]",
       "release_date": "2026-05-12",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 备注→实时交互；多模态语音/视频理解；智能体协作；MoE架构；276B参数/12B激活（待官方核验）; 问题: 模型名称包含Small型号，基本指向具体变体，但缺少公开可核验的正式版本号，建议人工核实是否为官方模型名; 备注包含来源信息，建议改为模型自身技术特征标签; 发布时间缺失，未能基于可靠官方信息补全; 官网缺失，未能基于可靠官方模型页面补全; 开闭源为未知，需核验; 该条信息疑似来自资讯自动提取，模型参数和发布时间均需以Thinking Machines Lab官方公告为准。"
+      "created_date": "2026-05-14"
     },
     {
       "name": "GridSFM_Open",
@@ -6278,9 +5582,7 @@
       "website": "https://huggingface.co/microsoft/GridSFM_Open",
       "note": "HuggingFace graph-ml",
       "release_date": "2026-05-12",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "AnyFlow-FAR-Wan2.1-14B-Diffusers",
@@ -6296,9 +5598,7 @@
       "website": "https://huggingface.co/nvidia/AnyFlow-FAR-Wan2.1-14B-Diffusers",
       "note": "HuggingFace text-to-video",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "AnyFlow-FAR-Wan2.1-1.3B-Diffusers",
@@ -6314,9 +5614,7 @@
       "website": "https://huggingface.co/nvidia/AnyFlow-FAR-Wan2.1-1.3B-Diffusers",
       "note": "HuggingFace text-to-video",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "AnyFlow-Wan2.1-T2V-14B-Diffusers",
@@ -6332,9 +5630,7 @@
       "website": "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-14B-Diffusers",
       "note": "HuggingFace text-to-video",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "AnyFlow-Wan2.1-T2V-1.3B-Diffusers",
@@ -6350,9 +5646,7 @@
       "website": "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-1.3B-Diffusers",
       "note": "HuggingFace text-to-video",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "Wan2.2-T2V-A14B-Diffusers-FP8",
@@ -6368,9 +5662,7 @@
       "website": "https://huggingface.co/nvidia/Wan2.2-T2V-A14B-Diffusers-FP8",
       "note": "HuggingFace text-to-video",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "Wan2.2-T2V-A14B-Diffusers-NVFP4",
@@ -6386,9 +5678,7 @@
       "website": "https://huggingface.co/nvidia/Wan2.2-T2V-A14B-Diffusers-NVFP4",
       "note": "HuggingFace text-to-video",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "Kimi-K2.6-NVFP4",
@@ -6404,9 +5694,7 @@
       "website": "https://huggingface.co/nvidia/Kimi-K2.6-NVFP4",
       "note": "HuggingFace text-generation",
       "release_date": "2026-05-11",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": ""
+      "created_date": "2026-05-14"
     },
     {
       "name": "GENE-26.5",
@@ -6422,9 +5710,7 @@
       "website": "",
       "note": "首个机器人基础模型 [重要性:中|机器人基础模型属于具身智能领域重要方向，但公司不在重点/优秀关注清单且信息需官方核验。]",
       "release_date": "2026-05-08",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 类型→具身智能; 备注→机器人基础模型；具身智能；机器人控制；版本26.5（待官方核验）; 问题: 模型名称包含版本号26.5，形式上符合具体模型名称规范; 发布时间虽已填写为2026-05-08，但来源为自动提取，需以Genesis AI官方公告核验; 官网缺失，未能基于可靠官方模型页面补全; 开闭源为未知，需核验; “首个机器人基础模型”表述较强，建议补充官方证据或改为更客观标签; 该模型如属实具备领域价值，但当前公开可核验信息不足。"
+      "created_date": "2026-05-14"
     },
     {
       "name": "GPT-Realtime-2",
@@ -6440,9 +5726,7 @@
       "website": "",
       "note": "GPT-5级推理的实时音频模型 [重要性:高|OpenAI实时语音模型的重大版本更新如属实属于国外重点公司的关键能力升级。]",
       "release_date": "2026-05-09",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 官网→https://platform.openai.com/docs/guides/realtime; 备注→实时音频；低延迟语音交互；通用对话；推理增强（待官方核验）; 问题: 模型名称包含版本号2，形式上符合具体模型名称规范; 截至可核验公开资料，未确认该精确模型名和2026-05-09官方发布时间，需核对OpenAI官方公告; “GPT-5级推理”属于强宣传性描述，需官方依据; 备注建议去除资讯来源，保留模型能力标签; OpenAI官方模型ID命名通常较严格，建议核对是否存在正式API模型ID，而非媒体归纳名。"
+      "created_date": "2026-05-14"
     },
     {
       "name": "GPT-Realtime-Translate",
@@ -6458,9 +5742,7 @@
       "website": "",
       "note": "支持70种语言的实时翻译模型 [重要性:中|OpenAI的实时翻译子变体属于重点公司的非旗舰能力更新，值得关注但重要性低于旗舰模型。]",
       "release_date": "2026-05-09",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 官网→https://platform.openai.com/docs/guides/realtime; 备注→实时语音翻译；多语言支持；低延迟语音交互（70种语言待官方核验）; 问题: 名称为能力型子变体，缺少明确数字版本号，需核实是否为OpenAI正式模型ID; 未确认该精确模型名和2026-05-09官方发布时间，需核对OpenAI官方公告; “支持70种语言”需官方依据; 备注建议去除资讯来源，保留模型能力标签; 若该名称仅为功能/产品能力而非独立模型ID，建议合并到GPT-Realtime系列而非单独收录。"
+      "created_date": "2026-05-14"
     },
     {
       "name": "GPT-Realtime-Whisper",
@@ -6476,9 +5758,7 @@
       "website": "",
       "note": "低延迟流式语音转录模型 [重要性:中|OpenAI语音转录能力子变体属于重点公司的非旗舰更新，具有应用价值但不是旗舰模型。]",
       "release_date": "2026-05-09",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 官网→https://platform.openai.com/docs/guides/speech-to-text; 备注→流式语音转录；低延迟ASR；实时音频输入（待官方核验）; 问题: 名称为能力型子变体，缺少明确数字版本号，需核实是否为OpenAI正式模型ID; 未确认该精确模型名和2026-05-09官方发布时间，需核对OpenAI官方公告; 需避免与2022年发布的Whisper旧模型混淆；若实际只是Whisper而非新Realtime变体，则应按旧模型删除; 备注建议去除资讯来源，保留模型能力标签; 如果该条记录指的是旧Whisper系列重新包装，应标注“建议删除：旧模型（发布于2022年）”；当前名称包含GPT-Realtime前缀，暂按疑似新子变体处理。"
+      "created_date": "2026-05-14"
     },
     {
       "name": "TransPaaS 4.0",
@@ -6494,9 +5774,7 @@
       "website": "",
       "note": "以交通大模型为核心的新一代智慧交通操作系统，集成多智能体协同调度、具身装备控制与路网级自主决策能力",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-14",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-14"
     },
     {
       "name": "MoMA (Mobile Model Platform)",
@@ -6512,9 +5790,7 @@
       "website": "",
       "note": "移动模型服务平台，提供万亿级Token服务体验包，内置适配端侧部署的轻量化MoE基座模型族",
       "release_date": "2026-05-08",
-      "created_date": "2026-05-14",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-14"
     },
     {
       "name": "Doubao-Seed-2.0-lite",
@@ -6530,9 +5806,7 @@
       "website": "",
       "note": "豆包首款全模态理解模型 | 来源: 腾讯研究院AI速递 20260508 [重要性:高|字节跳动/豆包属于国内重点关注公司，Seed 2.0 lite 若为豆包首款全模态理解模型则属于重要版本更新。]",
       "release_date": "2026-05-06",
-      "created_date": "2026-05-14",
-      "is_new": "New",
-      "status": "nan; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 备注→全模态理解；通用对话；视频理解；图像理解；语音识别；lite轻量版; 官网→https://www.volcengine.com/product/doubao; 公司→字节跳动/豆包; 任务类型→通用对话/多模态理解; 问题: 模型名称包含具体系列、版本号和子型号，非产品泛称，名称规范; 待核验官方发布日期：当前仅有来源提及为2026-05-08，需确认是否为模型提供方官方首次发布日; 原备注包含来源信息，建议改为模型技术特征标签; 未发现应删除的明确原因；但由于该模型发布时间超出可可靠核验范围，建议人工核对字节跳动/火山引擎/豆包官方公告后补全“模型发布时间”。; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 公司→字节跳动/豆包; 类型→多模态理解; 任务类型→通用对话/多模态理解/视频理解/图像理解/语音识别; 官网→https://www.volcengine.com/product/doubao; 备注→全模态理解；通用对话；视频理解；图像理解；语音识别；lite轻量版；支持推理; 问题: 模型名称包含具体系列、版本号和子型号，名称规范; 原备注包含来源信息和审核信息，建议改为模型自身技术特征标签; 模型发布时间为2026-05-06，位于本次窗口前后，建议保留; 官方发布日期仍建议以字节跳动/火山引擎/豆包官方公告复核; 未发现应删除原因；现有信息指向2026年窗口附近的新模型，但公开官方细节需人工复核。; ⚠️ GPT-5.5审核(中置信)待人工确认 — 建议修正: 官网→https://www.volcengine.com/product/doubao; 类型→多模态理解; 任务类型→通用对话/多模态理解/视频理解/图像理解/语音识别; 备注→全模态理解；通用对话；视频理解；图像理解；语音识别；支持推理；lite轻量版; 问题: 模型名称包含具体系列、版本号和子型号，名称规范; 模型发布时间为2026-05-06，位于本次窗口前1-2周内，按宽松原则保留; 原备注混入来源、重要性评级和审核信息，建议改为模型自身技术特征标签; 官方发布日期和具体技术指标仍需以字节跳动/火山引擎/豆包官方公告复核; 不建议删除；当前信息指向2026年窗口附近的新模型，但公开官方细节需人工核验。"
+      "created_date": "2026-05-14"
     },
     {
       "name": "DuMate (General Agent v1.0)",
@@ -6548,9 +5822,7 @@
       "website": "",
       "note": "百度在Create 2026大会上发布的首个生产级通用智能体，具备自主工具调用、长期记忆与多步任务编排能力，面向企业服务场景开放API。",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-15",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-15"
     },
     {
       "name": "秒哒App (Code Agent v1.0)",
@@ -6566,9 +5838,7 @@
       "website": "",
       "note": "百度推出的轻量级代码智能体应用，集成DuMate内核，支持自然语言→完整可运行项目（含前后端+部署脚本）一键生成。",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-15",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-15"
     },
     {
       "name": "Grok Build (Early Access v0.1)",
@@ -6584,9 +5854,7 @@
       "website": "",
       "note": "xAI发布的首个面向开发者任务的编程智能体，支持计划模式、并行子Agent机制与深度worktree集成，兼容AGENTS.md和MCP协议。",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-15",
-      "is_new": "否",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-15"
     },
     {
       "name": "MiniCPM-V 4.6",
@@ -6602,9 +5870,7 @@
       "website": "",
       "note": "面壁开源端侧多模态模型",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取"
+      "created_date": "2026-05-16"
     },
     {
       "name": "Mavis",
@@ -6620,9 +5886,7 @@
       "website": "",
       "note": "MiniMax升级Agent平台",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取"
+      "created_date": "2026-05-16"
     },
     {
       "name": "远征A3 全栈物理AI大模型（含多模态感知系统、全身运动控制模型）",
@@ -6638,9 +5902,7 @@
       "website": "",
       "note": "支撑第10000台通用具身机器人量产的全栈自研模型体系，覆盖视觉-语言-动作闭环，在汽车制造、3C装配等真实工业场景实现24小时稳定作业",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-16"
     },
     {
       "name": "DiscoRL（双层元强化学习框架）",
@@ -6656,9 +5918,7 @@
       "website": "",
       "note": "通过底层策略试错与上层元网络自主优化规则，实现AI算法的自我设计与跨游戏泛化，在57款游戏中超越MuZero等人工设计算法",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-16",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-16"
     },
     {
       "name": "GPT-5.6",
@@ -6674,9 +5934,7 @@
       "website": "",
       "note": "尚未正式发布，仅内测代号曝光（ember-alpha/beacon-alpha）；下月或升级发布",
       "release_date": "2026-05-15",
-      "created_date": "2026-05-18",
-      "is_new": "New",
-      "status": "腾讯研究院AI速递LLM自动提取; ⚠️ GPT-5.5审核(低置信)待人工确认 — 建议修正: 官网→https://platform.openai.com/docs/models; 任务类型→通用对话；代码生成；多模态理解; 问题: 模型名称形式上符合规范，但需人工核验是否为 OpenAI 官方发布的真实模型版本; 当前备注为“内测曝光”，不等同于官方发布；模型发布时间 2026-05-15 需要核验是否为 OpenAI 官方公告日; 缺少可核验的官方发布链接或模型卡; 备注应补充模型自身能力指标，如上下文长度、多模态能力、推理能力、价格等；目前信息不足; 不建议因未核实而直接删除；按宽松保留原则，应保留并标记为低置信度，等待官方公告或模型文档确认。"
+      "created_date": "2026-05-18"
     },
     {
       "name": "DuMate（百度搭子）",
@@ -6692,9 +5950,7 @@
       "website": "",
       "note": "百度发布的面向办公与服务场景的通用智能体，可自动处理邮箱客诉、分析销售数据、生成海报与活动页面，具备接近‘数字员工’的端到端任务执行能力。",
       "release_date": "2026-05-13",
-      "created_date": "2026-05-18",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-18"
     },
     {
       "name": "字节智助",
@@ -6710,13 +5966,11 @@
       "website": "",
       "note": "聚焦智能会议纪要、文档自动生成、邮件智能回复三大高频办公场景的企业级AI助手，已集成至飞书及内部协同工作流。",
       "release_date": "2026-05-08",
-      "created_date": "2026-05-18",
-      "is_new": "是",
-      "status": "待核实（LLM交叉巡检发现）"
+      "created_date": "2026-05-18"
     }
   ],
   "meta": {
     "total": 373,
-    "generated_at": "2026-05-19 19:14:23"
+    "generated_at": "2026-05-19 19:51:32"
   }
 }

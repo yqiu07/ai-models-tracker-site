@@ -136,7 +136,7 @@ def load_master_table() -> pd.DataFrame:
 
 
 def _row_to_model(row) -> dict:
-    """将 DataFrame 行转为标准模型字典（包含所有 Excel 列）。"""
+    """将 DataFrame 行转为标准模型字典（14列，去掉是否新增和核实情况）。"""
     return {
         "name": _clean_value(row.get("模型名称")),
         "connected": _clean_value(row.get("是否接入")),
@@ -152,8 +152,6 @@ def _row_to_model(row) -> dict:
         "note": _clean_value(row.get("备注")),
         "release_date": _normalize_date(row.get("模型发布时间")),
         "created_date": _normalize_date(row.get("记录创建时间")),
-        "is_new": _clean_value(row.get("是否新增")),
-        "status": _clean_value(row.get("核实情况")),
     }
 
 
@@ -289,7 +287,6 @@ def main():
     for hf in history_files:
         if hf.name == ".gitkeep":
             continue
-        # 文件名格式: YYYYMMDD_YYYYMMDD.json
         stem = hf.stem
         parts = stem.split("_")
         if len(parts) == 2:
@@ -301,6 +298,33 @@ def main():
                 "until": until_str,
                 "label": f"{since_str} ~ {until_str}",
             })
+
+    # 同时扫描 Report/ 下的 daily_report_*.md，复制到 history/ 并加入索引
+    if report_dir.exists():
+        import shutil as _shutil
+        for md_file in sorted(report_dir.glob("daily_report_*.md"), reverse=True):
+            match = re.search(r"daily_report_(\d{8})-(\d{8})", md_file.name)
+            if match:
+                s, u = match.group(1), match.group(2)
+                since_str = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+                until_str = f"{u[:4]}-{u[4:6]}-{u[6:8]}"
+                label = f"{since_str} ~ {until_str}"
+                # 复制到 history/ 目录
+                dest = HISTORY_DIR / md_file.name
+                if not dest.exists():
+                    _shutil.copy2(md_file, dest)
+                # 避免重复
+                if not any(h["label"] == label for h in history_index):
+                    history_index.append({
+                        "file": f"history/{md_file.name}",
+                        "since": since_str,
+                        "until": until_str,
+                        "label": label,
+                        "format": "md",
+                    })
+
+    # 按 since 降序排列
+    history_index.sort(key=lambda x: x.get("since", ""), reverse=True)
 
     history_index_path = DATA_DIR / "history_index.json"
     with open(history_index_path, "w", encoding="utf-8") as f:

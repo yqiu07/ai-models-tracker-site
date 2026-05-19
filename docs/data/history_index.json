@@ -10,5 +10,61 @@
     "since": "2026-05-14",
     "until": "2026-05-19",
     "label": "2026-05-14 ~ 2026-05-19"
+  },
+  {
+    "file": "history/daily_report_20260514-20260517.md",
+    "since": "2026-05-14",
+    "until": "2026-05-17",
+    "label": "2026-05-14 ~ 2026-05-17",
+    "format": "md"
+  },
+  {
+    "file": "history/daily_report_20260514-20260515.md",
+    "since": "2026-05-14",
+    "until": "2026-05-15",
+    "label": "2026-05-14 ~ 2026-05-15",
+    "format": "md"
+  },
+  {
+    "file": "history/daily_report_20260509-20260512.md",
+    "since": "2026-05-09",
+    "until": "2026-05-12",
+    "label": "2026-05-09 ~ 2026-05-12",
+    "format": "md"
+  },
+  {
+    "file": "history/daily_report_20260509-20260511.md",
+    "since": "2026-05-09",
+    "until": "2026-05-11",
+    "label": "2026-05-09 ~ 2026-05-11",
+    "format": "md"
+  },
+  {
+    "file": "history/daily_report_20260508-20260513.md",
+    "since": "2026-05-08",
+    "until": "2026-05-13",
+    "label": "2026-05-08 ~ 2026-05-13",
+    "format": "md"
+  },
+  {
+    "file": "history/daily_report_20260508-20260508.md",
+    "since": "2026-05-08",
+    "until": "2026-05-08",
+    "label": "2026-05-08 ~ 2026-05-08",
+    "format": "md"
+  },
+  {
+    "file": "history/daily_report_20260506-20260507.md",
+    "since": "2026-05-06",
+    "until": "2026-05-07",
+    "label": "2026-05-06 ~ 2026-05-07",
+    "format": "md"
+  },
+  {
+    "file": "history/daily_report_20260101-20260330.md",
+    "since": "2026-01-01",
+    "until": "2026-03-30",
+    "label": "2026-01-01 ~ 2026-03-30",
+    "format": "md"
   }
 ]
