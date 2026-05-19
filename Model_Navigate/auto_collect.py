@@ -585,24 +585,72 @@ def _build_llmstats_note(model: dict) -> str:
 #  数据源 2：腾讯研究院（搜狐号）
 # ================================================================
 
-def start_txresearch_crawl(since_int: int, until_int: int) -> subprocess.Popen | None:
-    """非阻塞启动腾讯研究院爬虫（后台 Selenium 进程）。
+def _try_lite_crawl(since_int: int, until_int: int) -> bool:
+    """尝试用 requests 轻量方案采集腾讯研究院AI速递（无 Selenium 依赖）。
 
-    爬虫本身是纯工具（Selenium + requests + BeautifulSoup），不依赖任何 AI 能力，
-    因此可以在后台异步运行，主流水线同时处理其他数据源（如 llmstats）。
+    成功时直接生成 JSON 文件并返回 True；失败返回 False，由调用方 fallback。
+    """
+    lite_script = ROOT / "Crawl" / "TXresearch" / "crawl_sohu_lite.py"
+    if not lite_script.exists():
+        return False
+
+    try:
+        # 同步调用 lite 版本（通常 <10s 即可完成）
+        result = subprocess.run(
+            [sys.executable, "-X", "utf8", str(lite_script),
+             "--since", str(since_int), "--until", str(until_int)],
+            cwd=str(lite_script.parent),
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=60,
+        )
+        # 输出爬虫日志
+        for line in (result.stdout or "").strip().split("\n"):
+            if line.strip():
+                print(f"    {line.strip()}")
+
+        tag = f"{since_int}-{until_int}"
+        json_path = TX_DIR / f"articles_{tag}.json"
+        if result.returncode == 0 and json_path.exists():
+            return True
+
+        # lite 版本运行成功但未产出文件（可能窗口内无文章）
+        if result.returncode == 0:
+            print(f"  ⚠️ lite 采集器运行成功但未产出文件（窗口内可能无AI速递）")
+            return True  # 仍视为成功，不需要 fallback
+
+        return False
+    except (subprocess.TimeoutExpired, Exception) as exc:
+        print(f"  ⚠️ lite 采集器异常: {exc}")
+        return False
+
+
+def start_txresearch_crawl(since_int: int, until_int: int) -> subprocess.Popen | None:
+    """采集腾讯研究院AI速递文章。
+
+    策略（两级 fallback）：
+      1. 优先使用 crawl_sohu_lite.py（纯 requests，零 Selenium 依赖，同步执行）
+      2. lite 失败时 fallback 到 crawl_sohu.py（Selenium 后台进程）
 
     Returns:
-        subprocess.Popen 进程对象（供后续 wait_txresearch_result 等待），
-        如果已有缓存或爬虫脚本不存在则返回 None。
+        subprocess.Popen 进程对象（仅 fallback 到 Selenium 时返回），
+        如果 lite 成功、已有缓存或爬虫脚本不存在则返回 None。
     """
     tag = f"{since_int}-{until_int}"
     json_path = TX_DIR / f"articles_{tag}.json"
-    crawl_script = ROOT / "Crawl" / "TXresearch" / "crawl_sohu.py"
 
     if json_path.exists():
         print(f"  📂 腾讯研究院: 已有抓取缓存 {json_path.name}，跳过爬虫")
         return None
 
+    # === 策略1: requests 轻量方案（首选）===
+    print(f"  🚀 腾讯研究院: 尝试 lite 采集器（纯 requests）...")
+    if _try_lite_crawl(since_int, until_int):
+        print(f"  ✅ 腾讯研究院: lite 采集器成功")
+        return None
+
+    # === 策略2: fallback 到 Selenium 版本 ===
+    print(f"  ⚠️ 腾讯研究院: lite 失败，fallback 到 Selenium 爬虫...")
+    crawl_script = ROOT / "Crawl" / "TXresearch" / "crawl_sohu.py"
     if not crawl_script.exists():
         print(f"  ⚠️ 腾讯研究院: 爬虫脚本不存在 {crawl_script}")
         return None
@@ -1118,30 +1166,52 @@ def _fetch_openai_compatible_models(config: dict) -> list[dict]:
 
 
 def _fetch_qianfan_models(config: dict) -> list[dict]:
-    """通过百度千帆 /v2/models 端点获取模型列表。
+    """通过百度千帆 /v1/models 端点获取模型列表（带真实 created 时间戳）。
 
-    千帆 API 返回格式: {result: [{modelId, modelName, ...}]}
-    需要转换为统一的 {id, created} 格式。
+    Re 2026/05/15/22:50 — 从 /v2/models 切换到 /v1/models：
+      /v2/models 返回 183 个模型但 created 全部为 0（无法做时间过滤）；
+      /v1/models 返回精选模型列表，有真实的 Unix 时间戳和丰富的描述字段。
+
+    Fallback: /v1/models 失败时退回 /v2/models（但 created=0 的会被上层过滤掉）。
     """
     api_base = os.environ.get(config["api_base_env"], "")
     api_key = os.environ.get(config["api_key_env"], "")
-
-    url = f"{api_base.rstrip('/')}/v2/models"
     headers = {"Authorization": f"Bearer {api_key}"}
-    params = {"pageSize": 200}
 
-    resp = requests.get(url, headers=headers, params=params, timeout=30)
+    # 策略1: /v1/models（有真实时间戳）
+    url_v1 = f"{api_base.rstrip('/')}/v1/models"
+    try:
+        resp = requests.get(url_v1, headers=headers, timeout=30)
+        if resp.status_code == 200:
+            data = resp.json()
+            raw_models = data.get("data", [])
+            if raw_models and raw_models[0].get("created", 0) > 0:
+                unified = []
+                for model in raw_models:
+                    model_id = model.get("id", "")
+                    created = model.get("created", 0)
+                    # /v1 还提供 owned_by 可用于公司推断
+                    owner = model.get("owned_by", "")
+                    unified.append({"id": model_id, "created": created, "_owner": owner})
+                print(f"    (使用 /v1/models，{len(unified)} 个模型，有时间戳)")
+                return unified
+    except Exception:
+        pass
+
+    # Fallback: /v2/models（created 全部为 0，会被上层 created=0 过滤逻辑跳过）
+    url_v2 = f"{api_base.rstrip('/')}/v2/models"
+    resp = requests.get(url_v2, headers=headers, params={"pageSize": 200}, timeout=30)
     if resp.status_code != 200:
         raise RuntimeError(f"HTTP {resp.status_code}: {resp.text[:200]}")
 
     data = resp.json()
     raw_models = data.get("result", data.get("data", []))
+    print(f"    (fallback /v2/models，{len(raw_models)} 个模型，created=0 将被跳过)")
 
     unified = []
     for model in raw_models:
-        model_id = model.get("modelName") or model.get("model") or model.get("id", "")
-        created = model.get("createTime", 0)
-        # 千帆的 createTime 可能是毫秒时间戳
+        model_id = model.get("id") or model.get("modelName") or model.get("model", "")
+        created = model.get("created", 0)
         if created > 1e12:
             created = int(created / 1000)
         unified.append({"id": model_id, "created": created})
@@ -1254,6 +1324,147 @@ def _model_to_row(model_id: str, created_ts: int, config: dict,
     }
 
 
+def _fallback_search_release_dates(
+    models: list[dict], config: dict, effective_since: int, effective_until: int
+) -> list[dict]:
+    """降级策略：对无时间戳的模型，取前 N 个用 LLM web search 查发布时间，按时间过滤。
+
+    Re 2026/05/15/23:50 — created=0 降级策略实现。
+    当平台 API 全部返回 created=0 时，不直接跳过，而是：
+    1. 取前 10 个模型名
+    2. 批量调 LLM（联网搜索）查询各模型的发布时间
+    3. 在时间窗口内的保留，窗口外的跳过
+
+    Args:
+        models: 待查询的模型列表（已过滤 skip_patterns）。
+        config: 平台配置字典。
+        effective_since: 时间窗口起始（Unix 时间戳）。
+        effective_until: 时间窗口截止（Unix 时间戳，0 表示不限）。
+
+    Returns:
+        通过时间过滤的标准行列表。
+    """
+    if not models:
+        return []
+
+    # 构造模型名列表
+    model_names = [m.get("id", "") for m in models]
+    print(f"    🔍 降级查询 {len(model_names)} 个模型的发布时间...")
+
+    # 尝试调用 LLM web search 获取发布时间
+    release_dates = _batch_search_release_dates(model_names)
+
+    # 按时间窗口过滤
+    rows = []
+    for model, model_name in zip(models, model_names):
+        date_str = release_dates.get(model_name, "")
+        if not date_str:
+            # LLM 没查到发布时间，跳过
+            continue
+
+        # 解析日期为时间戳
+        try:
+            dt = datetime.strptime(date_str, "%Y-%m-%d")
+            ts = int(dt.timestamp())
+        except (ValueError, TypeError):
+            continue
+
+        if ts < effective_since:
+            continue
+        if effective_until and ts > effective_until:
+            continue
+
+        # 通过时间过滤，生成标准行
+        owner_override = model.get("_owner", "")
+        row = _model_to_row(model.get("id", ""), ts, config, owner_override)
+        row["模型发布时间"] = date_str  # 用 LLM 查到的发布时间直接填入
+        rows.append(row)
+        print(f"      ✅ {model_name} → {date_str}")
+
+    print(f"    📊 降级策略结果: {len(rows)} 个模型通过时间过滤")
+    return rows
+
+
+def _batch_search_release_dates(model_names: list[str]) -> dict[str, str]:
+    """批量调用 LLM 联网搜索，查询模型发布时间。
+
+    Returns:
+        {model_name: "YYYY-MM-DD"} 字典；查不到的不包含在结果中。
+    """
+    # 获取 API 配置（复用 verify_models.py 的环境变量逻辑）
+    api_key = os.environ.get("LLM_API_KEY") or os.environ.get("DASHSCOPE_API_KEY", "")
+    api_base = os.environ.get("LLM_API_BASE") or os.environ.get("DASHSCOPE_API_BASE", "")
+
+    if not api_key or not api_base:
+        print(f"    ⚠️ 未配置 LLM API，降级策略跳过")
+        return {}
+
+    names_text = "\n".join(f"- {name}" for name in model_names)
+    prompt = (
+        f"以下是一批 AI 模型名称，请联网搜索每个模型的官方发布日期。\n"
+        f"严格按 JSON 格式返回，key 是模型名称，value 是发布日期（YYYY-MM-DD）。\n"
+        f"如果搜索不到某个模型的发布日期，不要包含该模型。不要编造日期。\n\n"
+        f"模型列表:\n{names_text}\n\n"
+        f"返回格式示例:\n"
+        f'{{"model-a": "2026-05-10", "model-b": "2026-04-28"}}'
+    )
+
+    url = f"{api_base.rstrip('/')}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": os.environ.get("LLM_MODEL", "qwen3.6-plus"),
+        "messages": [
+            {"role": "system", "content": "你是 AI 模型信息检索助手。联网搜索模型发布日期，严格返回 JSON。"},
+            {"role": "user", "content": prompt},
+        ],
+        "enable_search": True,
+        "temperature": 0.1,
+    }
+
+    try:
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        resp = requests.post(url, headers=headers, json=payload, timeout=60, verify=False)
+        if resp.status_code != 200:
+            print(f"    ⚠️ LLM API HTTP {resp.status_code}")
+            return {}
+
+        content = resp.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+
+        # 从返回内容中提取 JSON
+        import json as json_module
+        # 尝试直接解析
+        try:
+            result = json_module.loads(content)
+            if isinstance(result, dict):
+                return {k: v for k, v in result.items() if re.match(r"\d{4}-\d{2}-\d{2}", str(v))}
+        except json_module.JSONDecodeError:
+            pass
+
+        # 尝试从 markdown code block 中提取
+        json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", content, re.DOTALL)
+        if json_match:
+            try:
+                result = json_module.loads(json_match.group(1))
+                if isinstance(result, dict):
+                    return {k: v for k, v in result.items() if re.match(r"\d{4}-\d{2}-\d{2}", str(v))}
+            except json_module.JSONDecodeError:
+                pass
+
+        print(f"    ⚠️ LLM 返回内容无法解析为 JSON")
+        return {}
+
+    except requests.exceptions.Timeout:
+        print(f"    ⚠️ LLM API 超时（60s）")
+        return {}
+    except Exception as exc:
+        print(f"    ⚠️ LLM API 异常: {exc}")
+        return {}
+
+
 def _collect_single_platform(config: dict, since_ts: int = 0, until_ts: int = 0) -> list[dict]:
     """采集单个平台的模型目录，按时间窗口过滤，返回标准行列表。"""
     platform_name = config["name"]
@@ -1292,31 +1503,50 @@ def _collect_single_platform(config: dict, since_ts: int = 0, until_ts: int = 0)
     effective_since = since_ts if since_ts else fallback_cutoff
     effective_until = until_ts if until_ts else 0  # 0 表示不限上界
 
+    # 先过滤 skip_patterns
+    filtered_models = []
     for model in raw_models:
         model_id = model.get("id", "")
-        created_ts = model.get("created", 0)
         model_id_lower = model_id.lower()
-
         if any(pat in model_id_lower for pat in skip_patterns):
             skipped_pattern += 1
             continue
+        filtered_models.append(model)
 
-        # 时效性过滤：只保留时间窗口内的模型
-        if created_ts and created_ts < effective_since:
-            skipped_old += 1
-            continue
-        if created_ts and effective_until and created_ts > effective_until:
-            skipped_old += 1
-            continue
+    # 检测 created=0 比例：如果大量模型无时间戳，启用降级策略
+    no_time_count = sum(1 for m in filtered_models if not m.get("created", 0))
+    has_time_count = len(filtered_models) - no_time_count
 
-        # 自定义适配器可能预解析了 _owner 字段（如 OpenRouter）
-        owner_override = model.get("_owner", "")
-        rows.append(_model_to_row(model_id, created_ts, config, owner_override))
+    if no_time_count > 0 and has_time_count == 0:
+        # 全部 created=0：降级策略 — 取前10个，LLM web search 发布时间，按时间过滤
+        print(f"    ⚠️ 全部 {no_time_count} 个模型无时间戳，启用降级策略（前10个 + LLM 查发布时间）")
+        rows = _fallback_search_release_dates(
+            filtered_models[:10], config, effective_since, effective_until
+        )
+        skipped_old = max(0, no_time_count - 10)
+    else:
+        # 正常路径：有时间戳的按时间过滤，created=0 的跳过
+        for model in filtered_models:
+            model_id = model.get("id", "")
+            created_ts = model.get("created", 0)
+
+            if not created_ts:
+                skipped_old += 1
+                continue
+            if created_ts < effective_since:
+                skipped_old += 1
+                continue
+            if effective_until and created_ts > effective_until:
+                skipped_old += 1
+                continue
+
+            owner_override = model.get("_owner", "")
+            rows.append(_model_to_row(model_id, created_ts, config, owner_override))
 
     if skipped_pattern:
         print(f"    ⏭️ 跳过: {skipped_pattern} 个（模式匹配）")
     if skipped_old:
-        print(f"    ⏭️ 跳过: {skipped_old} 个（时间窗口外）")
+        print(f"    ⏭️ 跳过: {skipped_old} 个（时间窗口外或未查询）")
     print(f"    📊 可用: {len(rows)} 个")
     return rows
 
@@ -1584,16 +1814,78 @@ def _build_hf_search_names(name: str, company: str, org_id: str) -> list[str]:
 #  数据源 5：LM Arena（原 LMSYS Chatbot Arena）排行榜
 # ================================================================
 
+# Re 2026/05/15/22:37 — 重构为多策略 fallback 链
+
+# LM Arena 请求策略链（按优先级尝试，任一成功即返回）
+_LMARENA_STRATEGIES = [
+    {
+        "label": "官方 lmarena.ai (verify=True)",
+        "base_url": "https://lmarena.ai/api/v1/leaderboard",
+        "verify": True,
+    },
+    {
+        "label": "官方 lmarena.ai (verify=False)",
+        "base_url": "https://lmarena.ai/api/v1/leaderboard",
+        "verify": False,
+    },
+    {
+        "label": "第三方 api.wulong.dev (verify=True)",
+        "base_url": "https://api.wulong.dev/arena-ai-leaderboards/v1/leaderboard",
+        "verify": True,
+    },
+    {
+        "label": "第三方 api.wulong.dev (verify=False)",
+        "base_url": "https://api.wulong.dev/arena-ai-leaderboards/v1/leaderboard",
+        "verify": False,
+    },
+]
+
+
+def _lmarena_fetch_leaderboard(leaderboard_name: str) -> dict | None:
+    """尝试多种策略获取 LM Arena 排行榜数据，返回 JSON dict 或 None。"""
+    for strategy in _LMARENA_STRATEGIES:
+        label = strategy["label"]
+        base_url = strategy["base_url"]
+        verify = strategy["verify"]
+        api_url = f"{base_url}?name={leaderboard_name}"
+        try:
+            resp = requests.get(api_url, timeout=20, verify=verify)
+            if resp.status_code == 200:
+                data = resp.json()
+                # 验证返回的数据结构合法
+                if data.get("models") or data.get("data"):
+                    print(f"    [OK] {label}")
+                    return data
+                print(f"    [EMPTY] {label}: 返回数据为空")
+            elif resp.status_code == 403:
+                print(f"    [403] {label}: 域名被安全策略拦截")
+            else:
+                print(f"    [HTTP {resp.status_code}] {label}")
+        except requests.exceptions.SSLError:
+            print(f"    [SSL] {label}: 证书验证失败")
+        except requests.exceptions.Timeout:
+            print(f"    [TIMEOUT] {label}: 超时")
+        except requests.exceptions.ConnectionError:
+            print(f"    [CONN] {label}: 连接失败")
+        except Exception as exc:
+            print(f"    [ERR] {label}: {exc}")
+    return None
+
+
 def collect_lmarena(since_int: int, until_int: int) -> list[dict]:
-    """通过第三方 REST API 采集 LM Arena 排行榜数据。
+    """采集 LM Arena 排行榜数据（多策略 fallback）。
 
     采集 text 和 code 两个排行榜，将模型映射为流水线标准行格式。
     Arena 不提供模型发布时间，因此不按时间窗口过滤，全量采集排名模型。
 
-    API: https://api.wulong.dev/arena-ai-leaderboards/v1/
+    Fallback 策略链:
+      1. lmarena.ai 官方 API (verify=True)
+      2. lmarena.ai 官方 API (verify=False)
+      3. api.wulong.dev 第三方 (verify=True)
+      4. api.wulong.dev 第三方 (verify=False)
+      5. 全部失败 → 优雅跳过
     """
     leaderboard_names = ["text", "code"]
-    base_url = "https://api.wulong.dev/arena-ai-leaderboards/v1/leaderboard"
 
     print(f"\n🏆 数据源: LM Arena 排行榜（{', '.join(leaderboard_names)}）")
     print("=" * 50)
@@ -1602,79 +1894,73 @@ def collect_lmarena(since_int: int, until_int: int) -> list[dict]:
     seen_models: dict[str, dict] = {}
 
     for leaderboard_name in leaderboard_names:
-        try:
-            api_url = f"{base_url}?name={leaderboard_name}"
-            resp = requests.get(api_url, timeout=30)
+        print(f"  📡 排行榜: {leaderboard_name}")
+        data = _lmarena_fetch_leaderboard(leaderboard_name)
 
-            if resp.status_code != 200:
-                print(f"  ❌ {leaderboard_name}: HTTP {resp.status_code}")
+        if data is None:
+            print(f"  ⚠️ {leaderboard_name}: 所有策略均失败，跳过")
+            print(f"      提示: 可能需要申请域名加白 (lmarena.ai / api.wulong.dev)")
+            continue
+
+        models = data.get("models", data.get("data", []))
+        fetched_at = data.get("meta", {}).get("fetched_at", "")
+        print(f"    获取到 {len(models)} 个模型（fetched_at: {fetched_at}）")
+
+        for model_entry in models:
+            model_name = model_entry.get("model", "")
+            vendor = model_entry.get("vendor", "")
+            license_type = model_entry.get("license", "")
+            rank = model_entry.get("rank", "")
+            score = model_entry.get("score", "")
+            confidence_interval = model_entry.get("ci", "")
+            votes = model_entry.get("votes", "")
+
+            # 构造本排行榜的备注片段
+            note_parts = [f"Arena-{leaderboard_name} #{rank}"]
+            if score:
+                note_parts.append(f"ELO {score}")
+            if confidence_interval:
+                note_parts.append(f"±{confidence_interval}")
+            if votes:
+                note_parts.append(f"{votes} votes")
+            remark_fragment = " | ".join(note_parts)
+
+            # 跨排行榜去重：同一模型合并备注
+            name_key = model_name.strip().lower()
+            if name_key in seen_models:
+                existing_remark = seen_models[name_key]["备注"]
+                seen_models[name_key]["备注"] = f"{existing_remark} ; {remark_fragment}"
                 continue
 
-            data = resp.json()
-            models = data.get("models", [])
-            fetched_at = data.get("meta", {}).get("fetched_at", "")
-            print(f"  📡 {leaderboard_name}: 获取到 {len(models)} 个模型（fetched_at: {fetched_at}）")
+            # 判断国内外
+            vendor_lower = vendor.lower().replace(" ", "").replace("-", "")
+            domestic = "国内" if is_domestic(vendor_lower) else "国外"
 
-            for model_entry in models:
-                model_name = model_entry.get("model", "")
-                vendor = model_entry.get("vendor", "")
-                license_type = model_entry.get("license", "")
-                rank = model_entry.get("rank", "")
-                score = model_entry.get("score", "")
-                confidence_interval = model_entry.get("ci", "")
-                votes = model_entry.get("votes", "")
+            # 判断开闭源
+            open_source = "开源" if license_type == "open" else "闭源"
 
-                # 构造本排行榜的备注片段
-                note_parts = [f"Arena-{leaderboard_name} #{rank}"]
-                if score:
-                    note_parts.append(f"ELO {score}")
-                if confidence_interval:
-                    note_parts.append(f"±{confidence_interval}")
-                if votes:
-                    note_parts.append(f"{votes} votes")
-                remark_fragment = " | ".join(note_parts)
+            # 利用已有推断函数推断类型和推理能力
+            pseudo_model = {"name": model_name, "model_id": model_name}
+            inferred_type = _infer_type(pseudo_model)
+            inferred_reasoning = _infer_reasoning(pseudo_model)
 
-                # 跨排行榜去重：同一模型合并备注
-                name_key = model_name.strip().lower()
-                if name_key in seen_models:
-                    existing_remark = seen_models[name_key]["备注"]
-                    seen_models[name_key]["备注"] = f"{existing_remark} ; {remark_fragment}"
-                    continue
-
-                # 判断国内外
-                vendor_lower = vendor.lower().replace(" ", "").replace("-", "")
-                domestic = "国内" if is_domestic(vendor_lower) else "国外"
-
-                # 判断开闭源
-                open_source = "开源" if license_type == "open" else "闭源"
-
-                # 利用已有推断函数推断类型和推理能力
-                pseudo_model = {"name": model_name, "model_id": model_name}
-                inferred_type = _infer_type(pseudo_model)
-                inferred_reasoning = _infer_reasoning(pseudo_model)
-
-                row = {
-                    "模型名称": model_name,
-                    "公司": vendor,
-                    "国内外": domestic,
-                    "开闭源": open_source,
-                    "尺寸": _infer_size_from_name(model_name),
-                    "类型": inferred_type,
-                    "能否推理": inferred_reasoning,
-                    "任务类型": "",
-                    "官网": "https://lmarena.ai/",
-                    "备注": remark_fragment,
-                    "模型发布时间": "",
-                    "记录创建时间": today_str(),
-                    "是否新增": "New",
-                    "核实情况": "LM Arena 排行榜",
-                }
-                seen_models[name_key] = row
-
-        except requests.exceptions.Timeout:
-            print(f"  ❌ {leaderboard_name}: 请求超时（30s）")
-        except Exception as exc:
-            print(f"  ❌ {leaderboard_name}: {exc}")
+            row = {
+                "模型名称": model_name,
+                "公司": vendor,
+                "国内外": domestic,
+                "开闭源": open_source,
+                "尺寸": _infer_size_from_name(model_name),
+                "类型": inferred_type,
+                "能否推理": inferred_reasoning,
+                "任务类型": "",
+                "官网": "https://lmarena.ai/",
+                "备注": remark_fragment,
+                "模型发布时间": "",
+                "记录创建时间": today_str(),
+                "是否新增": "New",
+                "核实情况": "LM Arena 排行榜",
+            }
+            seen_models[name_key] = row
 
     all_rows = list(seen_models.values())
     print(f"\n  ✅ LM Arena 共采集 {len(all_rows)} 个模型（跨榜去重后）")
@@ -1979,15 +2265,14 @@ def main():
         print(f"  去重后: {len(llm_unique)}/{len(llm_rows)} 条")
         all_new_rows.extend(llm_unique)
 
-    # 3. 平台模型目录（通用适配器：DashScope / 硅基流动 / DeepSeek / 火山引擎等）
-    if args.source in ("all", "platform"):
-        platform_rows = collect_platform_catalogs(since_int, until_int)
-        combined_existing = existing_names | {
-            r.get("模型名称", "").strip().lower() for r in all_new_rows
-        }
-        platform_unique = deduplicate_rows(platform_rows, combined_existing)
-        print(f"  去重后: {len(platform_unique)}/{len(platform_rows)} 条")
-        all_new_rows.extend(platform_unique)
+    # 3. 平台模型目录 — Re 2026/05/19/11:40 暂停：灌入旧模型根因未解决
+    #    根因：LM Arena 全量无时间过滤；Moonshot/千帆 created=0 + LLM降级查错
+    #    恢复条件：实现可靠的「发布时间硬校验」机制后重新启用
+    if args.source == "platform":
+        print("\n⚠️ 平台模型目录采集已暂停（旧模型灌入问题待修复）")
+        print("   跳过: DashScope / 硅基流动 / Moonshot / 百度千帆 / DeepSeek 等")
+    elif args.source == "all":
+        print("\n⏭️ 跳过: 平台模型目录（暂停中）")
 
     # 4. HuggingFace API（批量发现开源模型）
     if args.source in ("all", "huggingface"):
@@ -2000,15 +2285,13 @@ def main():
         print(f"  去重后: {len(hf_unique)}/{len(hf_rows)} 条")
         all_new_rows.extend(hf_unique)
 
-    # 5. LM Arena 排行榜（text + code）
-    if args.source in ("all", "lmarena"):
-        arena_rows = collect_lmarena(since_int, until_int)
-        combined_existing = existing_names | {
-            r.get("模型名称", "").strip().lower() for r in all_new_rows
-        }
-        arena_unique = deduplicate_rows(arena_rows, combined_existing)
-        print(f"  去重后: {len(arena_unique)}/{len(arena_rows)} 条")
-        all_new_rows.extend(arena_unique)
+    # 5. LM Arena 排行榜 — Re 2026/05/19/11:40 暂停：全量灌入无时间过滤
+    #    根因：Arena 不提供模型发布时间，每次全量灌入排行榜所有模型
+    #    恢复条件：实现「已有总表名称严格匹配 + 新模型才入库」机制后重新启用
+    if args.source == "lmarena":
+        print("\n⚠️ LM Arena 排行榜采集已暂停（全量灌入旧模型问题待修复）")
+    elif args.source == "all":
+        print("\n⏭️ 跳过: LM Arena 排行榜（暂停中）")
 
     # 6. HuggingFace 核实（对开源模型自动验证）
     if all_new_rows:

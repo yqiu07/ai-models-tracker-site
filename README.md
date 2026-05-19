@@ -6,7 +6,7 @@ description: AI 模型导航与追踪系统，全自动化 AI 模型追踪流水
 
 > 全自动化 AI 模型追踪流水线，覆盖**采集→去重→审核→校验→巡检→归档→推送→记录**八步全链路。
 
-多数据源自动采集（llmstats.com / 腾讯研究院 / HuggingFace / **平台模型目录** / **LM Arena**），LLM 自动提取模型信息，GPT-5.5 智能审核 + 重要性评级（宽松保留 + 三级分类），钉钉日报一键推送。
+多数据源自动采集（llmstats.com / 腾讯研究院 / HuggingFace），LLM 自动提取模型信息，GPT-5.5 智能审核 + 重要性评级（宽松保留 + 三级分类），钉钉日报一键推送。
 
 本项目同时是一个 AI Skill —— `Model_Navigate/SKILL.md` 是 AI 的操作手册，AI 可直接按流程执行完整的模型追踪任务。
 
@@ -14,7 +14,8 @@ description: AI 模型导航与追踪系统，全自动化 AI 模型追踪流水
 
 ## 功能亮点
 
-- **多源自动采集**：llm-stats.com 4 页面（[首页](https://llm-stats.com) / [LLM 详情](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates)）+ 腾讯研究院 Selenium 爬虫 + HuggingFace API 交叉校验 + **平台模型目录采集**（通用适配器框架，支持 12 个平台）+ **LM Arena 排行榜**（text/code 双榜采集，跨榜去重，84+ 模型）
+- **多源自动采集**：llm-stats.com 4 页面（[首页](https://llm-stats.com) / [LLM 详情](https://llm-stats.com/leaderboards/llm-leaderboard) / [Open LLM](https://llm-stats.com/leaderboards/open-llm-leaderboard) / [Updates](https://llm-stats.com/llm-updates)）+ 腾讯研究院双模式爬虫（requests 轻量优先 + Selenium fallback）+ HuggingFace API 交叉校验
+- **腾讯研究院双模式爬虫**：优先使用 `crawl_sohu_lite.py`（纯 requests，从 HTML 源码提取文章链接，零 Selenium 依赖），失败时自动 fallback 到 `crawl_sohu.py`（Selenium 完整渲染），解决公司安全策略限制 ChromeDriver 的问题
 - **LLM 交叉巡检**：调用 DashScope 联网搜索 API，搜索指定时间段内新发布的 AI 模型/智能体，与已有采集数据交叉比对，自动发现遗漏模型
 - **LLM 智能提取**：从文章全文中自动提取模型名称、公司、类型等字段
 - **GPT-5.5 审核**：模型名称规范性审核 + 智能新旧判断（宽松保留 2026 年内新兴模型） + 字段补全 + 重要性三级评级（🔴高/🟡中/🟢低）
@@ -41,7 +42,7 @@ cd Model_Navigate
 pip install -r requirements.txt
 ```
 
-需要 **Python 3.13+**，依赖包：`pandas`、`openpyxl`、`requests`、`selenium`、`python-dotenv`。
+需要 **Python 3.13+**，依赖包：`pandas`、`openpyxl`、`requests`、`selenium`（仅 fallback 时需要）、`python-dotenv`。
 
 ### 3. 配置 API Key
 
@@ -67,8 +68,10 @@ cp Model_Navigate/.env.example Model_Navigate/.env
 > | `llm-stats.com` | llmstats 数据源（模型排行榜抓取） | 推荐 |
 > | `dashscope.aliyuncs.com` | 备选 LLM API（DashScope / Qwen） | 通常已加白 |
 > | `huggingface.co` | HuggingFace 开源模型校验 | 可选 |
+> | `lmarena.ai` | LM Arena 官方排行榜 | 推荐 |
+> | `api.wulong.dev` | LM Arena 第三方 API（fallback） | 推荐 |
 >
-> 症状：`SSLError: self-signed certificate` 或 403 "网站不在安全策略允许范围内"，或抓取到的文件内容是"域名拦截"页面。
+> 症状：`SSLError: self-signed certificate` 或 403 "网站不在安全策略允许范围内"，或连接超时。代码内置多策略 fallback（verify=True → verify=False → 备用域名），域名加白后自动恢复。
 
 ### 4. 首次运行（冷启动）
 
@@ -137,7 +140,7 @@ cd Extract; python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
 运行 `python main.py`，自动执行 8 个步骤：
 
 ```
-Step 1    数据采集 → 多源采集（llmstats + 腾讯研究院 + HuggingFace + 平台目录 + LM Arena）
+Step 1    数据采集 → 多源采集（llmstats + 腾讯研究院 + HuggingFace）
 Step 2    增量去重 → 与总表对比，只保留新增模型
 Step 3    AI 审核 → GPT-5.5 名称规范 + 字段补全 + 重要性评级
 Step 4    数据校验 → Web Search 校验发布时间/官网/备注
@@ -195,36 +198,35 @@ AI 会自动加载 `Model_Navigate/SKILL.md` 并按规范执行。
 | + HuggingFace（三源） | 38.8% (45/116) | 53.4% (62/116) |
 | **+ 平台模型目录（四源）** | **100% (116/116)** | **100% (116/116)** |
 
-#### 平台模型目录——通用适配器框架
+#### 平台模型目录——通用适配器框架（⛔ 已暂停）
 
-第四数据源是一个**通用的平台模型目录采集子 pipeline**，通过适配器模式支持多个 AI 平台的模型目录 API：
+> **Re 2026/05/19 暂停**：因旧模型灌入问题未解决，该数据源已在代码层面禁用。代码保留，恢复条件见上方「数据源暂停说明」。
 
-**官方平台**（数据最准确，优先使用）：
+<details>
+<summary>展开查看原有 12 平台配置（代码保留，未删除）</summary>
 
-| 平台 | API 类型 | 环境变量 | 状态 |
-|------|---------|---------|------|
-| DashScope 百炼（阿里） | OpenAI 兼容 | `LLM_API_BASE` + `LLM_API_KEY` | ✅ 已验证 |
-| 硅基流动 SiliconFlow | OpenAI 兼容 | `SILICONFLOW_API_BASE` + `SILICONFLOW_API_KEY` | ✅ 已验证（102个模型） |
-| DeepSeek（深度求索） | OpenAI 兼容 | `DEEPSEEK_API_BASE` + `DEEPSEEK_API_KEY` | ✅ 已验证（2个模型） |
-| 火山引擎（字节/豆包） | OpenAI 兼容 | `VOLCENGINE_API_BASE` + `VOLCENGINE_API_KEY` | ✅ 已验证 |
-| MiniMax | OpenAI 兼容 | `MINIMAX_API_BASE` + `MINIMAX_API_KEY` | ✅ 已验证 |
-| 腾讯混元 | OpenAI 兼容 | `HUNYUAN_API_BASE` + `HUNYUAN_API_KEY` | 🔧 待配置 |
-| 阶跃星辰 StepFun | OpenAI 兼容 | `STEPFUN_API_BASE` + `STEPFUN_API_KEY` | ✅ 已验证（36个模型） |
-| Moonshot 月之暗面 | OpenAI 兼容 | `MOONSHOT_API_BASE` + `MOONSHOT_API_KEY` | ✅ 已验证 |
-| 智谱 Zhipu（GLM） | OpenAI 兼容 | `ZHIPU_API_BASE` + `ZHIPU_API_KEY` | ✅ 已验证 |
-| MIMO 小米 | OpenAI 兼容 | `MIMO_API_BASE` + `MIMO_API_KEY` | ✅ 已验证 |
-| 百度千帆（ERNIE） | 自定义 REST | `QIANFAN_API_BASE` + `QIANFAN_API_KEY` | ⚠️ 需加白 `qianfan.baidubce.com` |
+**官方平台**：
 
-**聚合平台**（兜底补充源，覆盖遗漏）：
+| 平台 | API 类型 | 环境变量 |
+|------|---------|---------|
+| DashScope 百炼（阿里） | OpenAI 兼容 | `LLM_API_BASE` + `LLM_API_KEY` |
+| 硅基流动 SiliconFlow | OpenAI 兼容 | `SILICONFLOW_API_BASE` + `SILICONFLOW_API_KEY` |
+| DeepSeek（深度求索） | OpenAI 兼容 | `DEEPSEEK_API_BASE` + `DEEPSEEK_API_KEY` |
+| 火山引擎（字节/豆包） | OpenAI 兼容 | `VOLCENGINE_API_BASE` + `VOLCENGINE_API_KEY` |
+| MiniMax | OpenAI 兼容 | `MINIMAX_API_BASE` + `MINIMAX_API_KEY` |
+| 腾讯混元 | OpenAI 兼容 | `HUNYUAN_API_BASE` + `HUNYUAN_API_KEY` |
+| 阶跃星辰 StepFun | OpenAI 兼容 | `STEPFUN_API_BASE` + `STEPFUN_API_KEY` |
+| Moonshot 月之暗面 | OpenAI 兼容 | `MOONSHOT_API_BASE` + `MOONSHOT_API_KEY` |
+| 智谱 Zhipu（GLM） | OpenAI 兼容 | `ZHIPU_API_BASE` + `ZHIPU_API_KEY` |
+| MIMO 小米 | OpenAI 兼容 | `MIMO_API_BASE` + `MIMO_API_KEY` |
+| 百度千帆（ERNIE） | 自定义 REST | `QIANFAN_API_BASE` + `QIANFAN_API_KEY` |
+| OpenRouter | 自定义适配器 | `OPENROUTER_API_BASE` + `OPENROUTER_API_KEY` |
 
-| 平台 | API 类型 | 环境变量 | 状态 |
-|------|---------|---------|------|
-| OpenRouter（全球 500+ 模型） | 自定义适配器 | `OPENROUTER_API_BASE` + `OPENROUTER_API_KEY` | ✅ 已验证 |
-| 酷爱 Kuai（国内外聚合） | OpenAI 兼容 | `KUAI_API_BASE` + `KUAI_API_KEY` | 🔧 待配置 |
+**失败的防灌设计**：`created=0` 过滤 + LLM 降级查询发布时间。实际运行中 LLM 查错日期/失败导致大量旧模型灌入。
 
-**设计理念**：配置驱动，零代码扩展——新增平台只需在 `PLATFORM_REGISTRY` 注册表中添加一个配置项并在 `.env` 中填入 API Key 即可启用，无需编写新代码。对于非标准 API（如百度千帆、OpenRouter），通过自定义适配器函数处理响应格式转换和 owner 解析。
+</details>
 
-> **关于 HuggingFace（第三源）**：HuggingFace API 主要用于交叉校验已采集模型的参数量、发布日期等字段，并补全开源模型变体。它显著提升字段准确率和数据完整度。
+> **关于 HuggingFace（第三源）**：HuggingFace API 主要用于交叉校验已采集模型的参数量、发布日期等字段，并补全开源模型变体。它的 `createdAt` 字段精确到秒，时间过滤完全可靠。
 
 ### 运行评估
 
@@ -237,12 +239,30 @@ python 20260509_1700_eval_full_pipeline.py
 
 ## 数据源
 
-| 渠道 | 自动化 | 说明 |
-|------|--------|------|
-| [llm-stats.com](https://llm-stats.com) | ✅ 全自动 | HTTP 直连 + Next.js RSC JSON 解析 |
-| [腾讯研究院](https://mp.sohu.com/profile?xpt=bGl1amluc29uZzIwMDBAMTI2LmNvbQ==) | ✅ 全自动 | Selenium 爬虫抓取搜狐号文章全文 + LLM 提取模型信息 |
-| [HuggingFace](https://huggingface.co) | ✅ 全自动 | 第三源补充：API 交叉校验开源模型参数、日期，补全各类变体模型 |
-| [LM Arena](https://lmarena.ai) | ✅ 全自动 | 第三方 REST API（text/code 双榜，跨榜去重，84+ 模型） |
+| 渠道 | 状态 | 说明 |
+|------|------|------|
+| [llm-stats.com](https://llm-stats.com) | ✅ 启用 | HTTP 直连 + Next.js RSC JSON 解析，有可靠时间戳 |
+| [腾讯研究院](https://mp.sohu.com/profile?xpt=bGl1amluc29uZzIwMDBAMTI2LmNvbQ==) | ✅ 启用 | 双模式爬虫 + LLM 提取，文章自带日期天然时间锚定 |
+| [HuggingFace](https://huggingface.co) | ✅ 启用 | API `createdAt` 字段精确到秒，时间过滤可靠 |
+| 平台模型目录（12 平台） | ⛔ 暂停 | 灌入旧模型根因未解决（详见下方说明） |
+| [LM Arena](https://lmarena.ai) | ⛔ 暂停 | 排行榜无发布时间，全量灌入无法过滤（详见下方说明） |
+
+### 数据源暂停说明（Re 2026/05/19）
+
+**暂停原因**：5/14-5/18 期间总表被灌入 189 个旧模型（百度 126 个、阿里 19 个、月之暗面 12 个等），根因分析如下：
+
+| 数据源 | 根因 | 影响 |
+|--------|------|------|
+| **LM Arena** | 排行榜 API 不提供模型发布时间，代码设计为「全量灌入 + 靠名称去重」。名称细微差异即绕过去重 | 每次运行灌入数十个旧模型 |
+| **Moonshot 月之暗面** | API 返回所有模型 `created=0`，降级策略依赖 LLM 联网查时间。LLM 失败或查错日期时灌入旧模型 | 14 个模型全部灌入 |
+| **百度千帆** | `/v1/models`（8个有时间戳）失败时 fallback 到 `/v2/models`（183个 `created=0`），降级策略同上 | 最多 183 个旧模型灌入 |
+
+**恢复条件**（需全部满足）：
+1. 实现「发布时间硬校验」— 无论 LLM 查到什么日期，都必须有第二来源交叉验证
+2. LM Arena 实现「已有总表严格名称匹配 + 仅新模型入库」机制
+3. 对 `created=0` 的平台，默认策略改为「跳过」而非「降级查询」
+
+**当前流水线仍可正常运行**，只是覆盖面缩减为 llmstats + 腾讯研究院 + HuggingFace 三源。这三个数据源都具备可靠的时间锚点，不会产生灌入问题。
 
 ---
 
@@ -281,7 +301,9 @@ model-navigate-skill/               ← 项目根目录（GitHub 仓库）
     ├── TRACE.md                     ← 问题解决与优化轨迹
     │
     ├── Crawl/
-    │   ├── TXresearch/crawl_sohu.py ← 腾讯研究院爬虫（Selenium）
+    │   ├── TXresearch/
+    │   │   ├── crawl_sohu_lite.py   ← 腾讯研究院轻量爬虫（纯 requests，优先使用）
+    │   │   └── crawl_sohu.py        ← 腾讯研究院爬虫（Selenium，作为 fallback）
     │   └── Arena_x/
     │       ├── extract_llmstats_json.py  ← llmstats 数据提取
     │       └── format_cases.py           ← Case 文件格式化
