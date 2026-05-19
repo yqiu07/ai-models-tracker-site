@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 模型日报 — Model Navigate</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --warning: #d97706;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            color: white;
+            padding: 32px 20px;
+            text-align: center;
+            margin-bottom: 24px;
+            border-radius: 12px;
+        }
+        header h1 { font-size: 1.8rem; margin-bottom: 8px; }
+        header p { opacity: 0.9; font-size: 0.95rem; }
+        nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        nav a {
+            padding: 8px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        nav a:hover, nav a.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .meta-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .meta-bar .count { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
+        .push-btn {
+            padding: 10px 20px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .push-btn:hover { background: #15803d; transform: translateY(-1px); }
+        .push-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 16px;
+        }
+        .model-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            transition: box-shadow 0.2s;
+        }
+        .model-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .model-card h3 { font-size: 1rem; margin-bottom: 8px; color: var(--text); }
+        .model-card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+        .tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .tag-domestic { background: #fef3c7; color: #92400e; }
+        .tag-foreign { background: #dbeafe; color: #1e40af; }
+        .tag-open { background: #dcfce7; color: #166534; }
+        .tag-closed { background: #fce7f3; color: #9d174d; }
+        .tag-type { background: #f1f5f9; color: #475569; }
+        .model-card .note { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
+        .model-card .date { font-size: 0.8rem; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); }
+        footer { text-align: center; padding: 32px 20px; color: var(--text-muted); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 AI 模型日报</h1>
+            <p>Model Navigate — 全自动 AI 模型追踪流水线</p>
+        </header>
+
+        <nav>
+            <a href="index.html" class="active">📋 日报</a>
+            <a href="dashboard.html">📊 仪表盘</a>
+        </nav>
+
+        <div class="meta-bar">
+            <div>
+                <span id="date-range">加载中...</span> ·
+                <span class="count" id="model-count">-</span> 个模型
+            </div>
+            <button class="push-btn" id="push-btn" onclick="triggerPush()">📤 推送到钉钉</button>
+        </div>
+
+        <div id="model-list" class="loading">⏳ 加载数据中...</div>
+
+        <footer>
+            <p>数据来源：llm-stats.com · 腾讯研究院AI速递 · HuggingFace</p>
+            <p id="generated-at"></p>
+        </footer>
+    </div>
+
+    <script>
+        const DATA_URL = './data/daily_report.json';
+        const REPO_OWNER = 'yqiu07';
+        const REPO_NAME = 'ai-models-tracker-site';
+
+        async function loadReport() {
+            try {
+                const resp = await fetch(DATA_URL);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                renderReport(data);
+            } catch (err) {
+                document.getElementById('model-list').innerHTML =
+                    `<div class="empty-state"><p>⚠️ 数据加载失败：${err.message}</p><p>请等待首次流水线运行生成数据</p></div>`;
+            }
+        }
+
+        function renderReport(data) {
+            const { models, meta } = data;
+            document.getElementById('date-range').textContent = `${meta.since} ~ ${meta.until}`;
+            document.getElementById('model-count').textContent = meta.count;
+            document.getElementById('generated-at').textContent = `生成时间: ${meta.generated_at || ''}`;
+
+            if (!models || models.length === 0) {
+                document.getElementById('model-list').innerHTML =
+                    '<div class="empty-state"><p>📭 该时间段内暂无新模型</p></div>';
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'model-grid';
+
+            models.forEach(model => {
+                const card = document.createElement('div');
+                card.className = 'model-card';
+
+                const domesticTag = model.domestic === '国内'
+                    ? '<span class="tag tag-domestic">国内</span>'
+                    : '<span class="tag tag-foreign">国外</span>';
+
+                const openTag = model.open_source === '开源'
+                    ? '<span class="tag tag-open">开源</span>'
+                    : model.open_source === '闭源'
+                    ? '<span class="tag tag-closed">闭源</span>' : '';
+
+                const typeTag = model.type
+                    ? `<span class="tag tag-type">${model.type}</span>` : '';
+
+                const sizeTag = model.size
+                    ? `<span class="tag tag-type">${model.size}</span>` : '';
+
+                card.innerHTML = `
+                    <h3>${model.name}</h3>
+                    <div class="tags">${domesticTag}${openTag}${typeTag}${sizeTag}</div>
+                    <div class="date">🏢 ${model.company || '未知'} · 📅 ${model.release_date || '未知'}</div>
+                    ${model.note ? `<div class="note">${model.note}</div>` : ''}
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('model-list').innerHTML = '';
+            document.getElementById('model-list').appendChild(grid);
+        }
+
+        async function triggerPush() {
+            const btn = document.getElementById('push-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ 准备中...';
+
+            try {
+                const resp = await fetch(DATA_URL);
+                const data = await resp.json();
+                const since = data.meta.since.replace(/-/g, '');
+                const until = data.meta.until.replace(/-/g, '');
+
+                // 公开仓库无法在前端暴露 PAT，直接跳转 GitHub Actions 手动触发页面
+                // workflow_dispatch 支持在 GitHub UI 中填入 inputs 并触发
+                const actionsUrl = `https://github.com/${REPO_OWNER}/${REPO_NAME}/actions/workflows/push-dingtalk.yml`;
+                const confirmed = confirm(
+                    `即将跳转到 GitHub Actions 触发推送：\n\n` +
+                    `日期范围: ${since} ~ ${until}\n\n` +
+                    `请在 GitHub 页面点击 "Run workflow"，填入：\n` +
+                    `  since: ${since}\n` +
+                    `  until: ${until}\n\n` +
+                    `点击确定跳转`
+                );
+                if (confirmed) {
+                    window.open(actionsUrl, '_blank');
+                }
+            } catch (err) {
+                alert('获取日期范围失败: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📤 推送到钉钉';
+            }
+        }
+
+        loadReport();
+    </script>
+</body>
+</html>
