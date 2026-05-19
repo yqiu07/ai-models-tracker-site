@@ -38,16 +38,56 @@ HISTORY_DIR = DATA_DIR / "history"
 
 # 当前启用的数据源（与 auto_collect.py 同步维护）
 ACTIVE_DATA_SOURCES = [
-    {"name": "llm-stats.com", "url": "https://llm-stats.com", "status": "active",
-     "description": "HTTP 直连 + Next.js RSC JSON 解析，有可靠时间戳"},
-    {"name": "腾讯研究院AI速递", "url": "https://mp.sohu.com/profile?xpt=bGl1amluc29uZzIwMDBAMTI2LmNvbQ==",
-     "status": "active", "description": "双模式爬虫 + LLM 提取，文章自带日期天然时间锚定"},
-    {"name": "HuggingFace", "url": "https://huggingface.co", "status": "active",
-     "description": "API createdAt 字段精确到秒，时间过滤可靠"},
-    {"name": "平台模型目录（12平台）", "url": "", "status": "suspended",
-     "description": "灌入旧模型根因未解决（created=0 + LLM降级查错）"},
-    {"name": "LM Arena 排行榜", "url": "https://lmarena.ai", "status": "suspended",
-     "description": "排行榜无发布时间，全量灌入无法过滤"},
+    {
+        "name": "llm-stats.com",
+        "url": "https://llm-stats.com",
+        "status": "active",
+        "description": "HTTP 直连 + Next.js RSC JSON 解析，有可靠时间戳",
+        "sub_sources": [
+            {"name": "llm-stats-LLM.com", "url": "https://llm-stats.com", "description": "主站 LLM 模型列表"},
+            {"name": "llm-stats-ai.com", "url": "https://ai.llm-stats.com", "description": "AI 综合模型数据"},
+            {"name": "llm-stats-open-llm.com", "url": "https://open-llm.llm-stats.com", "description": "开源 LLM 排行"},
+            {"name": "llm-stats-updates.com", "url": "https://updates.llm-stats.com", "description": "模型更新动态"},
+        ],
+    },
+    {
+        "name": "腾讯研究院AI速递",
+        "url": "https://mp.sohu.com/profile?xpt=bGl1amluc29uZzIwMDBAMTI2LmNvbQ==",
+        "status": "active",
+        "description": "双模式爬虫 + LLM 提取，文章自带日期天然时间锚定",
+    },
+    {
+        "name": "HuggingFace",
+        "url": "https://huggingface.co",
+        "status": "active",
+        "description": "API createdAt 字段精确到秒，时间过滤可靠",
+    },
+    {
+        "name": "平台模型目录（12平台）",
+        "url": "",
+        "status": "suspended",
+        "description": "灌入旧模型根因未解决（created=0 + LLM降级查错）",
+        "sub_sources": [
+            {"name": "火山引擎（字节/豆包）", "url": "https://ark.cn-beijing.volces.com/api/v3"},
+            {"name": "OpenRouter（聚合平台）", "url": "https://openrouter.ai/api/v1"},
+            {"name": "Moonshot / Kimi", "url": "https://api.moonshot.cn/v1"},
+            {"name": "智谱 BigModel（GLM）", "url": "https://open.bigmodel.cn/api/paas/v4"},
+            {"name": "MiniMax（海螺AI）", "url": "https://api.minimaxi.com/v1"},
+            {"name": "MIMO（小米）", "url": "https://api.xiaomimimo.com/v1"},
+            {"name": "百度千帆（ERNIE）", "url": "https://qianfan.baidubce.com"},
+            {"name": "硅基流动 SiliconFlow", "url": "https://api.siliconflow.cn/v1"},
+            {"name": "DeepSeek 官方", "url": "https://api.deepseek.com"},
+            {"name": "阶跃星辰 StepFun", "url": "https://api.stepfun.com/v1"},
+            {"name": "DashScope（通义千问）", "url": "https://dashscope.aliyuncs.com/compatible-mode/v1"},
+            {"name": "腾讯混元", "url": "https://api.hunyuan.cloud.tencent.com/v1"},
+        ],
+    },
+    {
+        "name": "LM Arena 排行榜",
+        "url": "https://lmarena.ai",
+        "status": "suspended",
+        "description": "排行榜无发布时间，全量灌入无法过滤",
+    },
 ]
 
 
@@ -230,7 +270,20 @@ def main():
         json.dump(all_models_data, f, ensure_ascii=False, indent=2)
     print(f"[OK] all_models: {all_models_path.name} ({len(all_models_list)} models)")
 
-    # 4. 历史日报索引（列出 history/ 下所有 JSON 文件供前端切换）
+    # 4. 历史日报索引
+    # 同步 Report/ 下的 JSON 日报到 history/
+    report_dir = ROOT / "Report"
+    if report_dir.exists():
+        import shutil
+        for rpt_file in report_dir.glob("*.json"):
+            if rpt_file.name == "review_results.json":
+                continue
+            dest = HISTORY_DIR / rpt_file.name
+            if not dest.exists():
+                shutil.copy2(rpt_file, dest)
+                print(f"[OK] synced Report/{rpt_file.name} -> history/")
+
+    # 列出 history/ 下所有 JSON 文件供前端切换
     history_files = sorted(HISTORY_DIR.glob("*.json"), reverse=True)
     history_index = []
     for hf in history_files:
