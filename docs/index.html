@@ -245,9 +245,9 @@ function switchTab(tabName) {
   for (var i = 0; i < btns.length; i++) {
     btns[i].classList.remove('active');
   }
-  var tabNames = ['daily', 'all', 'dashboard', 'sources', 'push', 'readme'];
+  var tabNames = ['daily', 'all', 'dashboard', 'sources', 'readme'];
   var idx = tabNames.indexOf(tabName);
-  if (idx >= 0) btns[idx].classList.add('active');
+  if (idx >= 0 && idx < btns.length) btns[idx].classList.add('active');
 
   if (tabName === 'all' && !tabsLoaded.all) { loadAllModels(); tabsLoaded.all = true; }
   if (tabName === 'dashboard' && !tabsLoaded.dashboard) { loadDashboard(); tabsLoaded.dashboard = true; }
