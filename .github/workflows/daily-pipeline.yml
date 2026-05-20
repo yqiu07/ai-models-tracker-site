@@ -103,3 +103,15 @@ jobs:
           git add Model_Navigate/data/ docs/data/
           git diff --staged --quiet || git commit -m "chore(auto): review daily $(date +%Y-%m-%d)"
           git push
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
