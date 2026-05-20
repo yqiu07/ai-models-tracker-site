@@ -74,10 +74,32 @@ jobs:
           cd Model_Navigate
           python generate_site_data.py --since ${{ steps.dates.outputs.since }} --until ${{ steps.dates.outputs.until }}
 
-      - name: Commit updated data back to branch
+      - name: Commit collected data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Model_Navigate/data/ Model_Navigate/Extract/ Model_Navigate/Crawl/ docs/data/
           git diff --staged --quiet || git commit -m "chore(auto): daily pipeline $(date +%Y-%m-%d)"
+          git push
+
+      - name: Auto review daily report (LLM审核修正)
+        env:
+          KUAI_API_KEY: ${{ secrets.KUAI_API_KEY }}
+          KUAI_API_BASE: ${{ secrets.KUAI_API_BASE }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_BASE: ${{ secrets.LLM_API_BASE }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+        run: |
+          cd Model_Navigate
+          python review_daily.py --since ${{ steps.dates.outputs.since }} --until ${{ steps.dates.outputs.until }}
+
+      - name: Regenerate site data after review
+        run: |
+          cd Model_Navigate
+          python generate_site_data.py --since ${{ steps.dates.outputs.since }} --until ${{ steps.dates.outputs.until }}
+
+      - name: Commit reviewed results
+        run: |
+          git add Model_Navigate/data/ docs/data/
+          git diff --staged --quiet || git commit -m "chore(auto): review daily $(date +%Y-%m-%d)"
           git push
