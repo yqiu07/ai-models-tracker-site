@@ -105,6 +105,9 @@ def _normalize_date(value) -> str:
     """将日期值统一为 YYYY-MM-DD 格式（去掉时间部分）。"""
     if value is None:
         return ""
+    # pandas NaT
+    if pd.isna(value):
+        return ""
     # pandas Timestamp / datetime
     if hasattr(value, "strftime"):
         return value.strftime("%Y-%m-%d")
