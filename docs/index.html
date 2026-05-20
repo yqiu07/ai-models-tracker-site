@@ -95,10 +95,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .sub-source-item { padding: 6px 0; font-size: .85rem; border-bottom: 1px solid #f1f5f9; }
 .sub-source-item:last-child { border-bottom: none; }
 .sub-source-item a { color: var(--primary); text-decoration: none; }
-.push-card { text-align: center; padding: 40px; }
-.push-card p { color: var(--text-sec); margin-bottom: 20px; line-height: 1.6; }
-.push-btn { display: inline-block; padding: 12px 28px; background: var(--primary); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background .2s; }
-.push-btn:hover { background: var(--primary-light); }
+.daily-actions { display: flex; gap: 8px; margin-left: auto; }
+.action-btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: .85rem; font-weight: 500; cursor: pointer; transition: all .2s; }
+.review-btn { background: #f59e0b; color: #fff; }
+.review-btn:hover { background: #d97706; }
+.push-btn-small { background: var(--primary); color: #fff; }
+.push-btn-small:hover { background: var(--primary-light); }
 .readme-content { line-height: 1.8; }
 .readme-content h1 { font-size: 1.5rem; margin: 24px 0 12px; }
 .readme-content h2 { font-size: 1.3rem; margin: 20px 0 10px; }
@@ -130,7 +132,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <button class="tab-btn" onclick="switchTab('all')">总表</button>
     <button class="tab-btn" onclick="switchTab('dashboard')">仪表盘</button>
     <button class="tab-btn" onclick="switchTab('sources')">数据源</button>
-    <button class="tab-btn" onclick="switchTab('push')">推送</button>
     <button class="tab-btn" onclick="switchTab('readme')">README</button>
   </div>
 </div>
@@ -140,6 +141,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <label>历史日报：</label>
       <select id="history-select" onchange="loadHistoryReport(this.value)"></select>
       <span id="daily-meta" class="report-meta"></span>
+      <div class="daily-actions">
+        <button class="action-btn review-btn" onclick="triggerReview()">&#9881; 巡检修正</button>
+        <button class="action-btn push-btn-small" onclick="triggerPush()">&#9993; 推送钉钉</button>
+      </div>
     </div>
     <div id="daily-grid" class="model-grid"></div>
   </div>
@@ -709,6 +714,21 @@ function loadReadme() {
   }).catch(function() {
     document.getElementById('readme-body').innerHTML = '<div class="empty-state"><div class="icon">📄</div><p>加载 README 失败</p></div>';
   });
+}
+
+/* ===== Actions (Review + Push) ===== */
+function triggerReview() {
+  var msg = '即将触发「巡检修正」：调用 LLM 审核当前日报，移除不属于时间窗口的模型并修正错误。\n\n确认后将跳转到 GitHub Actions 手动触发页面。';
+  if (confirm(msg)) {
+    window.open('https://github.com/yqiu07/ai-models-tracker-site/actions/workflows/review-daily.yml', '_blank');
+  }
+}
+
+function triggerPush() {
+  var msg = '即将触发「推送钉钉」：将当前日报推送到钉钉群。\n\n确认后将跳转到 GitHub Actions 手动触发页面。';
+  if (confirm(msg)) {
+    window.open('https://github.com/yqiu07/ai-models-tracker-site/actions/workflows/push-dingtalk.yml', '_blank');
+  }
 }
 
 /* ===== Init ===== */
