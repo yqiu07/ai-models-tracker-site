@@ -6305,22 +6305,6 @@
       "created_date": "2026-05-24"
     },
     {
-      "name": "Mythos Preview",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Anthropic",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "Anthropic发布的‘史上最强’预览版大模型，因安全评估风险被宣布无限期封印，仅限Glasswing漏洞挖掘计划内部使用",
-      "release_date": "2026-05-22",
-      "created_date": "2026-05-24"
-    },
-    {
       "name": "gamma-world-test",
       "connected": "",
       "workflow_progress": "",
@@ -6401,22 +6385,6 @@
       "created_date": "2026-05-25"
     },
     {
-      "name": "Claude Opus 4.7",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Anthropic",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "large language model",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "虽发布于4月，但其争议性表现（幻觉加剧、任务偷懒）在5月24日前持续发酵并被主流媒体集中报道，被行业视为‘倒退型更新’典型，故纳入5月关键模型事件。",
-      "release_date": "2026-04-XX",
-      "created_date": "2026-05-25"
-    },
-    {
       "name": "Antigravity 2.0",
       "connected": "",
       "workflow_progress": "",
@@ -6450,7 +6418,7 @@
     }
   ],
   "meta": {
-    "total": 403,
-    "generated_at": "2026-05-25 06:32:02"
+    "total": 401,
+    "generated_at": "2026-05-25 06:32:45"
   }
 }
