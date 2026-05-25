@@ -283,6 +283,24 @@ def main():
         json.dump(all_models_data, f, ensure_ascii=False, indent=2)
     print(f"[OK] all_models: {all_models_path.name} ({len(active_models)} models, {len(recycled_names)} recycled)")
 
+    # 3.5 接入站数据（workflow接入进展=1 的模型）
+    connected_path = DATA_DIR / "connected.json"
+    # 如果 connected.json 已存在且有手动维护的数据，保留它；否则从 Excel 生成
+    if not connected_path.exists():
+        connected_models = [m for m in all_models_list if m.get("workflow_progress") == "1.0" or m.get("workflow_progress") == "1"]
+        connected_data = {
+            "models": connected_models,
+            "meta": {
+                "total": len(connected_models),
+                "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            },
+        }
+        with open(connected_path, "w", encoding="utf-8") as f:
+            json.dump(connected_data, f, ensure_ascii=False, indent=2)
+        print(f"[OK] connected: {connected_path.name} ({len(connected_models)} models, initial generation)")
+    else:
+        print(f"[SKIP] connected: {connected_path.name} already exists (manually maintained)")
+
     # 4. 历史日报索引
     # 同步 Report/ 下的 JSON 日报到 history/
     report_dir = ROOT / "Report"

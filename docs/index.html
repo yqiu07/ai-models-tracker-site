@@ -126,6 +126,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .recycle-item .restore-btn:hover { background: #059669; }
 .delete-btn-cell { background: var(--red); color: #fff; border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: .75rem; }
 .delete-btn-cell:hover { background: #dc2626; }
+.connect-btn-cell { background: var(--green); color: #fff; border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: .75rem; }
+.connect-btn-cell:hover { background: #059669; }
+/* Connected panel */
+.connected-btn { background: var(--green); color: #fff; position: relative; }
+.connected-btn:hover { background: #059669; }
+.connected-badge { background: #065f46; color: #fff; border-radius: 50%; font-size: 11px; padding: 1px 5px; margin-left: 4px; }
+.connected-panel { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 16px; margin-bottom: 16px; max-height: 300px; overflow-y: auto; }
+.connected-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.connected-header .close-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #64748b; }
+.connected-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #fff; border-radius: 6px; margin-bottom: 6px; font-size: .85rem; }
+.connected-item .model-info { flex: 1; }
+.connected-item .disconnect-btn { background: var(--orange); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: .8rem; }
+.connected-item .disconnect-btn:hover { background: #d97706; }
+/* Update button */
+.update-btn { background: var(--blue); color: #fff; }
+.update-btn:hover { background: #2563eb; }
+/* Update modal */
+.update-modal input[type="date"] { width: 45%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: .9rem; }
+.update-modal .date-row { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+.update-modal .progress-bar { height: 4px; background: #e2e8f0; border-radius: 2px; margin-top: 12px; overflow: hidden; }
+.update-modal .progress-fill { height: 100%; background: var(--blue); width: 0%; transition: width .3s; }
 /* Token modal */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 9999; }
 .modal-box { background: #fff; border-radius: 12px; padding: 24px; max-width: 480px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
@@ -136,10 +157,24 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .modal-box button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: .9rem; }
 .modal-box .btn-primary { background: var(--primary); color: #fff; }
 .modal-box .btn-cancel { background: #e2e8f0; color: var(--text); }
-/* Table responsive: all columns visible, auto-width */
-.data-table { width: 100%; border-collapse: collapse; font-size: .82rem; table-layout: auto; }
-.data-table th, .data-table td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
-.data-table .note-cell { white-space: normal; max-width: 300px; word-break: break-all; }
+/* Table responsive: all columns visible, controlled widths */
+.data-table { width: 100%; border-collapse: collapse; font-size: .82rem; table-layout: fixed; }
+.data-table th, .data-table td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: left; word-wrap: break-word; overflow-wrap: break-word; white-space: normal; vertical-align: top; }
+.data-table th { white-space: nowrap; }
+/* Column widths */
+.col-name { width: 180px; max-width: 180px; }
+.col-company { width: 100px; max-width: 100px; }
+.col-domestic { width: 55px; max-width: 55px; }
+.col-opensource { width: 55px; max-width: 55px; }
+.col-size { width: 70px; max-width: 70px; }
+.col-type { width: 120px; max-width: 120px; }
+.col-reasoning { width: 65px; max-width: 65px; }
+.col-tasktype { width: 80px; max-width: 80px; }
+.col-website { width: 45px; max-width: 45px; }
+.col-note { width: 150px; max-width: 150px; }
+.col-release { width: 80px; max-width: 80px; }
+.col-created { width: 80px; max-width: 80px; }
+.col-action { width: 90px; max-width: 90px; }
 .table-wrapper, .inline-table-wrapper { overflow-x: auto; }
 @media (max-width: 768px) {
   .header { padding: 12px 16px; }
@@ -188,11 +223,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <select id="filter-opensource" onchange="filterAllModels()"><option value="">开闭源</option><option value="开源">开源</option><option value="闭源">闭源</option></select>
         <select id="filter-type" onchange="filterAllModels()"><option value="">类型</option></select>
         <span id="table-count" class="table-count"></span>
+        <button class="action-btn update-btn" onclick="showUpdateModal()">&#x1F504; 更新</button>
+        <button class="action-btn connected-btn" onclick="toggleConnectedPanel()" title="接入站">&#x1F517; 接入站 <span id="connected-badge" class="connected-badge">0</span></button>
         <button class="action-btn recycle-btn" onclick="toggleRecycleBin()" title="回收站">&#128465; 回收站 <span id="recycle-badge" class="recycle-badge">0</span></button>
       </div>
       <div id="recycle-panel" class="recycle-panel" style="display:none;">
         <div class="recycle-header"><strong>&#128465; 回收站</strong> <button class="close-btn" onclick="toggleRecycleBin()">&times;</button></div>
         <div id="recycle-list"></div>
+      </div>
+      <div id="connected-panel" class="connected-panel" style="display:none;">
+        <div class="connected-header"><strong>&#x1F517; 接入站</strong> <button class="close-btn" onclick="toggleConnectedPanel()">&times;</button></div>
+        <div id="connected-list"></div>
       </div>
       <div id="all-table-container"></div>
       <div id="all-pagination" class="pagination"></div>
@@ -364,17 +405,21 @@ function renderDailyReport(data) {
 
 /* ===== All Models Table ===== */
 var recycleData = [];
+var connectedData = [];
 var GITHUB_REPO = 'yqiu07/ai-models-tracker-site';
 var GITHUB_BRANCH = '20260519-暂停平台目录与自动化平台';
 
 function loadAllModels() {
   Promise.all([
     fetch('data/all_models.json').then(function(r) { return r.json(); }),
-    fetch('data/recycle.json').then(function(r) { return r.json(); }).catch(function() { return { models: [] }; })
+    fetch('data/recycle.json').then(function(r) { return r.json(); }).catch(function() { return { models: [] }; }),
+    fetch('data/connected.json').then(function(r) { return r.json(); }).catch(function() { return { models: [] }; })
   ]).then(function(results) {
     allModelsData = results[0].models || [];
     recycleData = results[1].models || [];
+    connectedData = results[2].models || [];
     updateRecycleBadge();
+    updateConnectedBadge();
     populateTypeFilter();
     // 默认按创建日期降序
     sortColumn = 'created_date';
@@ -518,6 +563,199 @@ function restoreModel(idx) {
   });
 }
 
+/* ===== Connected (接入站) ===== */
+function updateConnectedBadge() {
+  document.getElementById('connected-badge').textContent = connectedData.length;
+}
+
+function toggleConnectedPanel() {
+  var panel = document.getElementById('connected-panel');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    renderConnectedList();
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function renderConnectedList() {
+  var el = document.getElementById('connected-list');
+  if (connectedData.length === 0) {
+    el.innerHTML = '<p style="color:#64748b;font-size:.85rem;">接入站为空</p>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < connectedData.length; i++) {
+    var m = connectedData[i];
+    html += '<div class="connected-item"><div class="model-info"><strong>' + escapeHtml(safe(m.name)) + '</strong> | ' + escapeHtml(safe(m.company)) + ' | ' + escapeHtml(safe(m.type)) + '</div>';
+    html += '<button class="disconnect-btn" onclick="disconnectModel(' + i + ')">移出</button></div>';
+  }
+  el.innerHTML = html;
+}
+
+function connectModel(idx) {
+  var model = filteredModels[idx];
+  // 检查是否已在接入站
+  for (var i = 0; i < connectedData.length; i++) {
+    if (connectedData[i].name === model.name) {
+      alert('「' + safe(model.name) + '」已在接入站中');
+      return;
+    }
+  }
+  if (!confirm('将「' + safe(model.name) + '」标记为已接入？')) return;
+
+  connectedData.push(model);
+  updateConnectedBadge();
+
+  var connContent = JSON.stringify({ models: connectedData, meta: { total: connectedData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+  commitFileToGitHub('docs/data/connected.json', connContent, 'chore: connect model "' + safe(model.name) + '"').then(function() {
+    renderConnectedList();
+    alert('已将「' + safe(model.name) + '」加入接入站 ✓');
+  }).catch(function(e) {
+    if (e === 'cancelled') { connectedData.pop(); updateConnectedBadge(); return; }
+    alert('保存失败: ' + e.message);
+    renderConnectedList();
+  });
+}
+
+function disconnectModel(idx) {
+  var model = connectedData[idx];
+  if (!confirm('确定将「' + safe(model.name) + '」移出接入站？')) return;
+
+  connectedData.splice(idx, 1);
+  updateConnectedBadge();
+
+  var connContent = JSON.stringify({ models: connectedData, meta: { total: connectedData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+  commitFileToGitHub('docs/data/connected.json', connContent, 'chore: disconnect model "' + safe(model.name) + '"').then(function() {
+    renderConnectedList();
+    alert('已将「' + safe(model.name) + '」移出接入站 ✓');
+  }).catch(function(e) {
+    if (e === 'cancelled') { connectedData.splice(idx, 0, model); updateConnectedBadge(); return; }
+    alert('保存失败: ' + e.message);
+    renderConnectedList();
+  });
+}
+
+/* ===== Update (从日报增量更新总表) ===== */
+function showUpdateModal() {
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  var today = new Date().toISOString().substring(0, 10);
+  overlay.innerHTML = '<div class="modal-box update-modal">' +
+    '<h3>&#x1F504; 从日报增量更新总表</h3>' +
+    '<p>选择日期范围，系统将从日报中提取该时段的新模型，查重后追加到总表。</p>' +
+    '<div class="date-row"><input type="date" id="update-start" value="' + today + '" /> <span>至</span> <input type="date" id="update-end" value="' + today + '" /></div>' +
+    '<div id="update-status" style="font-size:.85rem;color:#64748b;min-height:20px;"></div>' +
+    '<div class="progress-bar"><div class="progress-fill" id="update-progress"></div></div>' +
+    '<div class="btn-row" style="margin-top:16px;"><button class="btn-cancel" id="update-cancel">取消</button><button class="btn-primary" id="update-confirm">开始更新</button></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  document.getElementById('update-cancel').onclick = function() { document.body.removeChild(overlay); };
+  document.getElementById('update-confirm').onclick = function() { executeUpdate(overlay); };
+}
+
+function executeUpdate(overlay) {
+  var startDate = document.getElementById('update-start').value;
+  var endDate = document.getElementById('update-end').value;
+  var statusEl = document.getElementById('update-status');
+  var progressEl = document.getElementById('update-progress');
+
+  if (!startDate || !endDate) { statusEl.textContent = '请选择日期范围'; return; }
+  if (startDate > endDate) { statusEl.textContent = '开始日期不能晚于结束日期'; return; }
+
+  statusEl.textContent = '正在读取日报数据...';
+  progressEl.style.width = '20%';
+
+  // 读取日报 JSON
+  fetch('data/daily_report.json').then(function(r) { return r.json(); }).then(function(dailyData) {
+    var dailyModels = dailyData.models || [];
+    statusEl.textContent = '日报共 ' + dailyModels.length + ' 条，正在筛选日期范围...';
+    progressEl.style.width = '40%';
+
+    // 筛选日期范围内的模型（基于 created_date 或 release_date）
+    var candidateModels = [];
+    for (var i = 0; i < dailyModels.length; i++) {
+      var m = dailyModels[i];
+      var mDate = safe(m.created_date) || safe(m.release_date) || '';
+      if (mDate >= startDate && mDate <= endDate) {
+        candidateModels.push(m);
+      }
+    }
+
+    // 同时检查历史日报
+    return fetch('data/history_index.json').then(function(r) { return r.json(); }).catch(function() { return []; }).then(function(historyIndex) {
+      // 查找日期范围内的历史日报文件
+      var historyPromises = [];
+      for (var i = 0; i < historyIndex.length; i++) {
+        var entry = historyIndex[i];
+        var fileName = entry.file || '';
+        // 从文件名提取日期（如 daily_report_20260521-20260525.json）
+        var dateMatch = fileName.match(/(\d{4})(\d{2})(\d{2})/);
+        if (dateMatch) {
+          var fileDate = dateMatch[1] + '-' + dateMatch[2] + '-' + dateMatch[3];
+          if (fileDate >= startDate && fileDate <= endDate) {
+            historyPromises.push(fetch('data/' + fileName).then(function(r) { return r.json(); }).catch(function() { return { models: [] }; }));
+          }
+        }
+      }
+      return Promise.all(historyPromises).then(function(results) {
+        for (var i = 0; i < results.length; i++) {
+          var models = results[i].models || [];
+          for (var j = 0; j < models.length; j++) {
+            candidateModels.push(models[j]);
+          }
+        }
+        return candidateModels;
+      });
+    });
+  }).then(function(candidateModels) {
+    statusEl.textContent = '筛选到 ' + candidateModels.length + ' 条候选，正在查重...';
+    progressEl.style.width = '60%';
+
+    // 查重：按模型名称去重
+    var existingNames = {};
+    for (var i = 0; i < allModelsData.length; i++) {
+      existingNames[safe(allModelsData[i].name)] = true;
+    }
+    var newModels = [];
+    var seenNames = {};
+    for (var i = 0; i < candidateModels.length; i++) {
+      var name = safe(candidateModels[i].name);
+      if (name && !existingNames[name] && !seenNames[name]) {
+        newModels.push(candidateModels[i]);
+        seenNames[name] = true;
+      }
+    }
+
+    statusEl.textContent = '去重后新增 ' + newModels.length + ' 条模型';
+    progressEl.style.width = '80%';
+
+    if (newModels.length === 0) {
+      statusEl.textContent = '无新增模型（所有候选模型已存在于总表中）';
+      progressEl.style.width = '100%';
+      return;
+    }
+
+    // 追加到 allModelsData
+    for (var i = 0; i < newModels.length; i++) {
+      allModelsData.push(newModels[i]);
+    }
+
+    // 保存到 GitHub
+    var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+    return commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: update ' + newModels.length + ' models from daily reports (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
+      statusEl.textContent = '✓ 成功新增 ' + newModels.length + ' 条模型到总表！';
+      progressEl.style.width = '100%';
+      filterAllModels();
+      setTimeout(function() { document.body.removeChild(overlay); }, 2000);
+    });
+  }).catch(function(e) {
+    if (e === 'cancelled') { statusEl.textContent = '已取消'; progressEl.style.width = '0%'; return; }
+    statusEl.textContent = '更新失败: ' + (e.message || e);
+    progressEl.style.width = '0%';
+  });
+}
+
 function populateTypeFilter() {
   var types = {};
   for (var i = 0; i < allModelsData.length; i++) {
@@ -630,32 +868,34 @@ function renderAllTable() {
     endIdx = Math.min(startIdx + pageSize, models.length);
   }
 
+  var COL_CLASSES = { name:'col-name', company:'col-company', domestic:'col-domestic', open_source:'col-opensource', size:'col-size', type:'col-type', reasoning:'col-reasoning', task_type:'col-tasktype', website:'col-website', note:'col-note', release_date:'col-release', created_date:'col-created', _action:'col-action' };
   var html = '<table class="data-table"><thead><tr>';
   for (var c = 0; c < TABLE_COLUMNS.length; c++) {
     var col = TABLE_COLUMNS[c];
-    if (col.key === '_action') { html += '<th>' + col.label + '</th>'; continue; }
+    var cls = COL_CLASSES[col.key] || '';
+    if (col.key === '_action') { html += '<th class="' + cls + '">' + col.label + '</th>'; continue; }
     var arrowClass = '';
     if (sortColumn === col.key) arrowClass = sortDirection;
-    html += '<th onclick="sortModels(\'' + col.key + '\', \'\', true)">' + col.label + '<span class="sort-arrow ' + arrowClass + '"></span></th>';
+    html += '<th class="' + cls + '" onclick="sortModels(\'' + col.key + '\', \'\', true)">' + col.label + '<span class="sort-arrow ' + arrowClass + '"></span></th>';
   }
   html += '</tr></thead><tbody>';
 
   for (var i = startIdx; i < endIdx; i++) {
     var m = models[i];
     html += '<tr>';
-    html += '<td>' + escapeHtml(safe(m.name)) + '</td>';
-    html += '<td>' + renderCompanyBadge(safe(m.company)) + '</td>';
-    html += '<td>' + renderDomesticBadge(safe(m.domestic)) + '</td>';
-    html += '<td>' + renderOpenSourceBadge(safe(m.open_source)) + '</td>';
-    html += '<td>' + escapeHtml(safe(m.size)) + '</td>';
-    html += '<td>' + renderTypeBadge(safe(m.type)) + '</td>';
-    html += '<td>' + escapeHtml(safe(m.reasoning)) + '</td>';
-    html += '<td>' + escapeHtml(safe(m.task_type)) + '</td>';
-    html += '<td>' + renderWebsiteLink(safe(m.website)) + '</td>';
-    html += '<td class="note-cell"><div class="note-scroll">' + escapeHtml(safe(m.note)) + '</div></td>';
-    html += '<td>' + escapeHtml(safe(m.release_date)) + '</td>';
-    html += '<td>' + escapeHtml(safe(m.created_date)) + '</td>';
-    html += '<td><button class="delete-btn-cell" onclick="deleteModel(' + i + ')">删除</button></td>';
+    html += '<td class="col-name">' + escapeHtml(safe(m.name)) + '</td>';
+    html += '<td class="col-company">' + renderCompanyBadge(safe(m.company)) + '</td>';
+    html += '<td class="col-domestic">' + renderDomesticBadge(safe(m.domestic)) + '</td>';
+    html += '<td class="col-opensource">' + renderOpenSourceBadge(safe(m.open_source)) + '</td>';
+    html += '<td class="col-size">' + escapeHtml(safe(m.size)) + '</td>';
+    html += '<td class="col-type">' + renderTypeBadge(safe(m.type)) + '</td>';
+    html += '<td class="col-reasoning">' + escapeHtml(safe(m.reasoning)) + '</td>';
+    html += '<td class="col-tasktype">' + escapeHtml(safe(m.task_type)) + '</td>';
+    html += '<td class="col-website">' + renderWebsiteLink(safe(m.website)) + '</td>';
+    html += '<td class="col-note">' + escapeHtml(safe(m.note)) + '</td>';
+    html += '<td class="col-release">' + escapeHtml(safe(m.release_date)) + '</td>';
+    html += '<td class="col-created">' + escapeHtml(safe(m.created_date)) + '</td>';
+    html += '<td class="col-action"><button class="delete-btn-cell" onclick="deleteModel(' + i + ')">删除</button> <button class="connect-btn-cell" onclick="connectModel(' + i + ')">接入</button></td>';
     html += '</tr>';
   }
   html += '</tbody></table>';
