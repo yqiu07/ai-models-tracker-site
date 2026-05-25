@@ -47,10 +47,26 @@
       "note": "Anthropic发布的‘史上最强’预览版大模型，因安全评估风险被宣布无限期封印，仅限Glasswing漏洞挖掘计划内部使用",
       "release_date": "2026-05-22",
       "created_date": "2026-05-24"
+    },
+    {
+      "name": "DeepSeek V4",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "深度求索/DeepSeek",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "开源大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "https://www.deepseek.com/",
+      "note": "深度求索新一代开源模型，聚焦长上下文与复杂推理，在多个开源基准测试中刷新SOTA，适配低成本边缘部署。 [重要性:高|DeepSeek新一代主力模型若属实，属于行业广泛关注的重大版本更新。]",
+      "release_date": "2026-05-22",
+      "created_date": "2026-05-23"
     }
   ],
   "meta": {
-    "total": 3,
-    "updated_at": "2026-05-25 06:32:45"
+    "total": 4,
+    "updated_at": "2026-05-25 06:33:14"
   }
 }
