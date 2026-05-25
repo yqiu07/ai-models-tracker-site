@@ -31,28 +31,12 @@
       "note": "HuggingFace",
       "release_date": "2026-05-24",
       "created_date": "2026-05-25"
-    },
-    {
-      "name": "昇腾AgentInfra",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "华为",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "agent runtime infrastructure",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "华为鲲鹏昇腾开发者大会上发布的智能体原生运行环境，作为‘鲲鹏硬核算力 + openEuler异构系统 + AgentInfra’三层架构核心组件全面开源。",
-      "release_date": "2026-05-24",
-      "created_date": "2026-05-25"
     }
   ],
   "meta": {
     "since": "2026-05-24",
     "until": "2026-05-24",
-    "count": 3,
-    "generated_at": "2026-05-25 02:13:45"
+    "count": 2,
+    "generated_at": "2026-05-25 02:14:14"
   }
 }

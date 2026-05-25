@@ -6463,26 +6463,10 @@
       "note": "首个可在云端虚拟机中全天候自主运行的个人智能体，专为软件工程自动化设计，支持长期状态维持与跨会话任务延续。",
       "release_date": "2026-05-20",
       "created_date": "2026-05-25"
-    },
-    {
-      "name": "昇腾AgentInfra",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "华为",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "agent runtime infrastructure",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "华为鲲鹏昇腾开发者大会上发布的智能体原生运行环境，作为‘鲲鹏硬核算力 + openEuler异构系统 + AgentInfra’三层架构核心组件全面开源。",
-      "release_date": "2026-05-24",
-      "created_date": "2026-05-25"
     }
   ],
   "meta": {
-    "total": 405,
-    "generated_at": "2026-05-25 02:13:45"
+    "total": 404,
+    "generated_at": "2026-05-25 02:14:14"
   }
 }
