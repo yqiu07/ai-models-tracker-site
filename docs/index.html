@@ -471,8 +471,13 @@ function getGitHubToken() {
   return new Promise(function(resolve, reject) {
     _tokenResolve = resolve;
     _tokenReject = reject;
+    // 清理可能残留的旧弹窗
+    if (_tokenOverlay && _tokenOverlay.parentNode) {
+      _tokenOverlay.parentNode.removeChild(_tokenOverlay);
+    }
     _tokenOverlay = document.createElement('div');
     _tokenOverlay.className = 'modal-overlay';
+    _tokenOverlay.setAttribute('id', 'token-modal-overlay');
     _tokenOverlay.innerHTML = '<div class="modal-box">' +
       '<h3>&#128274; 输入 GitHub Token</h3>' +
       '<p>需要 GitHub Personal Access Token 来保存修改。<br><br>' +
@@ -482,24 +487,33 @@ function getGitHubToken() {
       '3. Repository access 选择 "Only select repositories" &rarr; 选 <code>' + GITHUB_REPO + '</code><br>' +
       '4. Permissions &rarr; Contents &rarr; Read and write<br>' +
       '5. 生成后复制 token 粘贴到下方</p>' +
-      '<input type="text" id="token-input" placeholder="ghp_xxxxxxxxxxxx..." style="font-family:monospace;" />' +
+      '<input type="text" class="token-input-field" placeholder="github_pat_xxxx 或 ghp_xxxx..." style="font-family:monospace;" autocomplete="off" />' +
       '<div class="btn-row"><button class="btn-cancel" onclick="tokenCancel()">取消</button><button class="btn-primary" onclick="tokenConfirm()">确认</button></div>' +
       '</div>';
     document.body.appendChild(_tokenOverlay);
+    // 自动聚焦输入框
+    var inp = _tokenOverlay.querySelector('.token-input-field');
+    if (inp) inp.focus();
   });
 }
 
 function tokenConfirm() {
-  var val = document.getElementById('token-input').value.trim();
+  if (!_tokenOverlay) return;
+  var inp = _tokenOverlay.querySelector('.token-input-field');
+  var val = inp ? inp.value.trim() : '';
   if (!val) { alert('请输入 Token'); return; }
   sessionStorage.setItem('gh_token', val);
-  if (_tokenOverlay) { document.body.removeChild(_tokenOverlay); _tokenOverlay = null; }
-  if (_tokenResolve) { _tokenResolve(val); _tokenResolve = null; }
+  document.body.removeChild(_tokenOverlay);
+  _tokenOverlay = null;
+  if (_tokenResolve) { var r = _tokenResolve; _tokenResolve = null; r(val); }
 }
 
 function tokenCancel() {
-  if (_tokenOverlay) { document.body.removeChild(_tokenOverlay); _tokenOverlay = null; }
-  if (_tokenReject) { _tokenReject('cancelled'); _tokenReject = null; }
+  if (_tokenOverlay && _tokenOverlay.parentNode) {
+    document.body.removeChild(_tokenOverlay);
+  }
+  _tokenOverlay = null;
+  if (_tokenReject) { var r = _tokenReject; _tokenReject = null; r('cancelled'); }
 }
 
 function commitFileToGitHub(path, content, message) {
