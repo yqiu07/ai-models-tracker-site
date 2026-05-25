@@ -95,10 +95,26 @@
       "note": "豆包首款全模态理解模型 | 来源: 腾讯研究院AI速递 20260508 [重要性:高|字节跳动/豆包属于国内重点关注公司，Seed 2.0 lite 若为豆包首款全模态理解模型则属于重要版本更新。]",
       "release_date": "2026-05-06",
       "created_date": "2026-05-19"
+    },
+    {
+      "name": "文心大模型5.1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "百度",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "large language model",
+      "reasoning": "",
+      "task_type": "",
+      "website": "https://yiyan.baidu.com",
+      "note": "采用‘多维弹性预训练’技术，总参数压缩至前代约1/3、激活参数约1/2，预训练成本降至业界同规模模型约6%，聚焦效率与商业化落地。 [重要性:中|百度属于国内优秀关注公司，文心大模型5.1若属官方版本更新则为值得关注的旗舰系列迭代。]",
+      "release_date": "2026-05-09",
+      "created_date": "2026-05-20"
     }
   ],
   "meta": {
-    "total": 6,
-    "updated_at": "2026-05-25 06:33:44"
+    "total": 7,
+    "updated_at": "2026-05-25 06:34:09"
   }
 }
