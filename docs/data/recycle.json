@@ -63,10 +63,42 @@
       "note": "深度求索新一代开源模型，聚焦长上下文与复杂推理，在多个开源基准测试中刷新SOTA，适配低成本边缘部署。 [重要性:高|DeepSeek新一代主力模型若属实，属于行业广泛关注的重大版本更新。]",
       "release_date": "2026-05-22",
       "created_date": "2026-05-23"
+    },
+    {
+      "name": "Claude Code",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Anthropic",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "代码智能体",
+      "reasoning": "",
+      "task_type": "",
+      "website": "https://docs.anthropic.com/en/docs/claude-code/overview",
+      "note": "Anthropic正式发布的编程专用智能体，支持--json工作流、本地IDE深度集成及自动单元测试生成，日均迭代更新。",
+      "release_date": "2026-05-22",
+      "created_date": "2026-05-23"
+    },
+    {
+      "name": "Doubao-Seed-2.0-lite",
+      "connected": "",
+      "workflow_progress": "0.0",
+      "company": "字节跳动",
+      "domestic": "国内",
+      "open_source": "闭源",
+      "size": "",
+      "type": "多模态",
+      "reasoning": "thinking",
+      "task_type": "通用对话, 视频理解, 图像理解, 语音识别",
+      "website": "",
+      "note": "豆包首款全模态理解模型 | 来源: 腾讯研究院AI速递 20260508 [重要性:高|字节跳动/豆包属于国内重点关注公司，Seed 2.0 lite 若为豆包首款全模态理解模型则属于重要版本更新。]",
+      "release_date": "2026-05-06",
+      "created_date": "2026-05-19"
     }
   ],
   "meta": {
-    "total": 4,
-    "updated_at": "2026-05-25 06:33:14"
+    "total": 6,
+    "updated_at": "2026-05-25 06:33:44"
   }
 }
