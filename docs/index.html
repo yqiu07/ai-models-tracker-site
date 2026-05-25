@@ -113,6 +113,34 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .footer { text-align: center; padding: 24px; color: var(--text-sec); font-size: .85rem; border-top: 1px solid var(--border); margin-top: 32px; }
 .footer a { color: var(--primary); text-decoration: none; }
 .footer a:hover { text-decoration: underline; }
+/* Recycle bin */
+.recycle-btn { background: #64748b; color: #fff; position: relative; }
+.recycle-btn:hover { background: #475569; }
+.recycle-badge { background: var(--red); color: #fff; border-radius: 50%; font-size: 11px; padding: 1px 5px; margin-left: 4px; }
+.recycle-panel { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 16px; max-height: 300px; overflow-y: auto; }
+.recycle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.recycle-header .close-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #64748b; }
+.recycle-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #fff; border-radius: 6px; margin-bottom: 6px; font-size: .85rem; }
+.recycle-item .model-info { flex: 1; }
+.recycle-item .restore-btn { background: var(--green); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: .8rem; }
+.recycle-item .restore-btn:hover { background: #059669; }
+.delete-btn-cell { background: var(--red); color: #fff; border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: .75rem; }
+.delete-btn-cell:hover { background: #dc2626; }
+/* Token modal */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+.modal-box { background: #fff; border-radius: 12px; padding: 24px; max-width: 480px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+.modal-box h3 { margin-bottom: 12px; }
+.modal-box p { font-size: .85rem; color: var(--text-sec); margin-bottom: 12px; line-height: 1.5; }
+.modal-box input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: .9rem; margin-bottom: 16px; }
+.modal-box .btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+.modal-box button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: .9rem; }
+.modal-box .btn-primary { background: var(--primary); color: #fff; }
+.modal-box .btn-cancel { background: #e2e8f0; color: var(--text); }
+/* Table responsive: all columns visible, auto-width */
+.data-table { width: 100%; border-collapse: collapse; font-size: .82rem; table-layout: auto; }
+.data-table th, .data-table td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+.data-table .note-cell { white-space: normal; max-width: 300px; word-break: break-all; }
+.table-wrapper, .inline-table-wrapper { overflow-x: auto; }
 @media (max-width: 768px) {
   .header { padding: 12px 16px; }
   .header h1 { font-size: 1.1rem; }
@@ -160,6 +188,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <select id="filter-opensource" onchange="filterAllModels()"><option value="">开闭源</option><option value="开源">开源</option><option value="闭源">闭源</option></select>
         <select id="filter-type" onchange="filterAllModels()"><option value="">类型</option></select>
         <span id="table-count" class="table-count"></span>
+        <button class="action-btn recycle-btn" onclick="toggleRecycleBin()" title="回收站">&#128465; 回收站 <span id="recycle-badge" class="recycle-badge">0</span></button>
+      </div>
+      <div id="recycle-panel" class="recycle-panel" style="display:none;">
+        <div class="recycle-header"><strong>&#128465; 回收站</strong> <button class="close-btn" onclick="toggleRecycleBin()">&times;</button></div>
+        <div id="recycle-list"></div>
       </div>
       <div id="all-table-container"></div>
       <div id="all-pagination" class="pagination"></div>
@@ -330,15 +363,158 @@ function renderDailyReport(data) {
 }
 
 /* ===== All Models Table ===== */
+var recycleData = [];
+var GITHUB_REPO = 'yqiu07/ai-models-tracker-site';
+var GITHUB_BRANCH = '20260519-暂停平台目录与自动化平台';
+
 function loadAllModels() {
-  fetch('data/all_models.json').then(function(r) { return r.json(); }).then(function(data) {
-    allModelsData = data.models || [];
+  Promise.all([
+    fetch('data/all_models.json').then(function(r) { return r.json(); }),
+    fetch('data/recycle.json').then(function(r) { return r.json(); }).catch(function() { return { models: [] }; })
+  ]).then(function(results) {
+    allModelsData = results[0].models || [];
+    recycleData = results[1].models || [];
+    updateRecycleBadge();
     populateTypeFilter();
+    // 默认按创建日期降序
+    sortColumn = 'created_date';
+    sortDirection = 'desc';
     filterAllModels();
-    var metaTime = safe((data.meta || {}).generated_at);
+    var metaTime = safe((results[0].meta || {}).generated_at);
     if (metaTime) document.getElementById('footer-time').textContent = '更新于 ' + metaTime;
   }).catch(function() {
     document.getElementById('all-table-container').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>加载总表失败</p></div>';
+  });
+}
+
+function updateRecycleBadge() {
+  document.getElementById('recycle-badge').textContent = recycleData.length;
+}
+
+function toggleRecycleBin() {
+  var panel = document.getElementById('recycle-panel');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    renderRecycleList();
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function renderRecycleList() {
+  var el = document.getElementById('recycle-list');
+  if (recycleData.length === 0) {
+    el.innerHTML = '<p style="color:#64748b;font-size:.85rem;">回收站为空</p>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < recycleData.length; i++) {
+    var m = recycleData[i];
+    html += '<div class="recycle-item"><div class="model-info"><strong>' + escapeHtml(safe(m.name)) + '</strong> | ' + escapeHtml(safe(m.company)) + ' | ' + escapeHtml(safe(m.type)) + '</div>';
+    html += '<button class="restore-btn" onclick="restoreModel(' + i + ')">恢复</button></div>';
+  }
+  el.innerHTML = html;
+}
+
+function getGitHubToken() {
+  var token = sessionStorage.getItem('gh_token');
+  if (token) return Promise.resolve(token);
+  return new Promise(function(resolve, reject) {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = '<div class="modal-box">' +
+      '<h3>&#128274; 输入 GitHub Token</h3>' +
+      '<p>需要 GitHub Personal Access Token 来保存修改。<br><br>' +
+      '<strong>获取方式：</strong><br>' +
+      '1. 打开 <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub Settings → Developer settings → Personal access tokens (Fine-grained)</a><br>' +
+      '2. 点击 "Generate new token"<br>' +
+      '3. Repository access 选择 "Only select repositories" → 选 <code>' + GITHUB_REPO + '</code><br>' +
+      '4. Permissions → Contents → Read and write<br>' +
+      '5. 生成后复制 token 粘贴到下方</p>' +
+      '<input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxx..." />' +
+      '<div class="btn-row"><button class="btn-cancel" id="token-cancel">取消</button><button class="btn-primary" id="token-confirm">确认</button></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('token-confirm').onclick = function() {
+      var val = document.getElementById('token-input').value.trim();
+      if (val) { sessionStorage.setItem('gh_token', val); document.body.removeChild(overlay); resolve(val); }
+    };
+    document.getElementById('token-cancel').onclick = function() { document.body.removeChild(overlay); reject('cancelled'); };
+  });
+}
+
+function commitFileToGitHub(path, content, message) {
+  return getGitHubToken().then(function(token) {
+    var apiUrl = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path + '?ref=' + encodeURIComponent(GITHUB_BRANCH);
+    return fetch(apiUrl, { headers: { 'Authorization': 'Bearer ' + token } }).then(function(r) { return r.json(); }).then(function(fileInfo) {
+      var sha = fileInfo.sha || '';
+      var body = { message: message, content: btoa(unescape(encodeURIComponent(content))), branch: GITHUB_BRANCH };
+      if (sha) body.sha = sha;
+      return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+    }).then(function(r) {
+      if (!r.ok) throw new Error('GitHub API error: ' + r.status);
+      return r.json();
+    });
+  });
+}
+
+function deleteModel(idx) {
+  var model = filteredModels[idx];
+  if (!confirm('确定删除「' + safe(model.name) + '」？\n将移入回收站，可随时恢复。')) return;
+
+  // 从 allModelsData 中移除
+  var realIdx = allModelsData.indexOf(model);
+  if (realIdx >= 0) allModelsData.splice(realIdx, 1);
+  // 加入回收站
+  recycleData.push(model);
+  updateRecycleBadge();
+
+  // 保存到 GitHub
+  var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+  var recycleContent = JSON.stringify({ models: recycleData, meta: { total: recycleData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+
+  Promise.all([
+    commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: delete model "' + safe(model.name) + '" to recycle'),
+    commitFileToGitHub('docs/data/recycle.json', recycleContent, 'chore: add "' + safe(model.name) + '" to recycle bin')
+  ]).then(function() {
+    filterAllModels();
+    renderRecycleList();
+    alert('已删除「' + safe(model.name) + '」并移入回收站 ✓');
+  }).catch(function(e) {
+    if (e === 'cancelled') { allModelsData.splice(realIdx, 0, model); recycleData.pop(); updateRecycleBadge(); return; }
+    alert('保存失败: ' + e.message + '\n本地已修改但未同步到GitHub');
+    filterAllModels();
+    renderRecycleList();
+  });
+}
+
+function restoreModel(idx) {
+  var model = recycleData[idx];
+  if (!confirm('确定恢复「' + safe(model.name) + '」到总表？')) return;
+
+  recycleData.splice(idx, 1);
+  allModelsData.push(model);
+  updateRecycleBadge();
+
+  var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+  var recycleContent = JSON.stringify({ models: recycleData, meta: { total: recycleData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+
+  Promise.all([
+    commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: restore model "' + safe(model.name) + '" from recycle'),
+    commitFileToGitHub('docs/data/recycle.json', recycleContent, 'chore: remove "' + safe(model.name) + '" from recycle bin')
+  ]).then(function() {
+    filterAllModels();
+    renderRecycleList();
+    alert('已恢复「' + safe(model.name) + '」到总表 ✓');
+  }).catch(function(e) {
+    if (e === 'cancelled') { recycleData.splice(idx, 0, model); allModelsData.pop(); updateRecycleBadge(); return; }
+    alert('保存失败: ' + e.message);
+    filterAllModels();
+    renderRecycleList();
   });
 }
 
@@ -427,8 +603,6 @@ function sortModels(column, direction, toggle) {
 
 var TABLE_COLUMNS = [
   { key: 'name', label: '模型名称' },
-  { key: 'connected', label: '是否接入' },
-  { key: 'workflow_progress', label: 'workflow进展' },
   { key: 'company', label: '公司' },
   { key: 'domestic', label: '国内外' },
   { key: 'open_source', label: '开闭源' },
@@ -439,7 +613,8 @@ var TABLE_COLUMNS = [
   { key: 'website', label: '官网' },
   { key: 'note', label: '备注' },
   { key: 'release_date', label: '发布时间' },
-  { key: 'created_date', label: '创建时间' }
+  { key: 'created_date', label: '创建时间' },
+  { key: '_action', label: '操作' }
 ];
 
 function renderAllTable() {
@@ -458,6 +633,7 @@ function renderAllTable() {
   var html = '<table class="data-table"><thead><tr>';
   for (var c = 0; c < TABLE_COLUMNS.length; c++) {
     var col = TABLE_COLUMNS[c];
+    if (col.key === '_action') { html += '<th>' + col.label + '</th>'; continue; }
     var arrowClass = '';
     if (sortColumn === col.key) arrowClass = sortDirection;
     html += '<th onclick="sortModels(\'' + col.key + '\', \'\', true)">' + col.label + '<span class="sort-arrow ' + arrowClass + '"></span></th>';
@@ -468,8 +644,6 @@ function renderAllTable() {
     var m = models[i];
     html += '<tr>';
     html += '<td>' + escapeHtml(safe(m.name)) + '</td>';
-    html += '<td>' + escapeHtml(safe(m.connected)) + '</td>';
-    html += '<td>' + renderWorkflow(safe(m.workflow_progress)) + '</td>';
     html += '<td>' + renderCompanyBadge(safe(m.company)) + '</td>';
     html += '<td>' + renderDomesticBadge(safe(m.domestic)) + '</td>';
     html += '<td>' + renderOpenSourceBadge(safe(m.open_source)) + '</td>';
@@ -481,6 +655,7 @@ function renderAllTable() {
     html += '<td class="note-cell"><div class="note-scroll">' + escapeHtml(safe(m.note)) + '</div></td>';
     html += '<td>' + escapeHtml(safe(m.release_date)) + '</td>';
     html += '<td>' + escapeHtml(safe(m.created_date)) + '</td>';
+    html += '<td><button class="delete-btn-cell" onclick="deleteModel(' + i + ')">删除</button></td>';
     html += '</tr>';
   }
   html += '</tbody></table>';

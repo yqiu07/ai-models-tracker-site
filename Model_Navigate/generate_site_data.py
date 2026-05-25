@@ -258,18 +258,30 @@ def main():
     print(f"[OK] dashboard: {dashboard_path.name} (total {dashboard['total']} models)")
 
     # 3. 全量模型数据（含所有 Excel 列，供前端交互式表格）
+    # 读取回收站文件，排除其中的模型
+    recycle_path = DATA_DIR / "recycle.json"
+    recycled_names = set()
+    if recycle_path.exists():
+        with open(recycle_path, "r", encoding="utf-8") as f:
+            recycle_data = json.load(f)
+            for item in recycle_data.get("models", []):
+                recycled_names.add(item.get("name", ""))
+
     all_models_list = [_row_to_model(row) for _, row in dataframe.iterrows()]
+    # 过滤掉回收站中的模型
+    active_models = [m for m in all_models_list if m.get("name", "") not in recycled_names]
     all_models_data = {
-        "models": all_models_list,
+        "models": active_models,
         "meta": {
-            "total": len(all_models_list),
+            "total": len(active_models),
+            "recycled": len(recycled_names),
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         },
     }
     all_models_path = DATA_DIR / "all_models.json"
     with open(all_models_path, "w", encoding="utf-8") as f:
         json.dump(all_models_data, f, ensure_ascii=False, indent=2)
-    print(f"[OK] all_models: {all_models_path.name} ({len(all_models_list)} models)")
+    print(f"[OK] all_models: {all_models_path.name} ({len(active_models)} models, {len(recycled_names)} recycled)")
 
     # 4. 历史日报索引
     # 同步 Report/ 下的 JSON 日报到 history/
