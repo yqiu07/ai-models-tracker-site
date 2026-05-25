@@ -139,6 +139,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .connected-item .model-info { flex: 1; }
 .connected-item .disconnect-btn { background: var(--orange); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: .8rem; }
 .connected-item .disconnect-btn:hover { background: #d97706; }
+/* Add buttons */
+.add-manual-btn { background: #6366f1; color: #fff; }
+.add-manual-btn:hover { background: #4f46e5; }
+.add-smart-btn { background: #8b5cf6; color: #fff; }
+.add-smart-btn:hover { background: #7c3aed; }
+/* Add modal form */
+.add-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.add-form-grid label { font-size: .8rem; color: var(--text-sec); display: block; margin-bottom: 3px; }
+.add-form-grid input, .add-form-grid select, .add-form-grid textarea { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: .85rem; }
+.add-form-grid textarea { resize: vertical; min-height: 50px; }
+.add-form-grid .full-width { grid-column: 1 / -1; }
+.smart-add-textarea { width: 100%; min-height: 120px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; resize: vertical; margin-bottom: 12px; font-family: inherit; }
 /* Update button */
 .update-btn { background: var(--blue); color: #fff; }
 .update-btn:hover { background: #2563eb; }
@@ -223,6 +235,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <select id="filter-opensource" onchange="filterAllModels()"><option value="">开闭源</option><option value="开源">开源</option><option value="闭源">闭源</option></select>
         <select id="filter-type" onchange="filterAllModels()"><option value="">类型</option></select>
         <span id="table-count" class="table-count"></span>
+        <button class="action-btn add-manual-btn" onclick="showManualAddModal()">&#x2795; 手动添加</button>
+        <button class="action-btn add-smart-btn" onclick="showSmartAddModal()">&#x1F916; 智能添加</button>
         <button class="action-btn update-btn" onclick="showUpdateModal()">&#x1F504; 更新</button>
         <button class="action-btn connected-btn" onclick="toggleConnectedPanel()" title="接入站">&#x1F517; 接入站 <span id="connected-badge" class="connected-badge">0</span></button>
         <button class="action-btn recycle-btn" onclick="toggleRecycleBin()" title="回收站">&#128465; 回收站 <span id="recycle-badge" class="recycle-badge">0</span></button>
@@ -661,6 +675,134 @@ function disconnectModel(idx) {
     if (e === 'cancelled') { connectedData.splice(idx, 0, model); updateConnectedBadge(); return; }
     alert('保存失败: ' + e.message);
     renderConnectedList();
+  });
+}
+
+/* ===== Manual Add (手动添加) ===== */
+function showManualAddModal() {
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = '<div class="modal-box" style="max-width:560px;">' +
+    '<h3>&#x2795; 手动添加模型</h3>' +
+    '<div class="add-form-grid">' +
+    '<div><label>模型名称 *</label><input type="text" id="add-name" placeholder="如 GPT-5" /></div>' +
+    '<div><label>公司 *</label><input type="text" id="add-company" placeholder="如 OpenAI" /></div>' +
+    '<div><label>国内外</label><select id="add-domestic"><option value="">选择</option><option value="国内">国内</option><option value="国外">国外</option></select></div>' +
+    '<div><label>开闭源</label><select id="add-opensource"><option value="">选择</option><option value="开源">开源</option><option value="闭源">闭源</option></select></div>' +
+    '<div><label>尺寸</label><input type="text" id="add-size" placeholder="如 70B" /></div>' +
+    '<div><label>类型</label><input type="text" id="add-type" placeholder="如 多模态" /></div>' +
+    '<div><label>能否推理</label><select id="add-reasoning"><option value="">选择</option><option value="thinking">thinking</option><option value="non-thinking">non-thinking</option></select></div>' +
+    '<div><label>任务类型</label><input type="text" id="add-tasktype" placeholder="如 通用对话" /></div>' +
+    '<div><label>官网</label><input type="text" id="add-website" placeholder="https://..." /></div>' +
+    '<div><label>发布时间</label><input type="date" id="add-release" /></div>' +
+    '<div class="full-width"><label>备注</label><textarea id="add-note" placeholder="补充说明..."></textarea></div>' +
+    '</div>' +
+    '<div id="add-status" style="font-size:.85rem;color:var(--text-sec);min-height:20px;"></div>' +
+    '<div class="btn-row"><button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">取消</button><button class="btn-primary" onclick="executeManualAdd(this.closest(\'.modal-overlay\'))">添加</button></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector('#add-name').focus();
+}
+
+function executeManualAdd(overlay) {
+  var name = overlay.querySelector('#add-name').value.trim();
+  var company = overlay.querySelector('#add-company').value.trim();
+  var statusEl = overlay.querySelector('#add-status');
+
+  if (!name) { statusEl.textContent = '⚠️ 请输入模型名称'; return; }
+  if (!company) { statusEl.textContent = '⚠️ 请输入公司名称'; return; }
+
+  // 查重
+  for (var i = 0; i < allModelsData.length; i++) {
+    if (safe(allModelsData[i].name).toLowerCase() === name.toLowerCase()) {
+      statusEl.textContent = '⚠️ 总表中已存在「' + name + '」'; return;
+    }
+  }
+
+  var today = new Date().toISOString().substring(0, 10);
+  var newModel = {
+    name: name,
+    company: company,
+    domestic: overlay.querySelector('#add-domestic').value,
+    open_source: overlay.querySelector('#add-opensource').value,
+    size: overlay.querySelector('#add-size').value.trim(),
+    type: overlay.querySelector('#add-type').value.trim(),
+    reasoning: overlay.querySelector('#add-reasoning').value,
+    task_type: overlay.querySelector('#add-tasktype').value.trim(),
+    website: overlay.querySelector('#add-website').value.trim(),
+    note: overlay.querySelector('#add-note').value.trim(),
+    release_date: overlay.querySelector('#add-release').value || today,
+    created_date: today,
+    connected: '',
+    workflow_progress: ''
+  };
+
+  statusEl.textContent = '正在保存...';
+  allModelsData.unshift(newModel);
+  var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+
+  commitFileToGitHub('docs/data/all_models.json', allContent, 'feat: manually add model "' + name + '"').then(function() {
+    filterAllModels();
+    statusEl.textContent = '✓ 已添加「' + name + '」';
+    setTimeout(function() { overlay.remove(); }, 1500);
+  }).catch(function(e) {
+    if (e === 'cancelled') { allModelsData.shift(); statusEl.textContent = '已取消'; return; }
+    statusEl.textContent = '保存失败: ' + (e.message || e) + '\n(本地已添加但未同步GitHub)';
+    filterAllModels();
+  });
+}
+
+/* ===== Smart Add (智能添加 via GitHub Actions) ===== */
+function showSmartAddModal() {
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = '<div class="modal-box" style="max-width:520px;">' +
+    '<h3>&#x1F916; 智能添加</h3>' +
+    '<p>粘贴链接、新闻文本或模型名称，系统将通过 AI 自动解析并提取模型信息，查重后添加到总表和对应日报中。</p>' +
+    '<p style="color:var(--orange);font-size:.8rem;">⏱ 提交后约 1-2 分钟处理完成，届时刷新页面查看。</p>' +
+    '<textarea class="smart-add-textarea" id="smart-add-input" placeholder="支持以下输入格式：\n• 一个或多个 URL（每行一个）\n• 新闻报道文本\n• 模型名称（如 Gemini 3.5 Flash）\n\n系统会自动判断是否为新模型并提取信息。"></textarea>' +
+    '<div id="smart-add-status" style="font-size:.85rem;color:var(--text-sec);min-height:20px;"></div>' +
+    '<div class="btn-row"><button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">取消</button><button class="btn-primary" onclick="executeSmartAdd(this.closest(\'.modal-overlay\'))">提交到后台处理</button></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector('#smart-add-input').focus();
+}
+
+function executeSmartAdd(overlay) {
+  var input = overlay.querySelector('#smart-add-input').value.trim();
+  var statusEl = overlay.querySelector('#smart-add-status');
+
+  if (!input) { statusEl.textContent = '⚠️ 请输入内容'; return; }
+  if (input.length > 5000) { statusEl.textContent = '⚠️ 输入内容过长（最多5000字符）'; return; }
+
+  statusEl.textContent = '正在提交...';
+
+  // 触发 GitHub Actions workflow_dispatch
+  getGitHubToken().then(function(token) {
+    return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/actions/workflows/smart-add.yml/dispatches', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        ref: GITHUB_BRANCH,
+        inputs: {
+          content: input
+        }
+      })
+    });
+  }).then(function(r) {
+    if (r.status === 204 || r.ok) {
+      statusEl.innerHTML = '✓ <strong>已成功提交！</strong><br>GitHub Actions 正在后台处理，约 1-2 分钟后刷新页面查看结果。';
+      setTimeout(function() { overlay.remove(); }, 4000);
+    } else {
+      return r.json().then(function(data) { throw new Error(data.message || 'HTTP ' + r.status); });
+    }
+  }).catch(function(e) {
+    if (e === 'cancelled') { statusEl.textContent = '已取消'; return; }
+    statusEl.textContent = '提交失败: ' + (e.message || e);
   });
 }
 

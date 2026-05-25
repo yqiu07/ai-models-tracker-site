@@ -1,0 +1,50 @@
+# Re 2026/05/25/15:00
+# 智能添加模型 — 由前端 workflow_dispatch 触发
+name: Smart Add Model
+
+on:
+  workflow_dispatch:
+    inputs:
+      content:
+        description: '用户输入的文本/链接（由前端提交）'
+        required: true
+        type: string
+
+jobs:
+  smart-add:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run smart_add.py
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_BASE: ${{ secrets.LLM_API_BASE || 'https://dashscope.aliyuncs.com/compatible-mode/v1' }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL || 'qwen-plus' }}
+        run: |
+          cd Model_Navigate
+          python smart_add.py --content "${{ github.event.inputs.content }}"
+
+      - name: Commit and push
+        run: |
+          git config user.name "smart-add-bot"
+          git config user.email "bot@ai-models-tracker.local"
+          git add docs/data/all_models.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "feat(smart-add): auto-added models from user input"
+            git push
+          fi
