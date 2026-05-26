@@ -1793,22 +1793,6 @@
       "created_date": "2026-04-28"
     },
     {
-      "name": "Mythos Preview",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "Anthropic",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "代码",
-      "reasoning": "未知",
-      "task_type": "代码生成",
-      "website": "https://llm-stats.com/models/claude-mythos-preview",
-      "note": "SWE-bench 93.9%仅限安全伙伴 [重要性:高|若确为Anthropic面向代码的高性能预览模型，来自国外重点公司且指标突出。]",
-      "release_date": "2026-04-17",
-      "created_date": "2026-04-28"
-    },
-    {
       "name": "NeuroVLA",
       "connected": "",
       "workflow_progress": "0.0",
@@ -2174,22 +2158,6 @@
       "website": "https://www.anthropic.com/products/managed-agents",
       "note": "全托管智能体运行环境；开发周期从数月压缩至数天；按使用量计费$0.08/活跃会话小时",
       "release_date": "",
-      "created_date": "2026-04-17"
-    },
-    {
-      "name": "Claude Opus 4.7",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "Anthropic",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "多模态",
-      "reasoning": "thinking",
-      "task_type": "通用对话",
-      "website": "",
-      "note": "1000k上下文；顶级推理能力；顶级编码能力；高端定价",
-      "release_date": "2026-04-16",
       "created_date": "2026-04-17"
     },
     {
@@ -6351,10 +6319,27 @@
       "note": "首个可在云端虚拟机中全天候自主运行的个人智能体，专为软件工程自动化设计，支持长期状态维持与跨会话任务延续。",
       "release_date": "2026-05-20",
       "created_date": "2026-05-25"
+    },
+    {
+      "name": "昇腾AgentInfra",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "华为",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "agent runtime infrastructure",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "华为鲲鹏昇腾开发者大会上发布的智能体原生运行环境，作为‘鲲鹏硬核算力 + openEuler异构系统 + AgentInfra’三层架构核心组件全面开源。",
+      "release_date": "2026-05-24",
+      "created_date": "2026-05-25"
     }
   ],
   "meta": {
-    "total": 397,
-    "generated_at": "2026-05-25 06:34:09"
+    "total": 396,
+    "recycled": 6,
+    "generated_at": "2026-05-26 02:04:56"
   }
 }

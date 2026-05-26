@@ -1,6 +1,6 @@
 {
-  "total": 404,
-  "recent_7d": 58,
+  "total": 405,
+  "recent_7d": 59,
   "by_type": {
     "基座": 137,
     "多模态": 66,
@@ -41,15 +41,16 @@
     "multimodal large language model": 1,
     "world model / physics-aware multimodal model": 1,
     "autonomous agent platform": 1,
-    "personal autonomous agent": 1
+    "personal autonomous agent": 1,
+    "agent runtime infrastructure": 1
   },
   "by_domestic": {
     "国外": 177,
-    "国内": 227
+    "国内": 228
   },
   "by_open_source": {
     "闭源": 183,
-    "未知": 52,
+    "未知": 53,
     "开源": 140,
     "集成产品": 29
   },
@@ -84,8 +85,8 @@
     },
     {
       "month": "2026-05",
-      "count": 63
+      "count": 64
     }
   ],
-  "generated_at": "2026-05-25 11:43:16"
+  "generated_at": "2026-05-26 02:04:56"
 }
