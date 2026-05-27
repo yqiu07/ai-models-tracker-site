@@ -1,19 +1,19 @@
 {
-  "total": 405,
-  "recent_7d": 59,
+  "total": 412,
+  "recent_7d": 37,
   "by_type": {
     "基座": 137,
     "多模态": 66,
     "智能体": 46,
     "领域": 43,
     "微调": 22,
+    "未知": 19,
     "语音": 17,
-    "未知": 15,
     "视频": 8,
     "具身": 6,
     "图像": 5,
     "large language model": 4,
-    "大语言模型": 3,
+    "大语言模型": 4,
     "代码智能体": 2,
     "通用智能体": 2,
     "代码": 2,
@@ -42,16 +42,18 @@
     "world model / physics-aware multimodal model": 1,
     "autonomous agent platform": 1,
     "personal autonomous agent": 1,
-    "agent runtime infrastructure": 1
+    "agent runtime infrastructure": 1,
+    "小规模混合推理大语言模型": 1,
+    "轻量级多模态大语言模型": 1
   },
   "by_domestic": {
-    "国外": 177,
+    "国外": 184,
     "国内": 228
   },
   "by_open_source": {
     "闭源": 183,
-    "未知": 53,
-    "开源": 140,
+    "未知": 56,
+    "开源": 144,
     "集成产品": 29
   },
   "trend": [
@@ -85,8 +87,8 @@
     },
     {
       "month": "2026-05",
-      "count": 64
+      "count": 71
     }
   ],
-  "generated_at": "2026-05-26 02:04:58"
+  "generated_at": "2026-05-27 02:12:19"
 }
