@@ -65,22 +65,6 @@
       "created_date": "2026-05-27"
     },
     {
-      "name": "Grok V9-Medium",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "SpaceXAI (xAI)",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "1.5T参数基础模型，已完成训练并进入微调阶段，专为复杂编程任务优化，预计2–3周内公开发布，年底将开源0.5T版本。",
-      "release_date": "2026-05-26",
-      "created_date": "2026-05-27"
-    },
-    {
       "name": "MiniCPM5-1B",
       "connected": "",
       "workflow_progress": "",
@@ -116,7 +100,7 @@
   "meta": {
     "since": "2026-05-26",
     "until": "2026-05-26",
-    "count": 7,
-    "generated_at": "2026-05-27 02:12:19"
+    "count": 6,
+    "generated_at": "2026-05-27 02:13:08"
   }
 }
