@@ -257,22 +257,6 @@
       "created_date": "2026-05-19"
     },
     {
-      "name": "GPT-5.6",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "基座",
-      "reasoning": "未知",
-      "task_type": "通用对话, 代码生成",
-      "website": "",
-      "note": "尚未正式发布，仅内测代号曝光（ember-alpha/beacon-alpha）；下月或升级发布",
-      "release_date": "2026-05-15",
-      "created_date": "2026-05-19"
-    },
-    {
       "name": "GPT-Realtime-2",
       "connected": "",
       "workflow_progress": "0.0",
@@ -6465,38 +6449,6 @@
       "created_date": "2026-05-28"
     },
     {
-      "name": "GPT-5.6",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "泄露信息显示支持150万token超长上下文窗口，预计2026年6月正式发布",
-      "release_date": "2026-05-27",
-      "created_date": "2026-05-28"
-    },
-    {
-      "name": "Claude Mythos",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Anthropic",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型（安全增强型）",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "在欧洲央行委托的红队测试中意外暴露SWIFT及三大央行结算系统漏洞，属Mythos系列新安全推理模型",
-      "release_date": "2026-05-27",
-      "created_date": "2026-05-28"
-    },
-    {
       "name": "Gemini for Science",
       "connected": "",
       "workflow_progress": "",
@@ -6562,8 +6514,8 @@
     }
   ],
   "meta": {
-    "total": 410,
+    "total": 407,
     "recycled": 6,
-    "generated_at": "2026-05-28 01:56:13"
+    "generated_at": "2026-05-28 01:56:46"
   }
 }
