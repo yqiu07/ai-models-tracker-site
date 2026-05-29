@@ -9,6 +9,14 @@ on:
         description: '用户输入的文本/链接（由前端提交）'
         required: true
         type: string
+      target:
+        description: '写入目标：all=仅总表，daily=总表+最新日报'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - daily
 
 jobs:
   smart-add:
@@ -35,13 +43,13 @@ jobs:
           LLM_MODEL: ${{ secrets.LLM_MODEL || 'qwen-plus' }}
         run: |
           cd Model_Navigate
-          python smart_add.py --content "${{ github.event.inputs.content }}"
+          python smart_add.py --content "${{ github.event.inputs.content }}" --target "${{ github.event.inputs.target }}"
 
       - name: Commit and push
         run: |
           git config user.name "smart-add-bot"
           git config user.email "bot@ai-models-tracker.local"
-          git add docs/data/all_models.json
+          git add docs/data/all_models.json docs/data/daily_report.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
