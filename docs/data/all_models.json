@@ -1,6 +1,22 @@
 {
   "models": [
     {
+      "name": "test",
+      "company": "test",
+      "domestic": "",
+      "open_source": "",
+      "size": "",
+      "type": "",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "",
+      "release_date": "2026-05-29",
+      "created_date": "2026-05-29",
+      "connected": "",
+      "workflow_progress": ""
+    },
+    {
       "name": "Gemini 3.5 Flash",
       "connected": "",
       "workflow_progress": "0.0",
@@ -6674,8 +6690,7 @@
     }
   ],
   "meta": {
-    "total": 417,
-    "recycled": 6,
-    "generated_at": "2026-05-29 02:05:13"
+    "total": 418,
+    "generated_at": "2026-05-29 02:57:26"
   }
 }
