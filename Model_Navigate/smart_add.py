@@ -33,6 +33,7 @@ import requests
 ROOT = Path(__file__).parent
 DOCS_DATA = ROOT.parent / "docs" / "data"
 ALL_MODELS_PATH = DOCS_DATA / "all_models.json"
+DAILY_REPORT_PATH = DOCS_DATA / "daily_report.json"
 RECYCLE_PATH = DOCS_DATA / "recycle.json"
 
 # ── LLM 配置 ──
@@ -179,9 +180,41 @@ def save_all_models(data: dict):
     print(f"[OK] Saved {len(data['models'])} models to all_models.json")
 
 
+def load_daily_report() -> dict:
+    """加载 daily_report.json。"""
+    if DAILY_REPORT_PATH.exists():
+        with open(DAILY_REPORT_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"models": [], "meta": {"total": 0}}
+
+
+def save_daily_report(data: dict):
+    """保存 daily_report.json。"""
+    data.setdefault("meta", {})
+    data["meta"]["total"] = len(data.get("models", []))
+    data["meta"]["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(DAILY_REPORT_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    print(f"[OK] Saved {len(data.get('models', []))} models to daily_report.json")
+
+
+def add_to_daily_report(new_models: list[dict]):
+    """将新增模型追加到最新日报，按名称避免重复。"""
+    daily_data = load_daily_report()
+    daily_models = daily_data.setdefault("models", [])
+    existing_names = {m.get("name", "").strip().lower() for m in daily_models}
+    models_to_add = [m for m in new_models if m.get("name", "").strip().lower() not in existing_names]
+    if not models_to_add:
+        print("[INFO] No new model needs to be added to daily_report.json")
+        return
+    daily_data["models"] = models_to_add + daily_models
+    save_daily_report(daily_data)
+
+
 def main():
     parser = argparse.ArgumentParser(description="智能添加模型")
     parser.add_argument("--content", required=True, help="用户输入的文本/链接")
+    parser.add_argument("--target", choices=["all", "daily"], default="all", help="写入目标：all=仅总表，daily=总表+最新日报")
     args = parser.parse_args()
 
     content = args.content.strip()
@@ -215,6 +248,9 @@ def main():
     # 4. 追加到总表
     all_data["models"] = unique_models + all_data["models"]
     save_all_models(all_data)
+
+    if args.target == "daily":
+        add_to_daily_report(unique_models)
 
     # 5. 输出摘要
     print(f"\n[DONE] Successfully added {len(unique_models)} model(s).")

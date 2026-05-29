@@ -217,6 +217,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <select id="history-select" onchange="loadHistoryReport(this.value)"></select>
       <span id="daily-meta" class="report-meta"></span>
       <div class="daily-actions">
+        <button class="action-btn add-manual-btn" onclick="showManualAddModal('daily')">&#x2795; 手动添加</button>
+        <button class="action-btn add-smart-btn" onclick="showSmartAddModal('daily')">&#x1F916; 智能添加</button>
+        <button class="action-btn recycle-btn" onclick="toggleRecycleBin()" title="回收站">&#128465; 回收站 <span id="daily-recycle-badge" class="recycle-badge">0</span></button>
         <button class="action-btn review-btn" onclick="triggerReview()">&#9881; 巡检修正</button>
         <button class="action-btn push-btn-small" onclick="triggerPush()">&#9993; 推送钉钉</button>
       </div>
@@ -358,7 +361,11 @@ function loadDailyReport() {
   });
 }
 
+var currentDailyData = { models: [], meta: {} };
+var currentDailyUrl = 'data/daily_report.json';
+
 function loadHistoryReport(url) {
+  currentDailyUrl = url;
   if (url.endsWith('.md')) {
     fetch(url).then(function(r) { return r.text(); }).then(function(mdText) {
       document.getElementById('daily-meta').textContent = '';
@@ -378,8 +385,9 @@ function loadHistoryReport(url) {
 }
 
 function renderDailyReport(data) {
-  var meta = data.meta || {};
-  var models = data.models || [];
+  currentDailyData = data || { models: [], meta: {} };
+  var meta = currentDailyData.meta || {};
+  var models = currentDailyData.models || [];
   var metaEl = document.getElementById('daily-meta');
   var parts = [];
   if (safe(meta.since) || safe(meta.until)) {
@@ -412,6 +420,9 @@ function renderDailyReport(data) {
     if (safe(m.release_date)) html += '<div class="meta-line">发布: ' + escapeHtml(safe(m.release_date)) + '</div>';
     if (safe(m.size)) html += '<div class="meta-line">尺寸: ' + escapeHtml(safe(m.size)) + '</div>';
     if (safe(m.note)) html += '<div class="note-text">' + escapeHtml(safe(m.note)) + '</div>';
+    if (!currentDailyUrl.endsWith('.md')) {
+      html += '<div style="margin-top:10px;display:flex;gap:8px;"><button class="delete-btn-cell" onclick="deleteDailyModel(' + i + ')">删除</button></div>';
+    }
     html += '</div>';
   }
   grid.innerHTML = html;
@@ -419,6 +430,7 @@ function renderDailyReport(data) {
 
 /* ===== All Models Table ===== */
 var recycleData = [];
+var recycleLoaded = false;
 var connectedData = [];
 var GITHUB_REPO = 'yqiu07/ai-models-tracker-site';
 var GITHUB_BRANCH = '20260519-暂停平台目录与自动化平台';
@@ -431,6 +443,7 @@ function loadAllModels() {
   ]).then(function(results) {
     allModelsData = results[0].models || [];
     recycleData = results[1].models || [];
+    recycleLoaded = true;
     connectedData = results[2].models || [];
     updateRecycleBadge();
     updateConnectedBadge();
@@ -447,21 +460,44 @@ function loadAllModels() {
 }
 
 function updateRecycleBadge() {
-  document.getElementById('recycle-badge').textContent = recycleData.length;
+  var total = recycleData.length;
+  var allBadge = document.getElementById('recycle-badge');
+  var dailyBadge = document.getElementById('daily-recycle-badge');
+  if (allBadge) allBadge.textContent = total;
+  if (dailyBadge) dailyBadge.textContent = total;
+}
+
+function ensureRecycleLoaded() {
+  if (recycleLoaded) return Promise.resolve();
+  return fetch('data/recycle.json').then(function(r) { return r.json(); }).catch(function() { return { models: [] }; }).then(function(data) {
+    recycleData = data.models || [];
+    recycleLoaded = true;
+    updateRecycleBadge();
+  });
 }
 
 function toggleRecycleBin() {
-  var panel = document.getElementById('recycle-panel');
-  if (panel.style.display === 'none') {
-    panel.style.display = 'block';
-    renderRecycleList();
-  } else {
-    panel.style.display = 'none';
+  var existingOverlay = document.getElementById('recycle-modal-overlay');
+  if (existingOverlay) {
+    existingOverlay.remove();
+    return;
   }
+
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'recycle-modal-overlay';
+  overlay.innerHTML = '<div class="modal-box" style="max-width:720px;max-height:80vh;overflow:auto;">' +
+    '<div class="recycle-header"><strong>&#128465; 回收站</strong><button class="close-btn" onclick="toggleRecycleBin()">&times;</button></div>' +
+    '<p style="font-size:.85rem;color:var(--text-sec);margin-bottom:12px;">删除项会先进入回收站；“恢复”会放回来源位置，“彻底清除”会永久移出回收站。</p>' +
+    '<div id="recycle-list"><p style="color:#64748b;font-size:.85rem;">正在加载...</p></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  ensureRecycleLoaded().then(function() { renderRecycleList(); });
 }
 
 function renderRecycleList() {
   var el = document.getElementById('recycle-list');
+  if (!el) return;
   if (recycleData.length === 0) {
     el.innerHTML = '<p style="color:#64748b;font-size:.85rem;">回收站为空</p>';
     return;
@@ -469,8 +505,9 @@ function renderRecycleList() {
   var html = '';
   for (var i = 0; i < recycleData.length; i++) {
     var m = recycleData[i];
-    html += '<div class="recycle-item"><div class="model-info"><strong>' + escapeHtml(safe(m.name)) + '</strong> | ' + escapeHtml(safe(m.company)) + ' | ' + escapeHtml(safe(m.type)) + '</div>';
-    html += '<button class="restore-btn" onclick="restoreModel(' + i + ')">恢复</button></div>';
+    var sourceLabel = safe(m.source) === 'daily' ? '日报' : '总表';
+    html += '<div class="recycle-item"><div class="model-info"><strong>' + escapeHtml(safe(m.name)) + '</strong> | ' + escapeHtml(safe(m.company)) + ' | ' + escapeHtml(safe(m.type)) + ' <span class="badge badge-type">来源：' + sourceLabel + '</span></div>';
+    html += '<div style="display:flex;gap:8px;"><button class="restore-btn" onclick="restoreModel(' + i + ')">恢复</button><button class="delete-btn-cell" onclick="permanentlyDeleteModel(' + i + ')">彻底清除</button></div></div>';
   }
   el.innerHTML = html;
 }
@@ -549,24 +586,65 @@ function commitFileToGitHub(path, content, message) {
   });
 }
 
+function getNowText() {
+  return new Date().toISOString().replace('T', ' ').substring(0, 19);
+}
+
+function isSameModel(a, b) {
+  var aName = safe(a && a.name).toLowerCase();
+  var bName = safe(b && b.name).toLowerCase();
+  if (!aName || !bName || aName !== bName) return false;
+  var aCompany = safe(a && a.company).toLowerCase();
+  var bCompany = safe(b && b.company).toLowerCase();
+  return !aCompany || !bCompany || aCompany === bCompany;
+}
+
+function stripRecycleMeta(model) {
+  var restored = {};
+  for (var key in model) {
+    if (Object.prototype.hasOwnProperty.call(model, key) && key !== 'source' && key !== 'deleted_at') {
+      restored[key] = model[key];
+    }
+  }
+  return restored;
+}
+
+function buildAllModelsContent() {
+  return JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: getNowText() } }, null, 2);
+}
+
+function buildRecycleContent() {
+  return JSON.stringify({ models: recycleData, meta: { total: recycleData.length, updated_at: getNowText() } }, null, 2);
+}
+
+function buildDailyContent() {
+  currentDailyData.models = currentDailyData.models || [];
+  currentDailyData.meta = currentDailyData.meta || {};
+  currentDailyData.meta.total = currentDailyData.models.length;
+  currentDailyData.meta.updated_at = getNowText();
+  return JSON.stringify(currentDailyData, null, 2);
+}
+
+function ensureAllModelsLoaded() {
+  if (allModelsData.length > 0) return Promise.resolve();
+  return fetch('data/all_models.json').then(function(r) { return r.json(); }).then(function(data) {
+    allModelsData = data.models || [];
+  });
+}
+
 function deleteModel(idx) {
   var model = filteredModels[idx];
   if (!confirm('确定删除「' + safe(model.name) + '」？\n将移入回收站，可随时恢复。')) return;
 
-  // 从 allModelsData 中移除
   var realIdx = allModelsData.indexOf(model);
   if (realIdx >= 0) allModelsData.splice(realIdx, 1);
-  // 加入回收站
-  recycleData.push(model);
+  var recycledModel = Object.assign({}, model, { source: 'all', deleted_at: getNowText() });
+  recycleData.push(recycledModel);
   updateRecycleBadge();
 
-  // 保存到 GitHub
-  var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-  var recycleContent = JSON.stringify({ models: recycleData, meta: { total: recycleData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-
   Promise.all([
-    commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: delete model "' + safe(model.name) + '" to recycle'),
-    commitFileToGitHub('docs/data/recycle.json', recycleContent, 'chore: add "' + safe(model.name) + '" to recycle bin')
+    commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'chore: delete model "' + safe(model.name) + '" to recycle'),
+    commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: add "' + safe(model.name) + '" to recycle bin')
   ]).then(function() {
     filterAllModels();
     renderRecycleList();
@@ -579,28 +657,99 @@ function deleteModel(idx) {
   });
 }
 
-function restoreModel(idx) {
-  var model = recycleData[idx];
-  if (!confirm('确定恢复「' + safe(model.name) + '」到总表？')) return;
+function deleteDailyModel(idx) {
+  if (currentDailyUrl !== 'data/daily_report.json') {
+    alert('历史日报暂不支持直接删除，请切换到“最新日报”后操作。');
+    return;
+  }
+  var dailyModels = currentDailyData.models || [];
+  var model = dailyModels[idx];
+  if (!model) return;
+  if (!confirm('确定从日报删除「' + safe(model.name) + '」？\n将同步从总表移除并移入回收站。')) return;
 
+  Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded()]).then(function() {
+    dailyModels.splice(idx, 1);
+    for (var i = allModelsData.length - 1; i >= 0; i--) {
+      if (isSameModel(allModelsData[i], model)) allModelsData.splice(i, 1);
+    }
+    recycleData.push(Object.assign({}, model, { source: 'daily', deleted_at: getNowText() }));
+    updateRecycleBadge();
+
+    return Promise.all([
+      commitFileToGitHub('docs/data/daily_report.json', buildDailyContent(), 'chore: delete daily model "' + safe(model.name) + '"'),
+      commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'chore: delete model "' + safe(model.name) + '" from all models'),
+      commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: add daily model "' + safe(model.name) + '" to recycle bin')
+    ]).then(function() {
+      renderDailyReport(currentDailyData);
+      if (tabsLoaded.all) filterAllModels();
+      renderRecycleList();
+      alert('已删除「' + safe(model.name) + '」并同步到回收站 ✓');
+    });
+  }).catch(function(e) {
+    if (e === 'cancelled') return;
+    alert('保存失败: ' + (e.message || e));
+    renderDailyReport(currentDailyData);
+    if (tabsLoaded.all) filterAllModels();
+    renderRecycleList();
+  });
+}
+
+function restoreModel(idx) {
+  var recycledModel = recycleData[idx];
+  var source = safe(recycledModel.source) || 'all';
+  var targetLabel = source === 'daily' ? '日报和总表' : '总表';
+  if (!confirm('确定恢复「' + safe(recycledModel.name) + '」到' + targetLabel + '？')) return;
+
+  Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded()]).then(function() {
+    var restoredModel = stripRecycleMeta(recycledModel);
+    recycleData.splice(idx, 1);
+    var commitTasks = [];
+
+    var existsInAll = false;
+    for (var i = 0; i < allModelsData.length; i++) {
+      if (isSameModel(allModelsData[i], restoredModel)) existsInAll = true;
+    }
+    if (!existsInAll) allModelsData.unshift(restoredModel);
+    commitTasks.push(commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'chore: restore model "' + safe(restoredModel.name) + '" from recycle'));
+
+    if (source === 'daily') {
+      currentDailyData.models = currentDailyData.models || [];
+      var existsInDaily = false;
+      for (var j = 0; j < currentDailyData.models.length; j++) {
+        if (isSameModel(currentDailyData.models[j], restoredModel)) existsInDaily = true;
+      }
+      if (!existsInDaily) currentDailyData.models.unshift(restoredModel);
+      commitTasks.push(commitFileToGitHub('docs/data/daily_report.json', buildDailyContent(), 'chore: restore daily model "' + safe(restoredModel.name) + '"'));
+    }
+
+    commitTasks.push(commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin'));
+    updateRecycleBadge();
+
+    return Promise.all(commitTasks).then(function() {
+      if (source === 'daily') renderDailyReport(currentDailyData);
+      if (tabsLoaded.all) filterAllModels();
+      renderRecycleList();
+      alert('已恢复「' + safe(restoredModel.name) + '」到' + targetLabel + ' ✓');
+    });
+  }).catch(function(e) {
+    if (e === 'cancelled') return;
+    alert('恢复失败: ' + (e.message || e));
+    renderRecycleList();
+  });
+}
+
+function permanentlyDeleteModel(idx) {
+  var model = recycleData[idx];
+  if (!confirm('确定彻底清除「' + safe(model.name) + '」？\n此操作不会恢复到日报或总表。')) return;
   recycleData.splice(idx, 1);
-  allModelsData.push(model);
   updateRecycleBadge();
 
-  var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-  var recycleContent = JSON.stringify({ models: recycleData, meta: { total: recycleData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-
-  Promise.all([
-    commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: restore model "' + safe(model.name) + '" from recycle'),
-    commitFileToGitHub('docs/data/recycle.json', recycleContent, 'chore: remove "' + safe(model.name) + '" from recycle bin')
-  ]).then(function() {
-    filterAllModels();
+  commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: permanently remove "' + safe(model.name) + '" from recycle bin').then(function() {
     renderRecycleList();
-    alert('已恢复「' + safe(model.name) + '」到总表 ✓');
+    alert('已彻底清除「' + safe(model.name) + '」 ✓');
   }).catch(function(e) {
-    if (e === 'cancelled') { recycleData.splice(idx, 0, model); allModelsData.pop(); updateRecycleBadge(); return; }
-    alert('保存失败: ' + e.message);
-    filterAllModels();
+    if (e === 'cancelled') { recycleData.splice(idx, 0, model); updateRecycleBadge(); return; }
+    alert('彻底清除失败: ' + (e.message || e));
     renderRecycleList();
   });
 }
@@ -679,11 +828,13 @@ function disconnectModel(idx) {
 }
 
 /* ===== Manual Add (手动添加) ===== */
-function showManualAddModal() {
+function showManualAddModal(target) {
+  target = target || 'all';
   var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML = '<div class="modal-box" style="max-width:560px;">' +
-    '<h3>&#x2795; 手动添加模型</h3>' +
+    '<h3>&#x2795; 手动添加模型' + (target === 'daily' ? '到日报' : '') + '</h3>' +
+    '<input type="hidden" id="add-target" value="' + target + '" />' +
     '<div class="add-form-grid">' +
     '<div><label>模型名称 *</label><input type="text" id="add-name" placeholder="如 GPT-5" /></div>' +
     '<div><label>公司 *</label><input type="text" id="add-company" placeholder="如 OpenAI" /></div>' +
@@ -712,13 +863,6 @@ function executeManualAdd(overlay) {
   if (!name) { statusEl.textContent = '⚠️ 请输入模型名称'; return; }
   if (!company) { statusEl.textContent = '⚠️ 请输入公司名称'; return; }
 
-  // 查重
-  for (var i = 0; i < allModelsData.length; i++) {
-    if (safe(allModelsData[i].name).toLowerCase() === name.toLowerCase()) {
-      statusEl.textContent = '⚠️ 总表中已存在「' + name + '」'; return;
-    }
-  }
-
   var today = new Date().toISOString().substring(0, 10);
   var newModel = {
     name: name,
@@ -738,26 +882,48 @@ function executeManualAdd(overlay) {
   };
 
   statusEl.textContent = '正在保存...';
-  allModelsData.unshift(newModel);
-  var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
+  var target = overlay.querySelector('#add-target').value || 'all';
 
-  commitFileToGitHub('docs/data/all_models.json', allContent, 'feat: manually add model "' + name + '"').then(function() {
-    filterAllModels();
-    statusEl.textContent = '✓ 已添加「' + name + '」';
-    setTimeout(function() { overlay.remove(); }, 1500);
+  ensureAllModelsLoaded().then(function() {
+    for (var i = 0; i < allModelsData.length; i++) {
+      if (safe(allModelsData[i].name).toLowerCase() === name.toLowerCase()) {
+        statusEl.textContent = '⚠️ 总表中已存在「' + name + '」';
+        return Promise.reject('duplicate');
+      }
+    }
+
+    allModelsData.unshift(newModel);
+    var commitTasks = [commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'feat: manually add model "' + name + '"')];
+
+    if (target === 'daily') {
+      currentDailyData.models = currentDailyData.models || [];
+      currentDailyData.models.unshift(newModel);
+      commitTasks.push(commitFileToGitHub('docs/data/daily_report.json', buildDailyContent(), 'feat: manually add daily model "' + name + '"'));
+    }
+
+    return Promise.all(commitTasks).then(function() {
+      if (tabsLoaded.all) filterAllModels();
+      if (target === 'daily') renderDailyReport(currentDailyData);
+      statusEl.textContent = '✓ 已添加「' + name + '」';
+      setTimeout(function() { overlay.remove(); }, 1500);
+    });
   }).catch(function(e) {
-    if (e === 'cancelled') { allModelsData.shift(); statusEl.textContent = '已取消'; return; }
+    if (e === 'duplicate') return;
+    if (e === 'cancelled') { statusEl.textContent = '已取消'; return; }
     statusEl.textContent = '保存失败: ' + (e.message || e) + '\n(本地已添加但未同步GitHub)';
-    filterAllModels();
+    if (tabsLoaded.all) filterAllModels();
+    if (target === 'daily') renderDailyReport(currentDailyData);
   });
 }
 
 /* ===== Smart Add (智能添加 via GitHub Actions) ===== */
-function showSmartAddModal() {
+function showSmartAddModal(target) {
+  target = target || 'all';
   var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML = '<div class="modal-box" style="max-width:520px;">' +
-    '<h3>&#x1F916; 智能添加</h3>' +
+    '<h3>&#x1F916; 智能添加' + (target === 'daily' ? '到日报' : '') + '</h3>' +
+    '<input type="hidden" id="smart-add-target" value="' + target + '" />' +
     '<p>粘贴链接、新闻文本或模型名称，系统将通过 AI 自动解析并提取模型信息，查重后添加到总表和对应日报中。</p>' +
     '<p style="color:var(--orange);font-size:.8rem;">⏱ 提交后约 1-2 分钟处理完成，届时刷新页面查看。</p>' +
     '<textarea class="smart-add-textarea" id="smart-add-input" placeholder="支持以下输入格式：\n• 一个或多个 URL（每行一个）\n• 新闻报道文本\n• 模型名称（如 Gemini 3.5 Flash）\n\n系统会自动判断是否为新模型并提取信息。"></textarea>' +
@@ -770,6 +936,7 @@ function showSmartAddModal() {
 
 function executeSmartAdd(overlay) {
   var input = overlay.querySelector('#smart-add-input').value.trim();
+  var target = overlay.querySelector('#smart-add-target').value || 'all';
   var statusEl = overlay.querySelector('#smart-add-status');
 
   if (!input) { statusEl.textContent = '⚠️ 请输入内容'; return; }
@@ -789,7 +956,8 @@ function executeSmartAdd(overlay) {
       body: JSON.stringify({
         ref: GITHUB_BRANCH,
         inputs: {
-          content: input
+          content: input,
+          target: target
         }
       })
     });
@@ -1303,10 +1471,38 @@ function loadReadme() {
 
 /* ===== Actions (Review + Push) ===== */
 function triggerReview() {
-  var msg = '即将触发「巡检修正」：调用 LLM 审核当前日报，移除不属于时间窗口的模型并修正错误。\n\n确认后将跳转到 GitHub Actions 手动触发页面。';
-  if (confirm(msg)) {
-    window.open('https://github.com/yqiu07/ai-models-tracker-site/actions/workflows/review-daily.yml', '_blank');
-  }
+  var meta = currentDailyData.meta || {};
+  var since = safe(meta.since).replace(/-/g, '');
+  var until = safe(meta.until).replace(/-/g, '');
+  var msg = '即将触发「巡检修正」：调用 LLM 审核当前日报，移除不属于时间窗口的模型并修正错误。\n\n时间范围：' + (since || '自动') + ' ~ ' + (until || '自动') + '\n\n确认后会直接触发 GitHub Actions。';
+  if (!confirm(msg)) return;
+
+  getGitHubToken().then(function(token) {
+    return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/actions/workflows/review-daily.yml/dispatches', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        ref: GITHUB_BRANCH,
+        inputs: {
+          since: since,
+          until: until
+        }
+      })
+    });
+  }).then(function(r) {
+    if (r.status === 204 || r.ok) {
+      alert('已触发巡检修正 workflow ✓\n约 1-2 分钟后刷新页面查看结果。');
+    } else {
+      return r.json().then(function(data) { throw new Error(data.message || 'HTTP ' + r.status); });
+    }
+  }).catch(function(e) {
+    if (e === 'cancelled') return;
+    alert('触发失败: ' + (e.message || e));
+  });
 }
 
 function triggerPush() {
