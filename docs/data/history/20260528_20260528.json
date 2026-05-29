@@ -65,22 +65,6 @@
       "created_date": "2026-05-29"
     },
     {
-      "name": "Meta One Plus / Meta One Premium",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Meta",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "AI智能体（聊天机器人服务）",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "Meta于2026年5月28日宣布下月起测试的付费AI智能体订阅服务，覆盖Facebook、Instagram、WhatsApp和Meta AI，提供分级AI生成与推理能力，标志其从免费AI助手转向商业化智能体生态。",
-      "release_date": "2026-05-28",
-      "created_date": "2026-05-29"
-    },
-    {
       "name": "稀宇极智MoE大模型（未公开命名）",
       "connected": "",
       "workflow_progress": "",
@@ -100,7 +84,7 @@
   "meta": {
     "since": "2026-05-28",
     "until": "2026-05-28",
-    "count": 6,
-    "generated_at": "2026-05-29 02:04:37"
+    "count": 5,
+    "generated_at": "2026-05-29 02:05:13"
   }
 }
