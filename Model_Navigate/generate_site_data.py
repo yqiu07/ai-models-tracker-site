@@ -1,4 +1,4 @@
-# Re 2026/05/19/18:01
+# Re 2026/06/01/12:01
 # name: generate_site_data
 # description: 从总表生成静态站所需的 JSON 数据文件，供 GitHub Pages 前端展示日报和仪表盘
 
@@ -130,12 +130,34 @@ def _normalize_date(value) -> str:
     return s
 
 
+def _normalize_model_name(value) -> str:
+    """归一化模型名称，用于日报和总表输出前的兜底去重。"""
+    name = _clean_value(value).lower()
+    return re.sub(r"[\s\-_:/（）()【】\[\]]+", "", name)
+
+
+def _deduplicate_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """按模型名称去重，保留后出现的记录（通常是更新/审核后的版本）。"""
+    if dataframe.empty or "模型名称" not in dataframe.columns:
+        return dataframe
+    deduped = dataframe.copy()
+    deduped["__model_key"] = deduped["模型名称"].apply(_normalize_model_name)
+    before_count = len(deduped)
+    deduped = deduped[deduped["__model_key"] != ""]
+    deduped = deduped.drop_duplicates(subset=["__model_key"], keep="last")
+    deduped = deduped.drop(columns=["__model_key"])
+    removed_count = before_count - len(deduped)
+    if removed_count > 0:
+        print(f"[WARN] removed duplicate models before site generation: {removed_count}")
+    return deduped
+
+
 def load_master_table() -> pd.DataFrame:
     """加载总表。"""
     if not EXCEL_PATH.exists():
         print(f"[ERROR] master table not found: {EXCEL_PATH}")
         return pd.DataFrame()
-    return pd.read_excel(EXCEL_PATH, engine="openpyxl")
+    return _deduplicate_dataframe(pd.read_excel(EXCEL_PATH, engine="openpyxl"))
 
 
 def _row_to_model(row) -> dict:
@@ -159,17 +181,32 @@ def _row_to_model(row) -> dict:
 
 
 def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> dict:
-    """生成日报 JSON 数据。"""
+    """生成日报 JSON 数据。
+
+    日报口径：优先覆盖本次窗口内“记录创建时间”的新增模型，同时兼容“模型发布时间”在窗口内的模型。
+    这样可以避免 GPT-5.5 Instant 这类“今天发现/录入，但发布时间较早”的模型漏出日报。
+    """
     since_dash = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
     until_dash = f"{until[:4]}-{until[4:6]}-{until[6:8]}"
 
-    if "模型发布时间" not in dataframe.columns:
+    if dataframe.empty:
         return {"models": [], "meta": {"since": since_dash, "until": until_dash, "count": 0}}
 
-    # 统一日期格式后再筛选
-    normalized_dates = dataframe["模型发布时间"].apply(_normalize_date)
-    mask = (normalized_dates >= since_dash) & (normalized_dates <= until_dash)
-    filtered = dataframe[mask].copy()
+    masks = []
+    if "记录创建时间" in dataframe.columns:
+        created_dates = dataframe["记录创建时间"].apply(_normalize_date)
+        masks.append((created_dates >= since_dash) & (created_dates <= until_dash))
+    if "模型发布时间" in dataframe.columns:
+        release_dates = dataframe["模型发布时间"].apply(_normalize_date)
+        masks.append((release_dates >= since_dash) & (release_dates <= until_dash))
+
+    if not masks:
+        return {"models": [], "meta": {"since": since_dash, "until": until_dash, "count": 0}}
+
+    mask = masks[0]
+    for extra_mask in masks[1:]:
+        mask = mask | extra_mask
+    filtered = _deduplicate_dataframe(dataframe[mask].copy())
 
     models = [_row_to_model(row) for _, row in filtered.iterrows()]
 
@@ -179,6 +216,7 @@ def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> di
             "since": since_dash,
             "until": until_dash,
             "count": len(models),
+            "selection_basis": "created_date_or_release_date",
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         },
     }

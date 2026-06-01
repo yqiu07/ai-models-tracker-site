@@ -37,6 +37,7 @@ import sys
 import os
 import argparse
 import shutil
+import re
 from datetime import date, datetime
 from pathlib import Path
 
@@ -663,6 +664,18 @@ def step_merge_and_archive(since_int, until_int):
     else:
         df_merged = df_increment
         log(f"总表新建: {len(df_merged)} 个模型")
+
+    if name_col in df_merged.columns:
+        before_count = len(df_merged)
+        df_merged["__model_key"] = df_merged[name_col].fillna("").astype(str).map(
+            lambda name: re.sub(r"[\s\-_:/（）()【】\[\]]+", "", name.strip().lower())
+        )
+        df_merged = df_merged[df_merged["__model_key"] != ""]
+        df_merged = df_merged.drop_duplicates(subset=["__model_key"], keep="last")
+        df_merged = df_merged.drop(columns=["__model_key"])
+        removed_count = before_count - len(df_merged)
+        if removed_count > 0:
+            log(f"总表合并后兜底去重: 移除 {removed_count} 条重复模型", "WARN")
 
     df_merged.to_excel(MASTER_FILE, index=False)
     log(f"总表已更新: {MASTER_FILE.name}")

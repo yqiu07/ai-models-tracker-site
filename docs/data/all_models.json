@@ -1,22 +1,6 @@
 {
   "models": [
     {
-      "name": "Gemini 3.5 Flash",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "Google",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "多模态",
-      "reasoning": "thinking",
-      "task_type": "通用对话",
-      "website": "https://llm-stats.com/models/gemini-3.5-flash",
-      "note": "1048k上下文 [重要性:高|Google DeepMind 重点模型 Gemini 系列的重大版本更新子型号，具备较高行业关注度。]",
-      "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
-    },
-    {
       "name": "Gemini 3.5 Pro",
       "connected": "",
       "workflow_progress": "0.0",
@@ -29,22 +13,6 @@
       "task_type": "",
       "website": "",
       "note": "Gemini 3.5系列中更强大的版本，具备更强推理与长程任务能力，当前处于内部测试阶段，后续将向更多用户分批发布。",
-      "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
-    },
-    {
-      "name": "Gemini Omni",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "Google/DeepMind",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "多模态",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "基于世界模型技术的新型视频生成模型，支持文本/图像/音频/视频混合输入，可对话式编辑视频（如修改角色、背景、风格），并支持自拍驱动内容生成。",
       "release_date": "2026-05-19",
       "created_date": "2026-05-20"
     },
@@ -254,38 +222,6 @@
       "website": "",
       "note": "首个机器人基础模型 [重要性:中|机器人基础模型属于具身智能领域重要方向，但公司不在重点/优秀关注清单且信息需官方核验。]",
       "release_date": "2026-05-08",
-      "created_date": "2026-05-19"
-    },
-    {
-      "name": "GPT-Realtime-2",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "语音",
-      "reasoning": "thinking",
-      "task_type": "语音交互, 通用对话",
-      "website": "",
-      "note": "GPT-5级推理的实时音频模型 [重要性:高|OpenAI实时语音模型的重大版本更新如属实属于国外重点公司的关键能力升级。]",
-      "release_date": "2026-05-09",
-      "created_date": "2026-05-19"
-    },
-    {
-      "name": "GPT-Realtime-Translate",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "语音",
-      "reasoning": "未知",
-      "task_type": "语音翻译",
-      "website": "",
-      "note": "支持70种语言的实时翻译模型 [重要性:中|OpenAI的实时翻译子变体属于重点公司的非旗舰能力更新，值得关注但重要性低于旗舰模型。]",
-      "release_date": "2026-05-09",
       "created_date": "2026-05-19"
     },
     {
@@ -1201,22 +1137,6 @@
       "created_date": "2026-05-09"
     },
     {
-      "name": "GPT-5.5 Instant",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "基座",
-      "reasoning": "non-thinking",
-      "task_type": "通用对话",
-      "website": "https://openai.com/index/gpt-5-5-instant/",
-      "note": "取代GPT-5.3 Instant为ChatGPT默认模型；幻觉率降52.5%；回答字数减30.2%；记忆来源功能全系上线；医学/法律/金融领域提升显著",
-      "release_date": "2026-05-05",
-      "created_date": "2026-05-09"
-    },
-    {
       "name": "Grok 4.3",
       "connected": "",
       "workflow_progress": "0.0",
@@ -1278,22 +1198,6 @@
       "website": "https://lumalabs.ai/news/uni-1-1-api",
       "note": "Uni-1升级到1.1并开放API；LMArena图像榜单全球前三；单图最低$0.0404；decoder-only自回归架构；支持9张参考图融合与多轮按句编辑；团队仅15人",
       "release_date": "",
-      "created_date": "2026-05-09"
-    },
-    {
-      "name": "MiMo-V2.5",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "小米",
-      "domestic": "国内",
-      "open_source": "开源",
-      "size": "1.02T",
-      "type": "基座",
-      "reasoning": "thinking",
-      "task_type": "通用对话, 代码生成",
-      "website": "",
-      "note": "小米开源万亿参数MoE基座模型",
-      "release_date": "2026-04-29",
       "created_date": "2026-05-09"
     },
     {
@@ -2577,22 +2481,6 @@
       "created_date": "2026-04-17"
     },
     {
-      "name": "HappyHorse-1.0",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "阿里",
-      "domestic": "国内",
-      "open_source": "闭源",
-      "size": "",
-      "type": "多模态",
-      "reasoning": "non-thinking",
-      "task_type": "文生视频",
-      "website": "",
-      "note": "匿名模型登顶Video Arena；Elo\n1332/1391；疑似阿里淘天未来生活实验室团队；可能采用Transfusion架构",
-      "release_date": "2026-04-17",
-      "created_date": "2026-04-17"
-    },
-    {
       "name": "Hermes Agent",
       "connected": "",
       "workflow_progress": "0.0",
@@ -3134,22 +3022,6 @@
       "website": "https://cloud.tencent.com/developer/news/3807147",
       "note": "腾讯智能体V2；多Agent并行（最多3个）；跨应用连接器；龙虾管家安全防护",
       "release_date": "2026-04-09",
-      "created_date": "2026-04-17"
-    },
-    {
-      "name": "Qwen Image 2.0",
-      "connected": "",
-      "workflow_progress": "0.0",
-      "company": "阿里",
-      "domestic": "国内",
-      "open_source": "闭源",
-      "size": "7B",
-      "type": "多模态",
-      "reasoning": "non-thinking",
-      "task_type": "图片编辑",
-      "website": "https://help.aliyun.com/zh/model-studio/qwen-image-api",
-      "note": "阿里通义图像生成模型；$0.03/img",
-      "release_date": "2026-02-10",
       "created_date": "2026-04-17"
     },
     {
@@ -5441,22 +5313,6 @@
       "created_date": "2025-12-23"
     },
     {
-      "name": "deepseek-r1",
-      "connected": "",
-      "workflow_progress": "1.0",
-      "company": "DeepSeek",
-      "domestic": "国内",
-      "open_source": "开源",
-      "size": "671B (37B active)",
-      "type": "基座",
-      "reasoning": "thinking",
-      "task_type": "",
-      "website": "",
-      "note": "对标GPT-o1 / Gemini 2.5 Flash Thinking",
-      "release_date": "",
-      "created_date": "2025-11-11"
-    },
-    {
       "name": "GPT 4o",
       "connected": "",
       "workflow_progress": "0.0",
@@ -6033,22 +5889,6 @@
       "created_date": "2026-05-22"
     },
     {
-      "name": "Qwen 3.7-Max",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "阿里巴巴/通义",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "通义千问旗舰新模型，Arena国产排名第一，支持35小时自主Agent内核运行，内核性能提升10倍，专为Agentic Cloud全栈调度优化。 [重要性:高|阿里/通义为国内重点关注公司，若为Max旗舰版本则属于重大模型更新。]",
-      "release_date": "2026-05-20",
-      "created_date": "2026-05-23"
-    },
-    {
       "name": "Gemma 4",
       "connected": "",
       "workflow_progress": "",
@@ -6078,38 +5918,6 @@
       "website": "https://mimo.xiaomi.com",
       "note": "小米自研轻量化多模态模型，支持手机端实时图文理解+语音指令闭环，集成于Xiaomi HyperOS 2.5 Agent框架。 [重要性:中|小米/MiMo属于国内优秀关注公司，端侧多模态模型具备特定场景价值。]",
       "release_date": "2026-05-22",
-      "created_date": "2026-05-23"
-    },
-    {
-      "name": "Gemini Spark",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Google/DeepMind",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "个人智能体",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "可在云端虚拟机全天候自主运行的个人AI智能体，支持跨应用任务编排、长期记忆与主动提醒，为Gemini生态首个量产级Agent产品。",
-      "release_date": "2026-05-21",
-      "created_date": "2026-05-23"
-    },
-    {
-      "name": "Antigravity 2.0",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Google/DeepMind",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "软件工程智能体平台",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "由93个子智能体协同构成的全自动代码生成平台，12小时内从零构建并测试完整操作系统，依托Gemini 3.5 Flash实现千美元级端到端成本。 [重要性:中|Google DeepMind相关软件工程智能体平台值得关注，但不是Gemini旗舰模型本身。]",
-      "release_date": "2026-05-21",
       "created_date": "2026-05-23"
     },
     {
@@ -6254,22 +6062,6 @@
       "website": "",
       "note": "具备物理一致性理解能力的世界模型，支持跨文本-视频的三维空间建模、动能/重力模拟及对话式视频元素编辑。",
       "release_date": "2026-05-20",
-      "created_date": "2026-05-25"
-    },
-    {
-      "name": "GPT-5.5 Instant",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "large language model",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "面向全体用户免费开放的轻量化GPT-5迭代版，强调简洁响应、增强长期记忆能力与低开销推理，标志OpenAI向价值验证与普惠部署转向。",
-      "release_date": "2026-05-09",
       "created_date": "2026-05-25"
     },
     {
@@ -6545,38 +6337,6 @@
       "created_date": "2026-05-28"
     },
     {
-      "name": "Claude Opus 4.8",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Anthropic",
-      "domestic": "国外",
-      "open_source": "闭源",
-      "size": "",
-      "type": "多模态",
-      "reasoning": "thinking",
-      "task_type": "通用对话",
-      "website": "https://llm-stats.com/models/claude-opus-4-8",
-      "note": "1000k上下文；顶级推理能力；顶级编码能力；高端定价 [重要性:高|Anthropic Claude Opus 主线高端模型若属实属于旗舰级重大版本更新。]",
-      "release_date": "2026-05-28",
-      "created_date": "2026-05-29"
-    },
-    {
-      "name": "Qwen3.7-Max",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "阿里巴巴/通义",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "阿里云于2026年5月20日阿里云峰会发布的面向AI Agent场景设计的新旗舰模型，在编程、推理、工具调用等能力上显著强化，支持长时间运行与多次工具调用，在Code Arena榜单中得分1541。",
-      "release_date": "2026-05-20",
-      "created_date": "2026-05-29"
-    },
-    {
       "name": "DeepSeek-V4 Flash",
       "connected": "",
       "workflow_progress": "",
@@ -6721,38 +6481,6 @@
       "created_date": "2026-05-30"
     },
     {
-      "name": "GPT-Realtime-2",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "语音大模型（推理级）",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "首个具备GPT-5级推理能力的实时语音模型，支持低延迟语音理解与多步语音任务规划。",
-      "release_date": "2026-05-07",
-      "created_date": "2026-05-30"
-    },
-    {
-      "name": "Gemini Robotics 1.5",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Google/DeepMind",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "具身智能模型（机器人控制）",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "面向物理机器人的新一代多模态推理模型，支持跨形态技能迁移与多智能体协同决策。",
-      "release_date": "2026-05-14",
-      "created_date": "2026-05-30"
-    },
-    {
       "name": "讯飞建筑智能体平台2.0",
       "connected": "",
       "workflow_progress": "",
@@ -6862,22 +6590,6 @@
       "website": "",
       "note": "豆包2.0系列旗舰版本，实现视频、图像、音频、文本的原生统一理解与视听联合推理，完成从对话AI到‘实体智能体’的范式跃迁。",
       "release_date": "2026-05-20",
-      "created_date": "2026-06-01"
-    },
-    {
-      "name": "GPT-5.5 Instant",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "GPT-5.5系列默认部署版本，取代GPT-5.3成为ChatGPT主力模型，医疗/法律/金融领域幻觉率下降52%，显著增强编码与计算机使用能力。",
-      "release_date": "2026-05-05",
       "created_date": "2026-06-01"
     },
     {
@@ -6994,7 +6706,8 @@
     }
   ],
   "meta": {
-    "total": 437,
-    "generated_at": "2026-06-01 03:50:55"
+    "total": 419,
+    "recycled": 9,
+    "generated_at": "2026-06-01 12:09:49"
   }
 }

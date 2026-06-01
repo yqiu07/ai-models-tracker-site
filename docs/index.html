@@ -489,10 +489,11 @@ function toggleRecycleBin() {
   overlay.innerHTML = '<div class="modal-box" style="max-width:720px;max-height:80vh;overflow:auto;">' +
     '<div class="recycle-header"><strong>&#128465; 回收站</strong><button class="close-btn" onclick="toggleRecycleBin()">&times;</button></div>' +
     '<p style="font-size:.85rem;color:var(--text-sec);margin-bottom:12px;">删除项会先进入回收站；“恢复”会放回来源位置，“彻底清除”会永久移出回收站。</p>' +
-    '<div id="recycle-list"><p style="color:#64748b;font-size:.85rem;">正在加载...</p></div>' +
+    '<div id="recycle-list"></div>' +
     '</div>';
   document.body.appendChild(overlay);
-  ensureRecycleLoaded().then(function() { renderRecycleList(); });
+  renderRecycleList();
+  ensureRecycleLoaded().then(function() { renderRecycleList(); }).catch(function() { renderRecycleList(); });
 }
 
 function renderRecycleList() {
@@ -569,21 +570,45 @@ function tokenCancel() {
 
 function commitFileToGitHub(path, content, message) {
   return getGitHubToken().then(function(token) {
-    var apiUrl = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path + '?ref=' + encodeURIComponent(GITHUB_BRANCH);
-    return fetch(apiUrl, { headers: { 'Authorization': 'Bearer ' + token } }).then(function(r) { return r.json(); }).then(function(fileInfo) {
-      var sha = fileInfo.sha || '';
-      var body = { message: message, content: btoa(unescape(encodeURIComponent(content))), branch: GITHUB_BRANCH };
-      if (sha) body.sha = sha;
-      return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
-        method: 'PUT',
-        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+    function putFile(attempt) {
+      var apiUrl = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path + '?ref=' + encodeURIComponent(GITHUB_BRANCH) + '&t=' + Date.now();
+      return fetch(apiUrl, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/vnd.github.v3+json',
+          'Cache-Control': 'no-cache'
+        }
+      }).then(function(r) { return r.json(); }).then(function(fileInfo) {
+        var sha = fileInfo.sha || '';
+        var body = { message: message, content: btoa(unescape(encodeURIComponent(content))), branch: GITHUB_BRANCH };
+        if (sha) body.sha = sha;
+        return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+          body: JSON.stringify(body)
+        });
+      }).then(function(r) {
+        if ((r.status === 409 || r.status === 422) && attempt < 2) {
+          return new Promise(function(resolve) { setTimeout(resolve, 800); }).then(function() { return putFile(attempt + 1); });
+        }
+        if (!r.ok) throw new Error('GitHub API error: ' + r.status);
+        return r.json();
       });
-    }).then(function(r) {
-      if (!r.ok) throw new Error('GitHub API error: ' + r.status);
-      return r.json();
-    });
+    }
+    return putFile(1);
   });
+}
+
+function commitFilesSequentially(tasks) {
+  var chain = Promise.resolve();
+  for (var i = 0; i < tasks.length; i++) {
+    (function(task) {
+      chain = chain.then(function() {
+        return commitFileToGitHub(task.path, task.content, task.message);
+      });
+    })(tasks[i]);
+  }
+  return chain;
 }
 
 function getNowText() {
@@ -602,7 +627,7 @@ function isSameModel(a, b) {
 function stripRecycleMeta(model) {
   var restored = {};
   for (var key in model) {
-    if (Object.prototype.hasOwnProperty.call(model, key) && key !== 'source' && key !== 'deleted_at') {
+    if (Object.prototype.hasOwnProperty.call(model, key) && key !== 'source' && key !== 'source_path' && key !== 'deleted_at') {
       restored[key] = model[key];
     }
   }
@@ -618,11 +643,31 @@ function buildRecycleContent() {
 }
 
 function buildDailyContent() {
-  currentDailyData.models = currentDailyData.models || [];
-  currentDailyData.meta = currentDailyData.meta || {};
-  currentDailyData.meta.total = currentDailyData.models.length;
-  currentDailyData.meta.updated_at = getNowText();
-  return JSON.stringify(currentDailyData, null, 2);
+  return buildDailyContentFromData(currentDailyData);
+}
+
+function buildDailyContentFromData(dailyData) {
+  dailyData.models = dailyData.models || [];
+  dailyData.meta = dailyData.meta || {};
+  dailyData.meta.total = dailyData.models.length;
+  dailyData.meta.count = dailyData.models.length;
+  dailyData.meta.updated_at = getNowText();
+  return JSON.stringify(dailyData, null, 2);
+}
+
+function getCurrentDailyGitHubPath() {
+  if (!currentDailyUrl || currentDailyUrl.endsWith('.md')) return '';
+  if (currentDailyUrl.indexOf('data/') === 0) {
+    return 'docs/' + currentDailyUrl;
+  }
+  return currentDailyUrl;
+}
+
+function getDataFetchPathFromGitHubPath(gitHubPath) {
+  if (gitHubPath.indexOf('docs/') === 0) {
+    return gitHubPath.substring(5);
+  }
+  return gitHubPath;
 }
 
 function ensureAllModelsLoaded() {
@@ -642,9 +687,9 @@ function deleteModel(idx) {
   recycleData.push(recycledModel);
   updateRecycleBadge();
 
-  Promise.all([
-    commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'chore: delete model "' + safe(model.name) + '" to recycle'),
-    commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: add "' + safe(model.name) + '" to recycle bin')
+  commitFilesSequentially([
+    { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
+    { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
   ]).then(function() {
     filterAllModels();
     renderRecycleList();
@@ -658,27 +703,28 @@ function deleteModel(idx) {
 }
 
 function deleteDailyModel(idx) {
-  if (currentDailyUrl !== 'data/daily_report.json') {
-    alert('历史日报暂不支持直接删除，请切换到“最新日报”后操作。');
+  var dailyPath = getCurrentDailyGitHubPath();
+  if (!dailyPath) {
+    alert('当前日报格式不支持直接删除。');
     return;
   }
   var dailyModels = currentDailyData.models || [];
   var model = dailyModels[idx];
   if (!model) return;
-  if (!confirm('确定从日报删除「' + safe(model.name) + '」？\n将同步从总表移除并移入回收站。')) return;
+  if (!confirm('确定从当前日报删除「' + safe(model.name) + '」？\n将同步从总表移除并移入回收站。')) return;
 
   Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded()]).then(function() {
     dailyModels.splice(idx, 1);
     for (var i = allModelsData.length - 1; i >= 0; i--) {
       if (isSameModel(allModelsData[i], model)) allModelsData.splice(i, 1);
     }
-    recycleData.push(Object.assign({}, model, { source: 'daily', deleted_at: getNowText() }));
+    recycleData.push(Object.assign({}, model, { source: 'daily', source_path: dailyPath, deleted_at: getNowText() }));
     updateRecycleBadge();
 
-    return Promise.all([
-      commitFileToGitHub('docs/data/daily_report.json', buildDailyContent(), 'chore: delete daily model "' + safe(model.name) + '"'),
-      commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'chore: delete model "' + safe(model.name) + '" from all models'),
-      commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: add daily model "' + safe(model.name) + '" to recycle bin')
+    return commitFilesSequentially([
+      { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
+      { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
+      { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
     ]).then(function() {
       renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
@@ -710,22 +756,32 @@ function restoreModel(idx) {
       if (isSameModel(allModelsData[i], restoredModel)) existsInAll = true;
     }
     if (!existsInAll) allModelsData.unshift(restoredModel);
-    commitTasks.push(commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'chore: restore model "' + safe(restoredModel.name) + '" from recycle'));
+    commitTasks.push({ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: restore model "' + safe(restoredModel.name) + '" from recycle' });
 
+    var dailyRestorePromise = Promise.resolve();
     if (source === 'daily') {
-      currentDailyData.models = currentDailyData.models || [];
-      var existsInDaily = false;
-      for (var j = 0; j < currentDailyData.models.length; j++) {
-        if (isSameModel(currentDailyData.models[j], restoredModel)) existsInDaily = true;
-      }
-      if (!existsInDaily) currentDailyData.models.unshift(restoredModel);
-      commitTasks.push(commitFileToGitHub('docs/data/daily_report.json', buildDailyContent(), 'chore: restore daily model "' + safe(restoredModel.name) + '"'));
+      var restorePath = safe(recycledModel.source_path) || 'docs/data/daily_report.json';
+      dailyRestorePromise = fetch(getDataFetchPathFromGitHubPath(restorePath) + '?t=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .catch(function() {
+          return restorePath === getCurrentDailyGitHubPath() ? currentDailyData : { models: [], meta: {} };
+        })
+        .then(function(targetDailyData) {
+          targetDailyData.models = targetDailyData.models || [];
+          var existsInDaily = false;
+          for (var j = 0; j < targetDailyData.models.length; j++) {
+            if (isSameModel(targetDailyData.models[j], restoredModel)) existsInDaily = true;
+          }
+          if (!existsInDaily) targetDailyData.models.unshift(restoredModel);
+          if (restorePath === getCurrentDailyGitHubPath()) currentDailyData = targetDailyData;
+          commitTasks.push({ path: restorePath, content: buildDailyContentFromData(targetDailyData), message: 'chore: restore daily model "' + safe(restoredModel.name) + '"' });
+        });
     }
 
-    commitTasks.push(commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin'));
+    commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
     updateRecycleBadge();
 
-    return Promise.all(commitTasks).then(function() {
+    return dailyRestorePromise.then(function() { return commitFilesSequentially(commitTasks); }).then(function() {
       if (source === 'daily') renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
       renderRecycleList();
@@ -893,15 +949,15 @@ function executeManualAdd(overlay) {
     }
 
     allModelsData.unshift(newModel);
-    var commitTasks = [commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'feat: manually add model "' + name + '"')];
+    var commitTasks = [{ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'feat: manually add model "' + name + '"' }];
 
     if (target === 'daily') {
       currentDailyData.models = currentDailyData.models || [];
       currentDailyData.models.unshift(newModel);
-      commitTasks.push(commitFileToGitHub('docs/data/daily_report.json', buildDailyContent(), 'feat: manually add daily model "' + name + '"'));
+      commitTasks.push({ path: getCurrentDailyGitHubPath() || 'docs/data/daily_report.json', content: buildDailyContent(), message: 'feat: manually add daily model "' + name + '"' });
     }
 
-    return Promise.all(commitTasks).then(function() {
+    return commitFilesSequentially(commitTasks).then(function() {
       if (tabsLoaded.all) filterAllModels();
       if (target === 'daily') renderDailyReport(currentDailyData);
       statusEl.textContent = '✓ 已添加「' + name + '」';
