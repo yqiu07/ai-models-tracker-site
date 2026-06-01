@@ -558,13 +558,14 @@ function getGitHubToken() {
     _tokenOverlay.setAttribute('id', 'token-modal-overlay');
     _tokenOverlay.innerHTML = '<div class="modal-box">' +
       '<h3>&#128274; 输入 GitHub Token</h3>' +
-      '<p>需要 GitHub Personal Access Token 来保存修改。<br><br>' +
+      '<p>需要 GitHub Personal Access Token 来触发后台数据操作。<br><br>' +
       '<strong>获取方式：</strong><br>' +
       '1. 打开 <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub Settings &rarr; Developer settings &rarr; Personal access tokens (Fine-grained)</a><br>' +
       '2. 点击 "Generate new token"<br>' +
       '3. Repository access 选择 "Only select repositories" &rarr; 选 <code>' + GITHUB_REPO + '</code><br>' +
-      '4. Permissions &rarr; Contents &rarr; Read and write<br>' +
-      '5. 生成后复制 token 粘贴到下方</p>' +
+      '4. Repository permissions 设置 <strong>Actions &rarr; Read and write</strong><br>' +
+      '5. 如需继续使用接入站/手动添加，再设置 <strong>Contents &rarr; Read and write</strong><br>' +
+      '6. 生成后复制 token 粘贴到下方</p>' +
       '<input type="text" class="token-input-field" placeholder="github_pat_xxxx 或 ghp_xxxx..." style="font-family:monospace;" autocomplete="off" />' +
       '<div class="btn-row"><button class="btn-cancel" onclick="tokenCancel()">取消</button><button class="btn-primary" onclick="tokenConfirm()">确认</button></div>' +
       '</div>';
@@ -676,9 +677,15 @@ function triggerDataOps(inputs, successMessage) {
     alert(successMessage + '\nGitHub Actions 正在后台处理，约 1-2 分钟后刷新页面查看结果。');
   }).catch(function(error) {
     if (error === 'cancelled') return;
+    var errorMessage = error.message || error;
     var command = buildDataOpsCommand(inputs);
     console.warn('Data Ops Proxy 触发失败，可手动执行：', command, error);
-    alert('后台任务触发失败，未下载任何文件。\n失败原因：' + (error.message || error) + '\n\n如果需要手动兜底，请打开控制台复制 gh workflow run 命令。');
+    if (String(errorMessage).indexOf('Resource not accessible by personal access token') >= 0) {
+      sessionStorage.removeItem('gh_token');
+      alert('后台任务触发失败，未下载任何文件。\n\n原因：当前 Token 缺少 Actions: Read and write 权限。\n我已清除旧 Token；请重新生成/输入带 Actions 权限的 Token 后再试。');
+      throw error;
+    }
+    alert('后台任务触发失败，未下载任何文件。\n失败原因：' + errorMessage + '\n\n如果需要手动兜底，请打开控制台复制 gh workflow run 命令。');
     throw error;
   });
 }
