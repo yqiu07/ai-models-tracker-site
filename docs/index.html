@@ -646,6 +646,42 @@ function commitFilesSequentially(tasks) {
   return chain;
 }
 
+function downloadTextFile(fileName, content) {
+  var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(function() {
+    URL.revokeObjectURL(link.href);
+    link.remove();
+  }, 1000);
+}
+
+function exportPendingGitHubFiles(tasks, reason) {
+  var timestamp = new Date().toISOString().replace(/[-:T.]/g, '').substring(0, 14);
+  var lines = [
+    'GitHub API 写入失败，网页已导出待保存文件。',
+    '',
+    '失败原因：' + (reason && reason.message ? reason.message : reason || '未知'),
+    '',
+    '使用方法：',
+    '1. 将每个 JSON 文件内容复制/覆盖到仓库中的对应路径。',
+    '2. 提交并推送到分支：' + GITHUB_BRANCH,
+    '3. 刷新 GitHub Pages 页面验证。',
+    '',
+    '对应文件：'
+  ];
+  for (var i = 0; i < tasks.length; i++) {
+    var task = tasks[i];
+    var safeFileName = timestamp + '_' + task.path.replace(/[\\/]/g, '__');
+    downloadTextFile(safeFileName, task.content);
+    lines.push('- ' + safeFileName + ' -> ' + task.path);
+  }
+  downloadTextFile(timestamp + '_README_保存失败兜底说明.txt', lines.join('\n'));
+}
+
 function getNowText() {
   return new Date().toISOString().replace('T', ' ').substring(0, 19);
 }
@@ -750,10 +786,11 @@ function deleteModel(idx) {
     recycleData.push(recycledModel);
     updateRecycleBadge();
 
-    commitFilesSequentially([
+    var commitTasks = [
       { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
       { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
-    ]).then(function() {
+    ];
+    commitFilesSequentially(commitTasks).then(function() {
       filterAllModels();
       renderRecycleList();
       alert('已删除「' + safe(model.name) + '」并移入回收站 ✓');
@@ -762,7 +799,8 @@ function deleteModel(idx) {
       recycleData.pop();
       updateRecycleBadge();
       if (e === 'cancelled') return;
-      alert('保存失败，已回滚本地删除：' + (e.message || e));
+      exportPendingGitHubFiles(commitTasks, e);
+      alert('保存失败，已回滚页面状态；同时已下载待保存 JSON 兜底包：' + (e.message || e));
       filterAllModels();
       renderRecycleList();
     });
@@ -794,11 +832,12 @@ function deleteDailyModel(idx) {
       recycleData.push(Object.assign({}, model, { source: 'daily', source_path: dailyPath, deleted_at: getNowText() }));
       updateRecycleBadge();
 
-      return commitFilesSequentially([
+      var commitTasks = [
         { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
         { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
         { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
-      ]).then(function() {
+      ];
+      return commitFilesSequentially(commitTasks).then(function() {
         renderDailyReport(currentDailyData);
         if (tabsLoaded.all) filterAllModels();
         renderRecycleList();
@@ -811,7 +850,8 @@ function deleteDailyModel(idx) {
         recycleData.pop();
         updateRecycleBadge();
         if (e === 'cancelled') return;
-        alert('保存失败，已回滚本地删除：' + (e.message || e));
+        exportPendingGitHubFiles(commitTasks, e);
+        alert('保存失败，已回滚页面状态；同时已下载待保存 JSON 兜底包：' + (e.message || e));
         renderDailyReport(currentDailyData);
         if (tabsLoaded.all) filterAllModels();
         renderRecycleList();
@@ -1224,7 +1264,10 @@ function executeUpdate(overlay) {
     progressEl.style.width = '80%';
 
     var allContent = buildAllModelsContent();
-    return commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: sync daily reports to unique all models (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
+    var commitTasks = [
+      { path: 'docs/data/all_models.json', content: allContent, message: 'chore: sync daily reports to unique all models (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')' }
+    ];
+    return commitFilesSequentially(commitTasks).then(function() {
       statusEl.textContent = '✓ 已同步日报到总表：新增 ' + addedCount + ' 条，更新 ' + updatedCount + ' 条，合并重复 ' + removedDuplicateCount + ' 条';
       progressEl.style.width = '100%';
       filterAllModels();
@@ -1232,7 +1275,8 @@ function executeUpdate(overlay) {
     });
   }).catch(function(e) {
     if (e === 'cancelled') { statusEl.textContent = '已取消'; progressEl.style.width = '0%'; return; }
-    statusEl.textContent = '更新失败: ' + (e.message || e);
+    exportPendingGitHubFiles([{ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: sync daily reports to unique all models' }], e);
+    statusEl.textContent = '更新失败，已下载待保存 JSON 兜底包: ' + (e.message || e);
     progressEl.style.width = '0%';
   });
 }
