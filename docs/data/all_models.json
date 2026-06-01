@@ -6721,22 +6721,6 @@
       "created_date": "2026-05-30"
     },
     {
-      "name": "GPT-5.5 Instant",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "正式成为ChatGPT默认模型，医疗/法律/金融领域幻觉率较GPT-5.3降低52%，强化编码、计算机使用与深度研究能力。",
-      "release_date": "2026-05-05",
-      "created_date": "2026-05-30"
-    },
-    {
       "name": "GPT-Realtime-2",
       "connected": "",
       "workflow_progress": "",
@@ -6749,22 +6733,6 @@
       "task_type": "",
       "website": "",
       "note": "首个具备GPT-5级推理能力的实时语音模型，支持低延迟语音理解与多步语音任务规划。",
-      "release_date": "2026-05-07",
-      "created_date": "2026-05-30"
-    },
-    {
-      "name": "GPT-Realtime-Translate",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "语音-多模态模型（实时翻译）",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "端到端实时同传翻译模型，支持语义对齐与文化适配，延迟低于300ms，覆盖58种语言对。",
       "release_date": "2026-05-07",
       "created_date": "2026-05-30"
     },
@@ -7026,8 +6994,7 @@
     }
   ],
   "meta": {
-    "total": 439,
-    "recycled": 8,
-    "generated_at": "2026-06-01 02:36:59"
+    "total": 437,
+    "generated_at": "2026-06-01 03:50:55"
   }
 }
