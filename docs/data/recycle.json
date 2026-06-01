@@ -145,10 +145,28 @@
       "created_date": "2026-05-29",
       "source": "daily",
       "deleted_at": "2026-05-29 03:48:45"
+    },
+    {
+      "name": "GPT-5.5 Instant",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "OpenAI",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "正式成为ChatGPT默认模型，医疗/法律/金融领域幻觉率较GPT-5.3降低52%，强化编码、计算机使用与深度研究能力。",
+      "release_date": "2026-05-05",
+      "created_date": "2026-05-30",
+      "source": "all",
+      "deleted_at": "2026-06-01 03:50:34"
     }
   ],
   "meta": {
-    "total": 9,
-    "updated_at": "2026-05-29 03:48:45"
+    "total": 10,
+    "updated_at": "2026-06-01 03:50:34"
   }
 }
