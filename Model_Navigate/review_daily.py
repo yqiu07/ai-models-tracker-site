@@ -1,6 +1,6 @@
-# 2026/05/20/11:06
+# Re 2026/06/01/14:59
 # name: review_daily
-# description: 巡检修正当日日报 — 调用 LLM 审核 daily_report.json 中的模型，移除不属于时间窗口的模型，修正错误信息
+# description: 巡检修正当日日报 — 调用 LLM 审核 daily_report.json 中的模型，移除不属于时间窗口的模型，修正错误信息，并同步总表
 
 """
 日报巡检修正脚本
@@ -261,7 +261,7 @@ def main():
         json.dump(report, f, ensure_ascii=False, indent=2)
     print(f"[OK] Written back to {DAILY_REPORT_PATH.name} ({len(reviewed_models)} models)")
 
-    # 同步更新总表（移除被删除的模型）
+    # 同步更新总表：日报是源头，总表跟随日报的删除和字段修正
     if EXCEL_PATH.exists():
         try:
             df = pd.read_excel(EXCEL_PATH, engine="openpyxl")
@@ -270,8 +270,38 @@ def main():
                 before_count = len(df)
                 df = df[~df["模型名称"].isin(removed_names)]
                 after_count = len(df)
-                df.to_excel(EXCEL_PATH, index=False, engine="openpyxl")
-                print(f"[OK] Updated master table: removed {before_count - after_count} models")
+                print(f"[OK] Master table removal: {before_count - after_count} models")
+
+            field_mapping = {
+                "company": "公司",
+                "domestic": "国内外",
+                "open_source": "开闭源",
+                "size": "尺寸",
+                "type": "类型",
+                "reasoning": "能否推理",
+                "task_type": "任务类型",
+                "website": "官网",
+                "note": "备注",
+                "release_date": "模型发布时间",
+                "created_date": "记录创建时间",
+                "connected": "是否接入",
+                "workflow_progress": "workflow接入进展",
+            }
+            updated_cells = 0
+            for reviewed_model in reviewed_models:
+                model_name = reviewed_model.get("name", "")
+                if not model_name or "模型名称" not in df.columns:
+                    continue
+                row_mask = df["模型名称"].astype(str) == str(model_name)
+                if not row_mask.any():
+                    continue
+                for json_field, excel_column in field_mapping.items():
+                    if excel_column in df.columns and json_field in reviewed_model:
+                        df.loc[row_mask, excel_column] = reviewed_model.get(json_field, "")
+                        updated_cells += int(row_mask.sum())
+
+            df.to_excel(EXCEL_PATH, index=False, engine="openpyxl")
+            print(f"[OK] Updated master table from reviewed daily: {updated_cells} cells")
         except Exception as exc:
             print(f"[WARN] Failed to update master table: {exc}")
 

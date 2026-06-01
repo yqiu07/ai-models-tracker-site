@@ -1,6 +1,54 @@
 {
   "models": [
     {
+      "name": "SigenAgent v1.0",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "思格新能源",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "AI智能体",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "面向新能源系统的全域AI智能体，支持目标理解、自动执行与持续学习，实现从‘对话助手’到‘使命必达执行者’的跃迁。 [重要性:低|其他公司面向新能源场景的垂直智能体，行业影响力和模型级技术信息有限。]",
+      "release_date": "2026-05-29",
+      "created_date": "2026-05-31"
+    },
+    {
+      "name": "悟空（Wukong）儿童陪伴人形机器人AI系统",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "中国电信",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "多模态AI智能体",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "专为3–7岁儿童设计的具身智能体，融合语音识别、视觉理解、触觉交互与情感化响应，支持自然语言问答与物理动作反馈。",
+      "release_date": "2026-05-29",
+      "created_date": "2026-05-31"
+    },
+    {
+      "name": "AgentForce 智能体中台 v2.1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "迈富时（MarketingForce）",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "AI智能体平台",
+      "reasoning": "",
+      "task_type": "",
+      "website": "https://www.marketingforce.com/",
+      "note": "企业级低代码智能体操作系统，支持业务人员2分钟内创建营销/销售场景专用智能体，集成NLA工作流自动生成与知识图谱驱动推理。 [重要性:低|其他公司企业级智能体平台版本更新，偏应用平台，非基础模型或重点公司旗舰模型。]",
+      "release_date": "2026-05-28",
+      "created_date": "2026-05-31"
+    },
+    {
       "name": "Qwen3.7-Max",
       "connected": "",
       "workflow_progress": "",
@@ -164,8 +212,8 @@
   "meta": {
     "since": "2026-06-01",
     "until": "2026-06-01",
-    "count": 10,
-    "selection_basis": "created_date_or_release_date",
-    "generated_at": "2026-06-01 12:09:49"
+    "count": 13,
+    "source": "Object-Models-Updated.xlsx",
+    "generated_at": "2026-06-01 14:58:44"
   }
 }

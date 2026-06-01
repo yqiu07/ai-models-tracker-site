@@ -467,13 +467,16 @@ function updateRecycleBadge() {
   if (dailyBadge) dailyBadge.textContent = total;
 }
 
-function ensureRecycleLoaded() {
-  if (recycleLoaded) return Promise.resolve();
-  return fetch('data/recycle.json').then(function(r) { return r.json(); }).catch(function() { return { models: [] }; }).then(function(data) {
-    recycleData = data.models || [];
-    recycleLoaded = true;
-    updateRecycleBadge();
-  });
+function ensureRecycleLoaded(forceRefresh) {
+  if (recycleLoaded && !forceRefresh) return Promise.resolve();
+  return fetch('data/recycle.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function(r) { return r.json(); })
+    .catch(function() { return { models: recycleData || [] }; })
+    .then(function(data) {
+      recycleData = data.models || [];
+      recycleLoaded = true;
+      updateRecycleBadge();
+    });
 }
 
 function toggleRecycleBin() {
@@ -493,7 +496,7 @@ function toggleRecycleBin() {
     '</div>';
   document.body.appendChild(overlay);
   renderRecycleList();
-  ensureRecycleLoaded().then(function() { renderRecycleList(); }).catch(function() { renderRecycleList(); });
+  ensureRecycleLoaded(true).then(function() { renderRecycleList(); }).catch(function() { renderRecycleList(); });
 }
 
 function renderRecycleList() {
@@ -677,28 +680,57 @@ function ensureAllModelsLoaded() {
   });
 }
 
+function showDeleteConfirm(message, storageKey) {
+  if (localStorage.getItem(storageKey) === '1') return Promise.resolve(true);
+  return new Promise(function(resolve) {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = '<div class="modal-box" style="max-width:460px;">' +
+      '<h3>&#9888; 删除确认</h3>' +
+      '<p style="white-space:pre-line;">' + escapeHtml(message) + '</p>' +
+      '<label style="display:flex;gap:8px;align-items:center;font-size:.88rem;color:var(--text-sec);margin:12px 0;">' +
+      '<input type="checkbox" id="skip-delete-confirm-checkbox" /> 后续不再提醒，直接删除</label>' +
+      '<div class="btn-row"><button class="btn-cancel" id="delete-confirm-cancel">取消</button><button class="btn-primary" id="delete-confirm-ok">确认删除</button></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#delete-confirm-cancel').onclick = function() {
+      overlay.remove();
+      resolve(false);
+    };
+    overlay.querySelector('#delete-confirm-ok').onclick = function() {
+      if (overlay.querySelector('#skip-delete-confirm-checkbox').checked) {
+        localStorage.setItem(storageKey, '1');
+      }
+      overlay.remove();
+      resolve(true);
+    };
+  });
+}
+
 function deleteModel(idx) {
   var model = filteredModels[idx];
-  if (!confirm('确定删除「' + safe(model.name) + '」？\n将移入回收站，可随时恢复。')) return;
+  showDeleteConfirm('确定删除「' + safe(model.name) + '」？\n将移入回收站，可随时恢复。', 'skip_delete_confirm_all').then(function(confirmed) {
+    if (!confirmed) return;
 
-  var realIdx = allModelsData.indexOf(model);
-  if (realIdx >= 0) allModelsData.splice(realIdx, 1);
-  var recycledModel = Object.assign({}, model, { source: 'all', deleted_at: getNowText() });
-  recycleData.push(recycledModel);
-  updateRecycleBadge();
+    var realIdx = allModelsData.indexOf(model);
+    if (realIdx >= 0) allModelsData.splice(realIdx, 1);
+    var recycledModel = Object.assign({}, model, { source: 'all', deleted_at: getNowText() });
+    recycleData.push(recycledModel);
+    updateRecycleBadge();
 
-  commitFilesSequentially([
-    { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
-    { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
-  ]).then(function() {
-    filterAllModels();
-    renderRecycleList();
-    alert('已删除「' + safe(model.name) + '」并移入回收站 ✓');
-  }).catch(function(e) {
-    if (e === 'cancelled') { allModelsData.splice(realIdx, 0, model); recycleData.pop(); updateRecycleBadge(); return; }
-    alert('保存失败: ' + e.message + '\n本地已修改但未同步到GitHub');
-    filterAllModels();
-    renderRecycleList();
+    commitFilesSequentially([
+      { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
+      { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
+    ]).then(function() {
+      filterAllModels();
+      renderRecycleList();
+      alert('已删除「' + safe(model.name) + '」并移入回收站 ✓');
+    }).catch(function(e) {
+      if (e === 'cancelled') { allModelsData.splice(realIdx, 0, model); recycleData.pop(); updateRecycleBadge(); return; }
+      alert('保存失败: ' + e.message + '\n本地已修改但未同步到GitHub');
+      filterAllModels();
+      renderRecycleList();
+    });
   });
 }
 
@@ -711,32 +743,35 @@ function deleteDailyModel(idx) {
   var dailyModels = currentDailyData.models || [];
   var model = dailyModels[idx];
   if (!model) return;
-  if (!confirm('确定从当前日报删除「' + safe(model.name) + '」？\n将同步从总表移除并移入回收站。')) return;
 
-  Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded()]).then(function() {
-    dailyModels.splice(idx, 1);
-    for (var i = allModelsData.length - 1; i >= 0; i--) {
-      if (isSameModel(allModelsData[i], model)) allModelsData.splice(i, 1);
-    }
-    recycleData.push(Object.assign({}, model, { source: 'daily', source_path: dailyPath, deleted_at: getNowText() }));
-    updateRecycleBadge();
+  showDeleteConfirm('确定从当前日报删除「' + safe(model.name) + '」？\n将同步从总表移除并移入回收站。', 'skip_delete_confirm_daily').then(function(confirmed) {
+    if (!confirmed) return;
 
-    return commitFilesSequentially([
-      { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
-      { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
-      { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
-    ]).then(function() {
+    Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded(true)]).then(function() {
+      dailyModels.splice(idx, 1);
+      for (var i = allModelsData.length - 1; i >= 0; i--) {
+        if (isSameModel(allModelsData[i], model)) allModelsData.splice(i, 1);
+      }
+      recycleData.push(Object.assign({}, model, { source: 'daily', source_path: dailyPath, deleted_at: getNowText() }));
+      updateRecycleBadge();
+
+      return commitFilesSequentially([
+        { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
+        { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
+        { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
+      ]).then(function() {
+        renderDailyReport(currentDailyData);
+        if (tabsLoaded.all) filterAllModels();
+        renderRecycleList();
+        alert('已删除「' + safe(model.name) + '」并同步到回收站 ✓');
+      });
+    }).catch(function(e) {
+      if (e === 'cancelled') return;
+      alert('保存失败: ' + (e.message || e));
       renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
       renderRecycleList();
-      alert('已删除「' + safe(model.name) + '」并同步到回收站 ✓');
     });
-  }).catch(function(e) {
-    if (e === 'cancelled') return;
-    alert('保存失败: ' + (e.message || e));
-    renderDailyReport(currentDailyData);
-    if (tabsLoaded.all) filterAllModels();
-    renderRecycleList();
   });
 }
 

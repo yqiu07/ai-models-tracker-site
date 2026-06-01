@@ -3,10 +3,12 @@
 # description: 从总表生成静态站所需的 JSON 数据文件，供 GitHub Pages 前端展示日报和仪表盘
 
 """
-从 Object-Models.xlsx 总表生成前端展示所需的 JSON 数据。
+从本轮增量和 Object-Models.xlsx 总表生成前端展示所需的 JSON 数据。
+
+核心口径：daily_report.json 以本轮增量/巡检结果为源头；all_models.json 才从总表生成。
 
 输出到 docs/data/ 目录：
-  - daily_report.json     — 最新日报数据（按发布时间筛选）
+  - daily_report.json     — 最新日报数据（来自本轮增量；已巡检则保留巡检结果）
   - dashboard.json        — 仪表盘统计数据（趋势、分布等）
   - all_models.json       — 全量模型数据（含所有Excel列，供前端交互表格）
   - history_index.json    — 历史日报文件列表（供前端切换）
@@ -31,6 +33,8 @@ import pandas as pd
 
 ROOT = Path(__file__).parent
 EXCEL_PATH = ROOT / "data" / "Object-Models.xlsx"
+UPDATED_PATH = ROOT / "data" / "Object-Models-Updated.xlsx"
+INCREMENT_DIR = ROOT / "data" / "increments"
 README_PATH = ROOT.parent / "README.md"
 DOCS_DIR = ROOT.parent / "docs"
 DATA_DIR = DOCS_DIR / "data"
@@ -180,35 +184,69 @@ def _row_to_model(row) -> dict:
     }
 
 
-def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> dict:
-    """生成日报 JSON 数据。
-
-    日报口径：优先覆盖本次窗口内“记录创建时间”的新增模型，同时兼容“模型发布时间”在窗口内的模型。
-    这样可以避免 GPT-5.5 Instant 这类“今天发现/录入，但发布时间较早”的模型漏出日报。
-    """
+def _empty_daily_report(since: str, until: str, source: str) -> dict:
     since_dash = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
     until_dash = f"{until[:4]}-{until[4:6]}-{until[6:8]}"
+    return {
+        "models": [],
+        "meta": {
+            "since": since_dash,
+            "until": until_dash,
+            "count": 0,
+            "source": source,
+            "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        },
+    }
 
-    if dataframe.empty:
-        return {"models": [], "meta": {"since": since_dash, "until": until_dash, "count": 0}}
 
-    masks = []
-    if "记录创建时间" in dataframe.columns:
-        created_dates = dataframe["记录创建时间"].apply(_normalize_date)
-        masks.append((created_dates >= since_dash) & (created_dates <= until_dash))
-    if "模型发布时间" in dataframe.columns:
-        release_dates = dataframe["模型发布时间"].apply(_normalize_date)
-        masks.append((release_dates >= since_dash) & (release_dates <= until_dash))
+def _load_reviewed_daily_if_same_range(since: str, until: str) -> dict | None:
+    """第二次生成站点数据时保留 LLM 巡检后的日报，避免被总表/增量覆盖。"""
+    report_path = DATA_DIR / "daily_report.json"
+    if not report_path.exists():
+        return None
+    try:
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
 
-    if not masks:
-        return {"models": [], "meta": {"since": since_dash, "until": until_dash, "count": 0}}
+    meta = report.get("meta", {})
+    since_dash = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
+    until_dash = f"{until[:4]}-{until[4:6]}-{until[6:8]}"
+    if meta.get("since") == since_dash and meta.get("until") == until_dash and meta.get("reviewed_at"):
+        report["meta"]["source"] = "reviewed_daily_report"
+        report["meta"]["count"] = len(report.get("models", []))
+        return report
+    return None
 
-    mask = masks[0]
-    for extra_mask in masks[1:]:
-        mask = mask | extra_mask
-    filtered = _deduplicate_dataframe(dataframe[mask].copy())
 
+def _load_daily_source_dataframe() -> tuple[pd.DataFrame, str]:
+    """读取日报源头：优先本轮增量审核结果，而不是总表。"""
+    if UPDATED_PATH.exists():
+        return pd.read_excel(UPDATED_PATH, engine="openpyxl"), UPDATED_PATH.name
+
+    increment_files = sorted(INCREMENT_DIR.glob("*.xlsx"), key=lambda path: path.stat().st_mtime, reverse=True)
+    for increment_file in increment_files:
+        if increment_file.stem.endswith("_empty"):
+            continue
+        return pd.read_excel(increment_file, engine="openpyxl"), f"increments/{increment_file.name}"
+
+    return pd.DataFrame(), "empty_increment"
+
+
+def generate_daily_report(since: str, until: str) -> dict:
+    """生成日报 JSON 数据：日报跟着本轮增量/巡检走，不从总表反推。"""
+    reviewed_report = _load_reviewed_daily_if_same_range(since, until)
+    if reviewed_report is not None:
+        return reviewed_report
+
+    daily_dataframe, source_name = _load_daily_source_dataframe()
+    if daily_dataframe.empty:
+        return _empty_daily_report(since, until, source_name)
+
+    filtered = _deduplicate_dataframe(daily_dataframe.copy())
     models = [_row_to_model(row) for _, row in filtered.iterrows()]
+    since_dash = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
+    until_dash = f"{until[:4]}-{until[4:6]}-{until[6:8]}"
 
     return {
         "models": models,
@@ -216,7 +254,7 @@ def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> di
             "since": since_dash,
             "until": until_dash,
             "count": len(models),
-            "selection_basis": "created_date_or_release_date",
+            "source": source_name,
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         },
     }
@@ -275,8 +313,8 @@ def main():
     if dataframe.empty:
         print("[WARN] master table is empty, generating empty data")
 
-    # 1. 日报
-    report = generate_daily_report(dataframe, args.since, args.until)
+    # 1. 日报：以本轮增量/已巡检日报为源头，不从总表反推
+    report = generate_daily_report(args.since, args.until)
     report_path = DATA_DIR / "daily_report.json"
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
