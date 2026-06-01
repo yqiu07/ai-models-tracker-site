@@ -240,7 +240,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <span id="table-count" class="table-count"></span>
         <button class="action-btn add-manual-btn" onclick="showManualAddModal()">&#x2795; 手动添加</button>
         <button class="action-btn add-smart-btn" onclick="showSmartAddModal()">&#x1F916; 智能添加</button>
-        <button class="action-btn update-btn" onclick="showUpdateModal()">&#x1F504; 更新</button>
+        <button class="action-btn update-btn" onclick="showUpdateModal()" title="从日报同步总表，并按模型名称查重唯一化">&#x1F504; 同步日报到总表</button>
         <button class="action-btn connected-btn" onclick="toggleConnectedPanel()" title="接入站">&#x1F517; 接入站 <span id="connected-badge" class="connected-badge">0</span></button>
         <button class="action-btn recycle-btn" onclick="toggleRecycleBin()" title="回收站">&#128465; 回收站 <span id="recycle-badge" class="recycle-badge">0</span></button>
       </div>
@@ -293,6 +293,29 @@ function escapeHtml(text) {
   var div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+function getModelUniqueKey(model) {
+  return safe(model && model.name).toLowerCase().replace(/[\s\-_:/（）()【】\[\]]+/g, '');
+}
+
+function deduplicateModelsByName(models) {
+  var uniqueModels = [];
+  var keyToIndex = {};
+  var duplicateCount = 0;
+  for (var i = 0; i < models.length; i++) {
+    var model = models[i];
+    var key = getModelUniqueKey(model);
+    if (!key) continue;
+    if (Object.prototype.hasOwnProperty.call(keyToIndex, key)) {
+      uniqueModels[keyToIndex[key]] = Object.assign({}, uniqueModels[keyToIndex[key]], model);
+      duplicateCount += 1;
+    } else {
+      keyToIndex[key] = uniqueModels.length;
+      uniqueModels.push(model);
+    }
+  }
+  return { models: uniqueModels, duplicateCount: duplicateCount };
 }
 
 function hashColor(str) {
@@ -594,11 +617,20 @@ function commitFileToGitHub(path, content, message) {
         if ((r.status === 409 || r.status === 422) && attempt < 2) {
           return new Promise(function(resolve) { setTimeout(resolve, 800); }).then(function() { return putFile(attempt + 1); });
         }
-        if (!r.ok) throw new Error('GitHub API error: ' + r.status);
+        if (!r.ok) {
+          return r.json().catch(function() { return {}; }).then(function(errorData) {
+            throw new Error('GitHub API error: ' + r.status + ' ' + (errorData.message || r.statusText || ''));
+          });
+        }
         return r.json();
       });
     }
-    return putFile(1);
+    return putFile(1).catch(function(error) {
+      if (error && error.message === 'Failed to fetch') {
+        throw new Error('无法连接 GitHub API。请检查当前网络是否能访问 api.github.com，或浏览器是否拦截了跨站请求。');
+      }
+      throw error;
+    });
   });
 }
 
@@ -726,8 +758,11 @@ function deleteModel(idx) {
       renderRecycleList();
       alert('已删除「' + safe(model.name) + '」并移入回收站 ✓');
     }).catch(function(e) {
-      if (e === 'cancelled') { allModelsData.splice(realIdx, 0, model); recycleData.pop(); updateRecycleBadge(); return; }
-      alert('保存失败: ' + e.message + '\n本地已修改但未同步到GitHub');
+      if (realIdx >= 0) allModelsData.splice(realIdx, 0, model);
+      recycleData.pop();
+      updateRecycleBadge();
+      if (e === 'cancelled') return;
+      alert('保存失败，已回滚本地删除：' + (e.message || e));
       filterAllModels();
       renderRecycleList();
     });
@@ -748,9 +783,13 @@ function deleteDailyModel(idx) {
     if (!confirmed) return;
 
     Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded(true)]).then(function() {
-      dailyModels.splice(idx, 1);
+      var removedDailyModel = dailyModels.splice(idx, 1)[0];
+      var removedAllModels = [];
       for (var i = allModelsData.length - 1; i >= 0; i--) {
-        if (isSameModel(allModelsData[i], model)) allModelsData.splice(i, 1);
+        if (isSameModel(allModelsData[i], model)) {
+          removedAllModels.push({ index: i, model: allModelsData[i] });
+          allModelsData.splice(i, 1);
+        }
       }
       recycleData.push(Object.assign({}, model, { source: 'daily', source_path: dailyPath, deleted_at: getNowText() }));
       updateRecycleBadge();
@@ -764,10 +803,22 @@ function deleteDailyModel(idx) {
         if (tabsLoaded.all) filterAllModels();
         renderRecycleList();
         alert('已删除「' + safe(model.name) + '」并同步到回收站 ✓');
+      }).catch(function(e) {
+        dailyModels.splice(idx, 0, removedDailyModel);
+        for (var j = 0; j < removedAllModels.length; j++) {
+          allModelsData.splice(removedAllModels[j].index, 0, removedAllModels[j].model);
+        }
+        recycleData.pop();
+        updateRecycleBadge();
+        if (e === 'cancelled') return;
+        alert('保存失败，已回滚本地删除：' + (e.message || e));
+        renderDailyReport(currentDailyData);
+        if (tabsLoaded.all) filterAllModels();
+        renderRecycleList();
       });
     }).catch(function(e) {
       if (e === 'cancelled') return;
-      alert('保存失败: ' + (e.message || e));
+      alert('删除前加载数据失败：' + (e.message || e));
       renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
       renderRecycleList();
@@ -1071,8 +1122,8 @@ function showUpdateModal() {
   overlay.className = 'modal-overlay';
   var today = new Date().toISOString().substring(0, 10);
   overlay.innerHTML = '<div class="modal-box update-modal">' +
-    '<h3>&#x1F504; 从日报增量更新总表</h3>' +
-    '<p>选择日期范围，系统将从日报中提取该时段的新模型，查重后追加到总表。</p>' +
+    '<h3>&#x1F504; 同步日报到总表</h3>' +
+    '<p>选择日期范围，系统会从日报/历史日报读取模型，按模型名称查重后同步到总表；同名模型只保留一条，并用日报信息补全总表。</p>' +
     '<div class="date-row"><input type="date" id="update-start" value="' + today + '" /> <span>至</span> <input type="date" id="update-end" value="' + today + '" /></div>' +
     '<div id="update-status" style="font-size:.85rem;color:#64748b;min-height:20px;"></div>' +
     '<div class="progress-bar"><div class="progress-fill" id="update-progress"></div></div>' +
@@ -1141,42 +1192,43 @@ function executeUpdate(overlay) {
     statusEl.textContent = '筛选到 ' + candidateModels.length + ' 条候选，正在查重...';
     progressEl.style.width = '60%';
 
-    // 查重：按模型名称去重
-    var existingNames = {};
-    for (var i = 0; i < allModelsData.length; i++) {
-      existingNames[safe(allModelsData[i].name)] = true;
+    var beforeTotal = allModelsData.length;
+    var mergedModels = allModelsData.slice();
+    var existingKeyToIndex = {};
+    for (var i = 0; i < mergedModels.length; i++) {
+      var existingKey = getModelUniqueKey(mergedModels[i]);
+      if (existingKey) existingKeyToIndex[existingKey] = i;
     }
-    var newModels = [];
-    var seenNames = {};
-    for (var i = 0; i < candidateModels.length; i++) {
-      var name = safe(candidateModels[i].name);
-      if (name && !existingNames[name] && !seenNames[name]) {
-        newModels.push(candidateModels[i]);
-        seenNames[name] = true;
+
+    var addedCount = 0;
+    var updatedCount = 0;
+    for (var j = 0; j < candidateModels.length; j++) {
+      var candidateModel = candidateModels[j];
+      var candidateKey = getModelUniqueKey(candidateModel);
+      if (!candidateKey) continue;
+      if (Object.prototype.hasOwnProperty.call(existingKeyToIndex, candidateKey)) {
+        mergedModels[existingKeyToIndex[candidateKey]] = Object.assign({}, mergedModels[existingKeyToIndex[candidateKey]], candidateModel);
+        updatedCount += 1;
+      } else {
+        existingKeyToIndex[candidateKey] = mergedModels.length;
+        mergedModels.push(candidateModel);
+        addedCount += 1;
       }
     }
 
-    statusEl.textContent = '去重后新增 ' + newModels.length + ' 条模型';
+    var dedupResult = deduplicateModelsByName(mergedModels);
+    allModelsData = dedupResult.models;
+    var removedDuplicateCount = beforeTotal + addedCount - allModelsData.length;
+
+    statusEl.textContent = '同步结果：新增 ' + addedCount + ' 条，更新 ' + updatedCount + ' 条，合并重复 ' + removedDuplicateCount + ' 条';
     progressEl.style.width = '80%';
 
-    if (newModels.length === 0) {
-      statusEl.textContent = '无新增模型（所有候选模型已存在于总表中）';
-      progressEl.style.width = '100%';
-      return;
-    }
-
-    // 追加到 allModelsData
-    for (var i = 0; i < newModels.length; i++) {
-      allModelsData.push(newModels[i]);
-    }
-
-    // 保存到 GitHub
-    var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-    return commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: update ' + newModels.length + ' models from daily reports (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
-      statusEl.textContent = '✓ 成功新增 ' + newModels.length + ' 条模型到总表！';
+    var allContent = buildAllModelsContent();
+    return commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: sync daily reports to unique all models (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
+      statusEl.textContent = '✓ 已同步日报到总表：新增 ' + addedCount + ' 条，更新 ' + updatedCount + ' 条，合并重复 ' + removedDuplicateCount + ' 条';
       progressEl.style.width = '100%';
       filterAllModels();
-      setTimeout(function() { document.body.removeChild(overlay); }, 2000);
+      setTimeout(function() { document.body.removeChild(overlay); }, 2600);
     });
   }).catch(function(e) {
     if (e === 'cancelled') { statusEl.textContent = '已取消'; progressEl.style.width = '0%'; return; }
