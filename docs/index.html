@@ -558,14 +558,13 @@ function getGitHubToken() {
     _tokenOverlay.setAttribute('id', 'token-modal-overlay');
     _tokenOverlay.innerHTML = '<div class="modal-box">' +
       '<h3>&#128274; 输入 GitHub Token</h3>' +
-      '<p>需要 GitHub Personal Access Token 来触发后台数据操作。<br><br>' +
+      '<p>需要 GitHub Personal Access Token 来保存修改。Token 只保存在当前浏览器会话的 sessionStorage 中。<br><br>' +
       '<strong>获取方式：</strong><br>' +
       '1. 打开 <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub Settings &rarr; Developer settings &rarr; Personal access tokens (Fine-grained)</a><br>' +
       '2. 点击 "Generate new token"<br>' +
       '3. Repository access 选择 "Only select repositories" &rarr; 选 <code>' + GITHUB_REPO + '</code><br>' +
-      '4. Repository permissions 设置 <strong>Actions &rarr; Read and write</strong><br>' +
-      '5. 如需继续使用接入站/手动添加，再设置 <strong>Contents &rarr; Read and write</strong><br>' +
-      '6. 生成后复制 token 粘贴到下方</p>' +
+      '4. Repository permissions 设置 <strong>Contents &rarr; Read and write</strong><br>' +
+      '5. 生成后复制 token 粘贴到下方</p>' +
       '<input type="text" class="token-input-field" placeholder="github_pat_xxxx 或 ghp_xxxx..." style="font-family:monospace;" autocomplete="off" />' +
       '<div class="btn-row"><button class="btn-cancel" onclick="tokenCancel()">取消</button><button class="btn-primary" onclick="tokenConfirm()">确认</button></div>' +
       '</div>';
@@ -645,49 +644,6 @@ function commitFilesSequentially(tasks) {
     })(tasks[i]);
   }
   return chain;
-}
-
-function buildDataOpsCommand(inputs) {
-  var command = 'gh workflow run 20260601_1547-data-ops.yml --repo ' + GITHUB_REPO + ' --ref "' + GITHUB_BRANCH + '"';
-  var keys = ['operation', 'model_name', 'source', 'source_path', 'start_date', 'end_date'];
-  for (var i = 0; i < keys.length; i++) {
-    var key = keys[i];
-    if (inputs[key]) command += ' -f ' + key + '="' + String(inputs[key]).replace(/"/g, '\\"') + '"';
-  }
-  return command;
-}
-
-function triggerDataOps(inputs, successMessage) {
-  return getGitHubToken().then(function(token) {
-    return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/actions/workflows/20260601_1547-data-ops.yml/dispatches', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      body: JSON.stringify({ ref: GITHUB_BRANCH, inputs: inputs })
-    });
-  }).then(function(response) {
-    if (response.status === 204 || response.ok) return;
-    return response.json().catch(function() { return {}; }).then(function(data) {
-      throw new Error(data.message || 'HTTP ' + response.status);
-    });
-  }).then(function() {
-    alert(successMessage + '\nGitHub Actions 正在后台处理，约 1-2 分钟后刷新页面查看结果。');
-  }).catch(function(error) {
-    if (error === 'cancelled') return;
-    var errorMessage = error.message || error;
-    var command = buildDataOpsCommand(inputs);
-    console.warn('Data Ops Proxy 触发失败，可手动执行：', command, error);
-    if (String(errorMessage).indexOf('Resource not accessible by personal access token') >= 0) {
-      sessionStorage.removeItem('gh_token');
-      alert('后台任务触发失败，未下载任何文件。\n\n原因：当前 Token 缺少 Actions: Read and write 权限。\n我已清除旧 Token；请重新生成/输入带 Actions 权限的 Token 后再试。');
-      throw error;
-    }
-    alert('后台任务触发失败，未下载任何文件。\n失败原因：' + errorMessage + '\n\n如果需要手动兜底，请打开控制台复制 gh workflow run 命令。');
-    throw error;
-  });
 }
 
 function getNowText() {
@@ -788,21 +744,25 @@ function deleteModel(idx) {
   showDeleteConfirm('确定删除「' + safe(model.name) + '」？\n将移入回收站，可随时恢复。', 'skip_delete_confirm_all').then(function(confirmed) {
     if (!confirmed) return;
 
-    triggerDataOps({
-      operation: 'delete_model',
-      model_name: safe(model.name),
-      source: 'all',
-      source_path: '',
-      start_date: '',
-      end_date: ''
-    }, '已提交删除「' + safe(model.name) + '」到后台').then(function() {
-      var realIdx = allModelsData.indexOf(model);
-      if (realIdx >= 0) allModelsData.splice(realIdx, 1);
-      recycleData.push(Object.assign({}, model, { source: 'all', deleted_at: getNowText() }));
-      updateRecycleBadge();
+    var realIdx = allModelsData.indexOf(model);
+    if (realIdx >= 0) allModelsData.splice(realIdx, 1);
+    recycleData.push(Object.assign({}, model, { source: 'all', deleted_at: getNowText() }));
+    updateRecycleBadge();
+
+    var commitTasks = [
+      { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
+      { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
+    ];
+    commitFilesSequentially(commitTasks).then(function() {
       filterAllModels();
       renderRecycleList();
-    }).catch(function() {
+      alert('已删除「' + safe(model.name) + '」并移入回收站 ✓');
+    }).catch(function(e) {
+      if (realIdx >= 0) allModelsData.splice(realIdx, 0, model);
+      recycleData.pop();
+      updateRecycleBadge();
+      if (e === 'cancelled') return;
+      alert('保存失败，已回滚页面状态，未下载任何文件：' + (e.message || e));
       filterAllModels();
       renderRecycleList();
     });
@@ -822,24 +782,44 @@ function deleteDailyModel(idx) {
   showDeleteConfirm('确定从当前日报删除「' + safe(model.name) + '」？\n将同步从总表移除并移入回收站。', 'skip_delete_confirm_daily').then(function(confirmed) {
     if (!confirmed) return;
 
-    triggerDataOps({
-      operation: 'delete_model',
-      model_name: safe(model.name),
-      source: 'daily',
-      source_path: dailyPath,
-      start_date: '',
-      end_date: ''
-    }, '已提交删除日报模型「' + safe(model.name) + '」到后台').then(function() {
-      dailyModels.splice(idx, 1);
+    Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded(true)]).then(function() {
+      var removedDailyModel = dailyModels.splice(idx, 1)[0];
+      var removedAllModels = [];
       for (var i = allModelsData.length - 1; i >= 0; i--) {
-        if (isSameModel(allModelsData[i], model)) allModelsData.splice(i, 1);
+        if (isSameModel(allModelsData[i], model)) {
+          removedAllModels.push({ index: i, model: allModelsData[i] });
+          allModelsData.splice(i, 1);
+        }
       }
       recycleData.push(Object.assign({}, model, { source: 'daily', source_path: dailyPath, deleted_at: getNowText() }));
       updateRecycleBadge();
-      renderDailyReport(currentDailyData);
-      if (tabsLoaded.all) filterAllModels();
-      renderRecycleList();
-    }).catch(function() {
+
+      var commitTasks = [
+        { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
+        { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
+        { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
+      ];
+      return commitFilesSequentially(commitTasks).then(function() {
+        renderDailyReport(currentDailyData);
+        if (tabsLoaded.all) filterAllModels();
+        renderRecycleList();
+        alert('已删除「' + safe(model.name) + '」并同步到回收站 ✓');
+      }).catch(function(e) {
+        dailyModels.splice(idx, 0, removedDailyModel);
+        for (var j = 0; j < removedAllModels.length; j++) {
+          allModelsData.splice(removedAllModels[j].index, 0, removedAllModels[j].model);
+        }
+        recycleData.pop();
+        updateRecycleBadge();
+        if (e === 'cancelled') return;
+        alert('保存失败，已回滚页面状态，未下载任何文件：' + (e.message || e));
+        renderDailyReport(currentDailyData);
+        if (tabsLoaded.all) filterAllModels();
+        renderRecycleList();
+      });
+    }).catch(function(e) {
+      if (e === 'cancelled') return;
+      alert('删除前加载数据失败：' + (e.message || e));
       renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
       renderRecycleList();
@@ -853,24 +833,46 @@ function restoreModel(idx) {
   var targetLabel = source === 'daily' ? '日报和总表' : '总表';
   if (!confirm('确定恢复「' + safe(recycledModel.name) + '」到' + targetLabel + '？')) return;
 
-  triggerDataOps({
-    operation: 'restore_model',
-    model_name: safe(recycledModel.name),
-    source: source,
-    source_path: safe(recycledModel.source_path),
-    start_date: '',
-    end_date: ''
-  }, '已提交恢复「' + safe(recycledModel.name) + '」到后台').then(function() {
+  Promise.all([ensureAllModelsLoaded(), ensureRecycleLoaded()]).then(function() {
     var restoredModel = stripRecycleMeta(recycledModel);
     recycleData.splice(idx, 1);
+    var commitTasks = [];
+
     if (!allModelsData.some(function(model) { return isSameModel(model, restoredModel); })) {
       allModelsData.unshift(restoredModel);
     }
-    if (source === 'daily') renderDailyReport(currentDailyData);
-    if (tabsLoaded.all) filterAllModels();
+    commitTasks.push({ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: restore model "' + safe(restoredModel.name) + '" from recycle' });
+
+    var dailyRestorePromise = Promise.resolve();
+    if (source === 'daily') {
+      var restorePath = safe(recycledModel.source_path) || 'docs/data/daily_report.json';
+      dailyRestorePromise = fetch(getDataFetchPathFromGitHubPath(restorePath) + '?t=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .catch(function() {
+          return restorePath === getCurrentDailyGitHubPath() ? currentDailyData : { models: [], meta: {} };
+        })
+        .then(function(targetDailyData) {
+          targetDailyData.models = targetDailyData.models || [];
+          if (!targetDailyData.models.some(function(model) { return isSameModel(model, restoredModel); })) {
+            targetDailyData.models.unshift(restoredModel);
+          }
+          if (restorePath === getCurrentDailyGitHubPath()) currentDailyData = targetDailyData;
+          commitTasks.push({ path: restorePath, content: buildDailyContentFromData(targetDailyData), message: 'chore: restore daily model "' + safe(restoredModel.name) + '"' });
+        });
+    }
+
+    commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
     updateRecycleBadge();
-    renderRecycleList();
-  }).catch(function() {
+
+    return dailyRestorePromise.then(function() { return commitFilesSequentially(commitTasks); }).then(function() {
+      if (source === 'daily') renderDailyReport(currentDailyData);
+      if (tabsLoaded.all) filterAllModels();
+      renderRecycleList();
+      alert('已恢复「' + safe(restoredModel.name) + '」到' + targetLabel + ' ✓');
+    });
+  }).catch(function(e) {
+    if (e === 'cancelled') return;
+    alert('恢复失败: ' + (e.message || e));
     renderRecycleList();
   });
 }
@@ -878,19 +880,19 @@ function restoreModel(idx) {
 function permanentlyDeleteModel(idx) {
   var model = recycleData[idx];
   if (!confirm('确定彻底清除「' + safe(model.name) + '」？\n此操作不会恢复到日报或总表。')) return;
+  recycleData.splice(idx, 1);
+  updateRecycleBadge();
 
-  triggerDataOps({
-    operation: 'purge_recycle',
-    model_name: safe(model.name),
-    source: safe(model.source) || 'all',
-    source_path: safe(model.source_path),
-    start_date: '',
-    end_date: ''
-  }, '已提交彻底清除「' + safe(model.name) + '」到后台').then(function() {
-    recycleData.splice(idx, 1);
-    updateRecycleBadge();
+  commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: permanently remove "' + safe(model.name) + '" from recycle bin').then(function() {
     renderRecycleList();
-  }).catch(function() {
+    alert('已彻底清除「' + safe(model.name) + '」 ✓');
+  }).catch(function(e) {
+    if (e === 'cancelled') {
+      recycleData.splice(idx, 0, model);
+      updateRecycleBadge();
+      return;
+    }
+    alert('彻底清除失败，未下载任何文件: ' + (e.message || e));
     renderRecycleList();
   });
 }
@@ -1142,23 +1144,85 @@ function executeUpdate(overlay) {
   if (!startDate || !endDate) { statusEl.textContent = '请选择日期范围'; return; }
   if (startDate > endDate) { statusEl.textContent = '开始日期不能晚于结束日期'; return; }
 
-  statusEl.textContent = '正在提交后台同步任务...';
-  progressEl.style.width = '35%';
+  statusEl.textContent = '正在读取日报数据...';
+  progressEl.style.width = '20%';
 
-  triggerDataOps({
-    operation: 'sync_daily_to_all',
-    model_name: '',
-    source: 'all',
-    source_path: '',
-    start_date: startDate,
-    end_date: endDate
-  }, '已提交日报同步总表任务').then(function() {
-    statusEl.textContent = '✓ 已提交后台同步任务，约 1-2 分钟后刷新页面查看结果';
-    progressEl.style.width = '100%';
-    setTimeout(function() { document.body.removeChild(overlay); }, 2600);
+  fetch('data/daily_report.json?t=' + Date.now(), { cache: 'no-store' }).then(function(r) { return r.json(); }).then(function(dailyData) {
+    var candidateModels = [];
+    var dailyModels = dailyData.models || [];
+    statusEl.textContent = '日报共 ' + dailyModels.length + ' 条，正在筛选日期范围...';
+    progressEl.style.width = '40%';
+
+    for (var i = 0; i < dailyModels.length; i++) {
+      var model = dailyModels[i];
+      var modelDate = safe(model.created_date) || safe(model.release_date) || '';
+      if (modelDate >= startDate && modelDate <= endDate) candidateModels.push(model);
+    }
+
+    return fetch('data/history_index.json?t=' + Date.now(), { cache: 'no-store' }).then(function(r) { return r.json(); }).catch(function() { return []; }).then(function(historyIndex) {
+      var historyPromises = [];
+      for (var i = 0; i < historyIndex.length; i++) {
+        var entry = historyIndex[i];
+        var fileName = entry.file || '';
+        var dateMatch = fileName.match(/(\d{4})(\d{2})(\d{2})/);
+        if (!dateMatch) continue;
+        var fileDate = dateMatch[1] + '-' + dateMatch[2] + '-' + dateMatch[3];
+        if (fileDate >= startDate && fileDate <= endDate) {
+          historyPromises.push(fetch('data/' + fileName + '?t=' + Date.now(), { cache: 'no-store' }).then(function(r) { return r.json(); }).catch(function() { return { models: [] }; }));
+        }
+      }
+      return Promise.all(historyPromises).then(function(results) {
+        for (var i = 0; i < results.length; i++) {
+          var models = results[i].models || [];
+          for (var j = 0; j < models.length; j++) candidateModels.push(models[j]);
+        }
+        return candidateModels;
+      });
+    });
+  }).then(function(candidateModels) {
+    statusEl.textContent = '筛选到 ' + candidateModels.length + ' 条候选，正在查重...';
+    progressEl.style.width = '60%';
+
+    var beforeTotal = allModelsData.length;
+    var mergedModels = allModelsData.slice();
+    var existingKeyToIndex = {};
+    for (var i = 0; i < mergedModels.length; i++) {
+      var existingKey = getModelUniqueKey(mergedModels[i]);
+      if (existingKey) existingKeyToIndex[existingKey] = i;
+    }
+
+    var addedCount = 0;
+    var updatedCount = 0;
+    for (var j = 0; j < candidateModels.length; j++) {
+      var candidateModel = candidateModels[j];
+      var candidateKey = getModelUniqueKey(candidateModel);
+      if (!candidateKey) continue;
+      if (Object.prototype.hasOwnProperty.call(existingKeyToIndex, candidateKey)) {
+        mergedModels[existingKeyToIndex[candidateKey]] = Object.assign({}, mergedModels[existingKeyToIndex[candidateKey]], candidateModel);
+        updatedCount += 1;
+      } else {
+        existingKeyToIndex[candidateKey] = mergedModels.length;
+        mergedModels.push(candidateModel);
+        addedCount += 1;
+      }
+    }
+
+    var dedupResult = deduplicateModelsByName(mergedModels);
+    allModelsData = dedupResult.models;
+    var removedDuplicateCount = beforeTotal + addedCount - allModelsData.length;
+
+    statusEl.textContent = '正在保存总表：新增 ' + addedCount + ' 条，更新 ' + updatedCount + ' 条，合并重复 ' + removedDuplicateCount + ' 条...';
+    progressEl.style.width = '80%';
+
+    return commitFileToGitHub('docs/data/all_models.json', buildAllModelsContent(), 'chore: sync daily reports to unique all models (' + startDate + ' ~ ' + endDate + ')').then(function() {
+      statusEl.textContent = '✓ 已同步日报到总表：新增 ' + addedCount + ' 条，更新 ' + updatedCount + ' 条，合并重复 ' + removedDuplicateCount + ' 条';
+      progressEl.style.width = '100%';
+      filterAllModels();
+      setTimeout(function() { document.body.removeChild(overlay); }, 2600);
+    });
   }).catch(function(e) {
     if (e === 'cancelled') { statusEl.textContent = '已取消'; progressEl.style.width = '0%'; return; }
-    statusEl.textContent = '提交失败，未下载任何文件: ' + (e.message || e);
+    statusEl.textContent = '更新失败，未下载任何文件: ' + (e.message || e);
     progressEl.style.width = '0%';
   });
 }
