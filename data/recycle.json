@@ -127,46 +127,10 @@
       "created_date": "2026-05-29",
       "connected": "",
       "workflow_progress": ""
-    },
-    {
-      "name": "豆包Seed 2.0 Pro",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "字节跳动/豆包",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "豆包于2026年5月28日前后正式发布升级版Seed 2.0 Pro，综合性能跻身全球前五，以$1/M token超低价格和MMMU-Pro 68.7%精度成为国产综合能力最强的商用大模型之一。",
-      "release_date": "2026-05-28",
-      "created_date": "2026-05-29",
-      "source": "daily",
-      "deleted_at": "2026-05-29 03:48:45"
-    },
-    {
-      "name": "GPT-5.5 Instant",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "OpenAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "正式成为ChatGPT默认模型，医疗/法律/金融领域幻觉率较GPT-5.3降低52%，强化编码、计算机使用与深度研究能力。",
-      "release_date": "2026-05-05",
-      "created_date": "2026-05-30",
-      "source": "all",
-      "deleted_at": "2026-06-01 03:50:34"
     }
   ],
   "meta": {
-    "total": 10,
-    "updated_at": "2026-06-01 03:50:34"
+    "total": 8,
+    "updated_at": "2026-05-29 02:58:02"
   }
 }
