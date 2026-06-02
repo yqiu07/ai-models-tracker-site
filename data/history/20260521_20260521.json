@@ -1,0 +1,58 @@
+{
+  "models": [
+    {
+      "name": "非遗武术大模型 2.0",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "上海体育大学武术学院、百度飞桨智慧体育技术创新中心、上海体刻动视技术有限公司",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "垂直领域多模态视频分析大模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "面向非遗武术领域的AI视频分析智能平台，支持数秒级动作细节诊断、知识问答交互与专业报告生成。",
+      "release_date": "2026-05-21",
+      "created_date": "2026-05-22"
+    },
+    {
+      "name": "PuduFM 1.0",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "普渡机器人",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "具身智能大模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "首个面向服务机器人的物理认知大模型，具备3D空间深度感知、物理状态预测与持续进化能力。",
+      "release_date": "2026-05-21",
+      "created_date": "2026-05-22"
+    },
+    {
+      "name": "烽火工业智能体",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "中石化",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "行业垂直智能体",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "石油化工行业首个数字专家智能体，可直接操作工业软件、分析实时生产数据并运行工艺仿真。",
+      "release_date": "2026-05-21",
+      "created_date": "2026-05-22"
+    }
+  ],
+  "meta": {
+    "since": "2026-05-21",
+    "until": "2026-05-21",
+    "count": 3,
+    "generated_at": "2026-05-22 02:09:31"
+  }
+}

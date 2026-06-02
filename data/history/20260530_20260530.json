@@ -1,0 +1,26 @@
+{
+  "models": [
+    {
+      "name": "讯飞建筑智能体平台2.0",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "科大讯飞",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "行业智能体平台",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "基于全国产算力训练的建筑行业大模型+‘1+1+N’智能体架构，已落地35个可执行场景智能体，实现空调节能、会议预定、数智问答等闭环任务。",
+      "release_date": "2026-05-30",
+      "created_date": "2026-05-30"
+    }
+  ],
+  "meta": {
+    "since": "2026-05-30",
+    "until": "2026-05-30",
+    "count": 1,
+    "generated_at": "2026-05-31 02:15:40"
+  }
+}

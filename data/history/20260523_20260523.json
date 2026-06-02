@@ -1,0 +1,74 @@
+{
+  "models": [
+    {
+      "name": "GLM-5.1-HighSpeed",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "智谱AI",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "官方称推理速度达400 tokens/s，面向高吞吐低延迟场景优化的GLM系列新版本",
+      "release_date": "2026-05-23",
+      "created_date": "2026-05-24"
+    },
+    {
+      "name": "BitCPM-CANN",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "OpenBMB",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "大语言模型（昇腾原生）",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "基于华为昇腾910B芯片全栈原生训练的开源大模型，适配CANN生态，强调国产算力高效部署",
+      "release_date": "2026-05-23",
+      "created_date": "2026-05-24"
+    },
+    {
+      "name": "Confucius4-TTS",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "网易有道",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "语音合成模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "支持14种语言零样本语音克隆的TTS引擎，即将全量开源",
+      "release_date": "2026-05-23",
+      "created_date": "2026-05-24"
+    },
+    {
+      "name": "AlphaProof Nexus",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Google DeepMind",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "数学推理与形式化证明框架",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "首个端到端可验证数学证明生成系统，集成强化学习驱动的搜索与Coq/Galaxy形式化验证闭环",
+      "release_date": "2026-05-23",
+      "created_date": "2026-05-24"
+    }
+  ],
+  "meta": {
+    "since": "2026-05-23",
+    "until": "2026-05-23",
+    "count": 4,
+    "generated_at": "2026-05-24 02:07:27"
+  }
+}
