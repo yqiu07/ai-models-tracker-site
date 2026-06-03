@@ -111,28 +111,12 @@
       "note": "京东云率先上线的MiniMax最新多模态基础模型，支持图文音视频联合理解与生成。",
       "release_date": "2026-06-02",
       "created_date": "2026-06-03"
-    },
-    {
-      "name": "LobsterAI Image-Video Matrix",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "LobsterAI",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "图像/视频生成大模型矩阵",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "LobsterAI发布的多分辨率、多时长视频与高保真图像协同生成模型集合。",
-      "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
     }
   ],
   "meta": {
     "since": "2026-06-02",
     "until": "2026-06-02",
-    "count": 8,
-    "generated_at": "2026-06-03 02:40:53"
+    "count": 7,
+    "generated_at": "2026-06-03 02:41:22"
   }
 }
