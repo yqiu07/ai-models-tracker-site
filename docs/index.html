@@ -577,8 +577,7 @@ function commitFileToGitHub(path, content, message) {
       return fetch(apiUrl, {
         headers: {
           'Authorization': 'Bearer ' + token,
-          'Accept': 'application/vnd.github.v3+json',
-          'Cache-Control': 'no-cache'
+          'Accept': 'application/vnd.github.v3+json'
         }
       }).then(function(r) { return r.json(); }).then(function(fileInfo) {
         var sha = fileInfo.sha || '';
