@@ -477,29 +477,29 @@ function ensureRecycleLoaded() {
 }
 
 function toggleRecycleBin() {
-  var staleOverlay = document.getElementById('recycle-modal-overlay');
-  if (staleOverlay) staleOverlay.remove();
-
-  var panel = document.getElementById('recycle-panel');
-  if (!panel) return;
-
-  var activeTab = document.querySelector('.tab-content.active');
-  var anchor = activeTab ? (activeTab.querySelector('.report-header') || activeTab.querySelector('.table-controls')) : null;
-  if (anchor && anchor.nextSibling !== panel) {
-    anchor.parentNode.insertBefore(panel, anchor.nextSibling);
-  }
-
-  if (panel.style.display === 'none' || !panel.style.display) {
-    panel.style.display = 'block';
-    ensureRecycleLoaded().then(function() { renderRecycleList(); });
+  var existingOverlay = document.getElementById('recycle-modal-overlay');
+  if (existingOverlay) {
+    existingOverlay.remove();
     return;
   }
 
-  panel.style.display = 'none';
+  var panel = document.getElementById('recycle-panel');
+  if (panel) panel.style.display = 'none';
+
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'recycle-modal-overlay';
+  overlay.innerHTML = '<div class="modal-box" style="max-width:720px;max-height:80vh;overflow:auto;">' +
+    '<div class="recycle-header"><strong>&#128465; 回收站</strong><button class="close-btn" onclick="toggleRecycleBin()">&times;</button></div>' +
+    '<p style="font-size:.85rem;color:var(--text-sec);margin-bottom:12px;">删除项会先进入回收站；“恢复”会放回来源位置，“彻底清除”会永久移出回收站。</p>' +
+    '<div id="recycle-modal-list"><p style="color:#64748b;font-size:.85rem;">正在加载...</p></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  ensureRecycleLoaded().then(function() { renderRecycleList(); });
 }
 
 function renderRecycleList() {
-  var el = document.getElementById('recycle-list');
+  var el = document.getElementById('recycle-modal-list') || document.getElementById('recycle-list');
   if (!el) return;
   if (recycleData.length === 0) {
     el.innerHTML = '<p style="color:#64748b;font-size:.85rem;">回收站为空</p>';
