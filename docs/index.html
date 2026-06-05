@@ -632,11 +632,25 @@ function isSameModel(a, b) {
 function stripRecycleMeta(model) {
   var restored = {};
   for (var key in model) {
-    if (Object.prototype.hasOwnProperty.call(model, key) && key !== 'source' && key !== 'deleted_at') {
+    if (Object.prototype.hasOwnProperty.call(model, key) && key !== 'source' && key !== 'source_url' && key !== 'deleted_at') {
       restored[key] = model[key];
     }
   }
   return restored;
+}
+
+function getDailyGitHubPath(url) {
+  if (!url || url.endsWith('.md')) return '';
+  if (url.indexOf('data/') === 0) return 'docs/' + url;
+  return url;
+}
+
+function buildDailyDataContent(dailyData) {
+  dailyData.models = dailyData.models || [];
+  dailyData.meta = dailyData.meta || {};
+  dailyData.meta.total = dailyData.models.length;
+  dailyData.meta.updated_at = getNowText();
+  return JSON.stringify(dailyData, null, 2);
 }
 
 function buildAllModelsContent() {
@@ -648,11 +662,7 @@ function buildRecycleContent() {
 }
 
 function buildDailyContent() {
-  currentDailyData.models = currentDailyData.models || [];
-  currentDailyData.meta = currentDailyData.meta || {};
-  currentDailyData.meta.total = currentDailyData.models.length;
-  currentDailyData.meta.updated_at = getNowText();
-  return JSON.stringify(currentDailyData, null, 2);
+  return buildDailyDataContent(currentDailyData);
 }
 
 function ensureAllModelsLoaded() {
@@ -688,8 +698,9 @@ function deleteModel(idx) {
 }
 
 function deleteDailyModel(idx) {
-  if (currentDailyUrl !== 'data/daily_report.json') {
-    alert('历史日报暂不支持直接删除，请切换到“最新日报”后操作。');
+  var dailyPath = getDailyGitHubPath(currentDailyUrl);
+  if (!dailyPath) {
+    alert('Markdown 历史日报暂不支持直接删除，请选择 JSON 日报后操作。');
     return;
   }
   var dailyModels = currentDailyData.models || [];
@@ -702,11 +713,11 @@ function deleteDailyModel(idx) {
     for (var i = allModelsData.length - 1; i >= 0; i--) {
       if (isSameModel(allModelsData[i], model)) allModelsData.splice(i, 1);
     }
-    recycleData.push(Object.assign({}, model, { source: 'daily', deleted_at: getNowText() }));
+    recycleData.push(Object.assign({}, model, { source: 'daily', source_url: currentDailyUrl, deleted_at: getNowText() }));
     updateRecycleBadge();
 
     return commitFilesSequentially([
-      { path: 'docs/data/daily_report.json', content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
+      { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
       { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
       { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
     ]).then(function() {
@@ -743,20 +754,33 @@ function restoreModel(idx) {
     commitTasks.push({ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: restore model "' + safe(restoredModel.name) + '" from recycle' });
 
     if (source === 'daily') {
-      currentDailyData.models = currentDailyData.models || [];
-      var existsInDaily = false;
-      for (var j = 0; j < currentDailyData.models.length; j++) {
-        if (isSameModel(currentDailyData.models[j], restoredModel)) existsInDaily = true;
-      }
-      if (!existsInDaily) currentDailyData.models.unshift(restoredModel);
-      commitTasks.push({ path: 'docs/data/daily_report.json', content: buildDailyContent(), message: 'chore: restore daily model "' + safe(restoredModel.name) + '"' });
+      var sourceUrl = safe(recycledModel.source_url) || 'data/daily_report.json';
+      var sourcePath = getDailyGitHubPath(sourceUrl) || 'docs/data/daily_report.json';
+      var dailyDataPromise = sourceUrl === currentDailyUrl ? Promise.resolve(currentDailyData) : fetch(sourceUrl).then(function(r) { return r.json(); });
+      return dailyDataPromise.then(function(targetDailyData) {
+        targetDailyData.models = targetDailyData.models || [];
+        var existsInDaily = false;
+        for (var j = 0; j < targetDailyData.models.length; j++) {
+          if (isSameModel(targetDailyData.models[j], restoredModel)) existsInDaily = true;
+        }
+        if (!existsInDaily) targetDailyData.models.unshift(restoredModel);
+        if (sourceUrl === currentDailyUrl) currentDailyData = targetDailyData;
+        commitTasks.push({ path: sourcePath, content: buildDailyDataContent(targetDailyData), message: 'chore: restore daily model "' + safe(restoredModel.name) + '"' });
+        commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
+        updateRecycleBadge();
+        return commitFilesSequentially(commitTasks).then(function() {
+          if (sourceUrl === currentDailyUrl) renderDailyReport(currentDailyData);
+          if (tabsLoaded.all) filterAllModels();
+          renderRecycleList();
+          alert('已恢复「' + safe(restoredModel.name) + '」到' + targetLabel + ' ✓');
+        });
+      });
     }
 
     commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
     updateRecycleBadge();
 
     return commitFilesSequentially(commitTasks).then(function() {
-      if (source === 'daily') renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
       renderRecycleList();
       alert('已恢复「' + safe(restoredModel.name) + '」到' + targetLabel + ' ✓');
