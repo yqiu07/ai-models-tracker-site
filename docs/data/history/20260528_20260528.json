@@ -33,22 +33,6 @@
       "created_date": "2026-05-29"
     },
     {
-      "name": "豆包Seed 2.0 Pro",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "字节跳动/豆包",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "豆包于2026年5月28日前后正式发布升级版Seed 2.0 Pro，综合性能跻身全球前五，以$1/M token超低价格和MMMU-Pro 68.7%精度成为国产综合能力最强的商用大模型之一。",
-      "release_date": "2026-05-28",
-      "created_date": "2026-05-29"
-    },
-    {
       "name": "HappyHorse 1.0",
       "connected": "",
       "workflow_progress": "",
@@ -85,6 +69,8 @@
     "since": "2026-05-28",
     "until": "2026-05-28",
     "count": 5,
-    "generated_at": "2026-05-29 02:05:13"
+    "generated_at": "2026-05-29 02:05:13",
+    "total": 4,
+    "updated_at": "2026-06-05 03:25:33"
   }
 }
