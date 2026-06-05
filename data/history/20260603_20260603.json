@@ -1,0 +1,90 @@
+{
+  "models": [
+    {
+      "name": "MAI-Code-1-Flash",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Microsoft",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "代码生成大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "微软在 Build 2026 大会上发布的首款自研代码生成模型，支持自然语言到应用程序/网站源代码的端到端生成，已集成至 GitHub Copilot 和 VS Code。",
+      "release_date": "2026-06-03",
+      "created_date": "2026-06-04"
+    },
+    {
+      "name": "MAI-Thinking-1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Microsoft",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "推理型大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "微软发布的旗舰推理模型，在编码基准测试中性能媲美 Anthropic Claude Sonnet 4.6，为微软新一代智能体核心推理引擎。",
+      "release_date": "2026-06-03",
+      "created_date": "2026-06-04"
+    },
+    {
+      "name": "MAI-Vision-1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Microsoft",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "多模态视觉理解模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "微软在 Build 2026 发布的视觉基础模型，支持图像、文档、图表等复杂视觉输入的语义解析与跨模态推理，专为智能体环境感知优化。",
+      "release_date": "2026-06-03",
+      "created_date": "2026-06-04"
+    },
+    {
+      "name": "MAI-Speech-1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Microsoft",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "语音大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "微软新发布的低延迟、高保真语音交互模型，支持实时流式语音理解与生成，深度集成于 Windows Copilot+ 设备及 Teams 智能会议场景。",
+      "release_date": "2026-06-03",
+      "created_date": "2026-06-04"
+    },
+    {
+      "name": "Mayo-Medical-LLM (codename: MedSage)",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Mayo Clinic & Microsoft",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "医疗垂直领域大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "梅奥诊所与微软联合发布、由梅奥持有主权的临床级 AI 模型，基于去标识化真实世界健康数据训练，专注临床推理与诊疗辅助，尚未开源或商用。",
+      "release_date": "2026-06-03",
+      "created_date": "2026-06-04"
+    }
+  ],
+  "meta": {
+    "since": "2026-06-03",
+    "until": "2026-06-03",
+    "count": 5,
+    "generated_at": "2026-06-04 02:37:14"
+  }
+}
