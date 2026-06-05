@@ -201,44 +201,27 @@
       "deleted_at": "2026-06-02 11:26:07"
     },
     {
-      "name": "Qwen3.7-Plus",
+      "name": "豆包Seed 2.0 Pro",
       "connected": "",
       "workflow_progress": "",
-      "company": "阿里巴巴/通义",
+      "company": "字节跳动/豆包",
       "domestic": "国内",
       "open_source": "",
       "size": "",
-      "type": "多模态智能体模型",
+      "type": "大语言模型",
       "reasoning": "",
       "task_type": "",
       "website": "",
-      "note": "阿里发布的全新多模态智能体模型，面向复杂任务编排与具身交互优化。",
-      "release_date": "2026-06-02",
-      "created_date": "2026-06-03",
-      "source": "all",
-      "deleted_at": "2026-06-05 03:18:07"
-    },
-    {
-      "name": "Qwen3.7-Plus",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "阿里巴巴/通义",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "多模态智能体模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "阿里发布的全新多模态智能体模型，面向复杂任务编排与具身交互优化。",
-      "release_date": "2026-06-02",
-      "created_date": "2026-06-03",
-      "source": "all",
-      "deleted_at": "2026-06-05 03:18:25"
+      "note": "豆包于2026年5月28日前后正式发布升级版Seed 2.0 Pro，综合性能跻身全球前五，以$1/M token超低价格和MMMU-Pro 68.7%精度成为国产综合能力最强的商用大模型之一。",
+      "release_date": "2026-05-28",
+      "created_date": "2026-05-29",
+      "source": "daily",
+      "source_url": "data/history/20260528_20260528.json",
+      "deleted_at": "2026-06-05 03:25:33"
     }
   ],
   "meta": {
-    "total": 14,
-    "updated_at": "2026-06-05 03:18:25"
+    "total": 13,
+    "updated_at": "2026-06-05 03:25:33"
   }
 }
