@@ -145,8 +145,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.6,
     "output_price": 2.4,
-    "throughput": null,
-    "latency": null,
+    "throughput": 203.0719284217771,
+    "latency": 2820.1,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -169,7 +169,7 @@
     "scicode_score": null,
     "apex_agents_score": 0.277,
     "swe_bench_pro_score": 0.59,
-    "coding_arena_score": null,
+    "coding_arena_score": 7.432544525023442,
     "index_reasoning": 55.93,
     "index_math": null,
     "index_code": 46.19,
@@ -188,7 +188,9 @@
       "updates"
     ],
     "is_open_source": true,
-    "arena_scores": {},
+    "arena_scores": {
+      "coding-arena": 7.432544525023442
+    },
     "license_id": "mit"
   },
   {
@@ -209,8 +211,8 @@
     "knowledge_cutoff": null,
     "input_price": 5,
     "output_price": 25,
-    "throughput": 72.70826627073984,
-    "latency": 1000.0679611650486,
+    "throughput": 72.18901550259682,
+    "latency": 1026.5394736842106,
     "aime_2025_score": null,
     "hle_score": 0.579,
     "gpqa_score": 0.936,
@@ -233,7 +235,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.692,
-    "coding_arena_score": 16.341822150995828,
+    "coding_arena_score": 15.970178772816656,
     "index_reasoning": 66.23,
     "index_math": 54.7,
     "index_code": 52.71,
@@ -253,73 +255,7 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 16.341822150995828
-    },
-    "license_id": "proprietary"
-  },
-  {
-    "model_id": "gemini-3.5-flash",
-    "name": "Gemini 3.5 Flash",
-    "organization": "Google",
-    "organization_id": "google",
-    "organization_country": "US",
-    "params": null,
-    "training_tokens": null,
-    "context": 1048576,
-    "canonical_model_id": null,
-    "release_date": "2026-05-19",
-    "announcement_date": "2026-05-19",
-    "multimodal": true,
-    "license": "proprietary",
-    "is_moe": null,
-    "knowledge_cutoff": "2026-01-31",
-    "input_price": 1.5,
-    "output_price": 9,
-    "throughput": 81.99741223574287,
-    "latency": 5921.028037383177,
-    "aime_2025_score": null,
-    "hle_score": 0.402,
-    "gpqa_score": null,
-    "swe_bench_verified_score": null,
-    "mmmu_score": null,
-    "simpleqa_score": null,
-    "osworld_score": null,
-    "browsecomp_score": null,
-    "toolathlon_score": 0.565,
-    "terminal_bench_score": null,
-    "tau_bench_retail_score": null,
-    "arc_agi_v2_score": 0.721,
-    "mmmlu_score": null,
-    "charxiv_r_score": 0.842,
-    "mmmu_pro_score": 0.836,
-    "screenspot_pro_score": null,
-    "mcp_atlas_score": 0.836,
-    "frontiermath_score": null,
-    "mrcr_v2_score": 0.266,
-    "scicode_score": null,
-    "apex_agents_score": null,
-    "swe_bench_pro_score": 0.551,
-    "coding_arena_score": 16.30614811035658,
-    "index_reasoning": 59.57,
-    "index_math": 40.71,
-    "index_code": 46.63,
-    "index_search": null,
-    "index_communication": null,
-    "index_vision": 40.34,
-    "index_tool_calling": 42.73,
-    "index_long_context": 21.42,
-    "index_finance": 33.95,
-    "index_legal": 37.63,
-    "index_healthcare": null,
-    "_source_pages": [
-      "llm",
-      "ai",
-      "open",
-      "updates"
-    ],
-    "is_open_source": false,
-    "arena_scores": {
-      "coding-arena": 16.30614811035658
+      "coding-arena": 15.970178772816656
     },
     "license_id": "proprietary"
   },
@@ -341,8 +277,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.25,
     "output_price": 3.75,
-    "throughput": 120.24563344334385,
-    "latency": 27169.645669291338,
+    "throughput": 121.62211968493298,
+    "latency": 27579.236842105263,
     "aime_2025_score": null,
     "hle_score": 0.414,
     "gpqa_score": 0.924,
@@ -365,7 +301,7 @@
     "scicode_score": 0.535,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.606,
-    "coding_arena_score": 15.994420082910057,
+    "coding_arena_score": 16.34068479415036,
     "index_reasoning": 60.46,
     "index_math": 54.83,
     "index_code": 48.2,
@@ -385,7 +321,73 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 15.994420082910057
+      "coding-arena": 16.34068479415036
+    },
+    "license_id": "proprietary"
+  },
+  {
+    "model_id": "gemini-3.5-flash",
+    "name": "Gemini 3.5 Flash",
+    "organization": "Google",
+    "organization_id": "google",
+    "organization_country": "US",
+    "params": null,
+    "training_tokens": null,
+    "context": 1048576,
+    "canonical_model_id": null,
+    "release_date": "2026-05-19",
+    "announcement_date": "2026-05-19",
+    "multimodal": true,
+    "license": "proprietary",
+    "is_moe": null,
+    "knowledge_cutoff": "2026-01-31",
+    "input_price": 1.5,
+    "output_price": 9,
+    "throughput": 81.40819318062182,
+    "latency": 6415.418604651163,
+    "aime_2025_score": null,
+    "hle_score": 0.402,
+    "gpqa_score": null,
+    "swe_bench_verified_score": null,
+    "mmmu_score": null,
+    "simpleqa_score": null,
+    "osworld_score": null,
+    "browsecomp_score": null,
+    "toolathlon_score": 0.565,
+    "terminal_bench_score": null,
+    "tau_bench_retail_score": null,
+    "arc_agi_v2_score": 0.721,
+    "mmmlu_score": null,
+    "charxiv_r_score": 0.842,
+    "mmmu_pro_score": 0.836,
+    "screenspot_pro_score": null,
+    "mcp_atlas_score": 0.836,
+    "frontiermath_score": null,
+    "mrcr_v2_score": 0.266,
+    "scicode_score": null,
+    "apex_agents_score": null,
+    "swe_bench_pro_score": 0.551,
+    "coding_arena_score": 16.290580904690785,
+    "index_reasoning": 59.57,
+    "index_math": 40.71,
+    "index_code": 46.63,
+    "index_search": null,
+    "index_communication": null,
+    "index_vision": 40.34,
+    "index_tool_calling": 42.73,
+    "index_long_context": 21.42,
+    "index_finance": 33.95,
+    "index_legal": 37.63,
+    "index_healthcare": null,
+    "_source_pages": [
+      "llm",
+      "ai",
+      "open",
+      "updates"
+    ],
+    "is_open_source": false,
+    "arena_scores": {
+      "coding-arena": 16.290580904690785
     },
     "license_id": "proprietary"
   },
@@ -407,8 +409,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.25,
     "output_price": 2.5,
-    "throughput": 299.4155228108192,
-    "latency": 4111.75,
+    "throughput": 315.6438721999986,
+    "latency": 3971.3333333333335,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -431,7 +433,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 8.44635926460671,
+    "coding_arena_score": 8.453680855633065,
     "index_reasoning": null,
     "index_math": null,
     "index_code": null,
@@ -451,7 +453,7 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 8.44635926460671
+      "coding-arena": 8.453680855633065
     },
     "license_id": "proprietary"
   },
@@ -473,8 +475,8 @@
     "knowledge_cutoff": "2025-08-31",
     "input_price": 5,
     "output_price": 30,
-    "throughput": 212.15580823399844,
-    "latency": 2867.6190476190477,
+    "throughput": 215.6405699006053,
+    "latency": 1173.2,
     "aime_2025_score": 0.812,
     "hle_score": null,
     "gpqa_score": 0.856,
@@ -497,7 +499,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 13.994874747492174,
+    "coding_arena_score": 14.050046647046575,
     "index_reasoning": 42.67,
     "index_math": 20.81,
     "index_code": null,
@@ -517,7 +519,7 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 13.994874747492174
+      "coding-arena": 14.050046647046575
     },
     "license_id": "proprietary"
   },
@@ -539,8 +541,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.5,
     "output_price": 7.5,
-    "throughput": 381.56715656054786,
-    "latency": 4042.9473684210525,
+    "throughput": 406.6461888610141,
+    "latency": 836.15,
     "aime_2025_score": 0.863,
     "hle_score": null,
     "gpqa_score": null,
@@ -605,8 +607,8 @@
     "knowledge_cutoff": "2025-12-01",
     "input_price": 5,
     "output_price": 30,
-    "throughput": 143.31610475664917,
-    "latency": 29321.12844036697,
+    "throughput": 148.670488120348,
+    "latency": 28862.33606557377,
     "aime_2025_score": null,
     "hle_score": 0.522,
     "gpqa_score": 0.936,
@@ -629,7 +631,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.586,
-    "coding_arena_score": 21.012382868789103,
+    "coding_arena_score": 21.128457494778736,
     "index_reasoning": 62.5,
     "index_math": 48.6,
     "index_code": 51.2,
@@ -650,7 +652,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 8.217576665146911,
-      "coding-arena": 21.012382868789103
+      "coding-arena": 21.128457494778736
     },
     "license_id": "proprietary"
   },
@@ -672,8 +674,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.74,
     "output_price": 3.48,
-    "throughput": 37.262278056867125,
-    "latency": 143719.71739130435,
+    "throughput": 39.848505469473956,
+    "latency": 124153.77966101695,
     "aime_2025_score": null,
     "hle_score": 0.482,
     "gpqa_score": 0.901,
@@ -696,7 +698,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.554,
-    "coding_arena_score": 12.869678840721868,
+    "coding_arena_score": 12.844619412107184,
     "index_reasoning": 57.11,
     "index_math": 53.27,
     "index_code": 43.68,
@@ -717,7 +719,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 5.107086909838571,
-      "coding-arena": 12.869678840721868
+      "coding-arena": 12.844619412107184
     },
     "license_id": "mit"
   },
@@ -739,8 +741,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.14,
     "output_price": 0.28,
-    "throughput": 77.51427992966774,
-    "latency": 18449.506666666668,
+    "throughput": 78.29626795833144,
+    "latency": 17902.948051948053,
     "aime_2025_score": null,
     "hle_score": 0.451,
     "gpqa_score": 0.881,
@@ -870,8 +872,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.6,
     "output_price": 3.6,
-    "throughput": 149.631182136415,
-    "latency": 15924.194444444443,
+    "throughput": 151.10011968072132,
+    "latency": 15656,
     "aime_2025_score": null,
     "hle_score": 0.24,
     "gpqa_score": 0.878,
@@ -937,8 +939,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.95,
     "output_price": 4,
-    "throughput": 55.54108043375753,
-    "latency": 56872.29756097561,
+    "throughput": 61.028014101534104,
+    "latency": 57541.27135678392,
     "aime_2025_score": null,
     "hle_score": 0.364,
     "gpqa_score": 0.905,
@@ -961,7 +963,7 @@
     "scicode_score": 0.522,
     "apex_agents_score": 0.279,
     "swe_bench_pro_score": 0.586,
-    "coding_arena_score": 15.571113438198024,
+    "coding_arena_score": 15.685227072386128,
     "index_reasoning": 58.31,
     "index_math": 50.03,
     "index_code": 43.74,
@@ -982,7 +984,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": -3.895712923391354,
-      "coding-arena": 15.571113438198024
+      "coding-arena": 15.685227072386128
     },
     "license_id": "modified_mit_license"
   },
@@ -1004,8 +1006,8 @@
     "knowledge_cutoff": null,
     "input_price": 5,
     "output_price": 25,
-    "throughput": 115.30591302123443,
-    "latency": 1160.1836734693877,
+    "throughput": 104.31686166016895,
+    "latency": 1292.90625,
     "aime_2025_score": null,
     "hle_score": 0.547,
     "gpqa_score": 0.942,
@@ -1199,8 +1201,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.4,
     "output_price": 4.4,
-    "throughput": 338.4751223161074,
-    "latency": 20530.777777777777,
+    "throughput": 391.2646494199212,
+    "latency": 11473.909090909092,
     "aime_2025_score": null,
     "hle_score": 0.523,
     "gpqa_score": 0.862,
@@ -1223,7 +1225,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.584,
-    "coding_arena_score": 17.561694582973363,
+    "coding_arena_score": 17.501230722160578,
     "index_reasoning": 54.05,
     "index_math": 46.84,
     "index_code": 42.91,
@@ -1244,7 +1246,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 2.6583313889690974,
-      "coding-arena": 17.561694582973363
+      "coding-arena": 17.501230722160578
     },
     "license_id": "mit"
   },
@@ -1330,8 +1332,8 @@
     "knowledge_cutoff": "2025-01-01",
     "input_price": 0.14,
     "output_price": 0.4,
-    "throughput": 188.71949017013924,
-    "latency": 808.8064516129032,
+    "throughput": 192.53015921614997,
+    "latency": 794.7142857142857,
     "aime_2025_score": null,
     "hle_score": 0.265,
     "gpqa_score": 0.843,
@@ -1354,7 +1356,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 12.864365788495073,
+    "coding_arena_score": 13.020853260409913,
     "index_reasoning": 45.03,
     "index_math": 39.23,
     "index_code": null,
@@ -1375,7 +1377,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 8.807762343345642,
-      "coding-arena": 12.864365788495073
+      "coding-arena": 13.020853260409913
     },
     "license_id": "apache_2_0"
   },
@@ -1397,8 +1399,8 @@
     "knowledge_cutoff": "2025-01-01",
     "input_price": 0.13,
     "output_price": 0.4,
-    "throughput": 114.89074343028172,
-    "latency": 2493.1470588235293,
+    "throughput": 114.7735336778814,
+    "latency": 2542.5714285714284,
     "aime_2025_score": null,
     "hle_score": 0.172,
     "gpqa_score": 0.823,
@@ -1464,8 +1466,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.5,
     "output_price": 3,
-    "throughput": 73.40134364131889,
-    "latency": 83686.33333333333,
+    "throughput": 61.114531058746785,
+    "latency": 66039.42857142857,
     "aime_2025_score": null,
     "hle_score": 0.288,
     "gpqa_score": 0.904,
@@ -1488,7 +1490,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.566,
-    "coding_arena_score": 12.189855985714665,
+    "coding_arena_score": 12.020309092894479,
     "index_reasoning": 52.11,
     "index_math": 49.19,
     "index_code": 41.71,
@@ -1509,7 +1511,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 7.496802277166566,
-      "coding-arena": 12.189855985714665
+      "coding-arena": 12.020309092894479
     },
     "license_id": "proprietary"
   },
@@ -1723,8 +1725,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.3,
     "output_price": 1.2,
-    "throughput": 198.78239014477253,
-    "latency": 3576.109090909091,
+    "throughput": 208.33056821246026,
+    "latency": 2828.387755102041,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -1924,8 +1926,8 @@
     "knowledge_cutoff": "2025-08-31",
     "input_price": 0.75,
     "output_price": 4.5,
-    "throughput": 373.131489751962,
-    "latency": 824,
+    "throughput": 373.9380595471431,
+    "latency": 806.2380952380952,
     "aime_2025_score": null,
     "hle_score": 0.282,
     "gpqa_score": 0.88,
@@ -1948,7 +1950,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.544,
-    "coding_arena_score": 14.170753819641453,
+    "coding_arena_score": 14.198967691163798,
     "index_reasoning": 45.97,
     "index_math": 35.85,
     "index_code": 34.15,
@@ -1969,7 +1971,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 7.174650371324576,
-      "coding-arena": 14.170753819641453
+      "coding-arena": 14.198967691163798
     },
     "license_id": "proprietary"
   },
@@ -1991,8 +1993,8 @@
     "knowledge_cutoff": "2025-08-31",
     "input_price": 0.2,
     "output_price": 1.25,
-    "throughput": 459.5366225701467,
-    "latency": 706.5882352941177,
+    "throughput": 468.5313908411475,
+    "latency": 690.2631578947369,
     "aime_2025_score": null,
     "hle_score": 0.243,
     "gpqa_score": 0.828,
@@ -2058,8 +2060,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.15,
     "output_price": 0.6,
-    "throughput": 327.1044625436566,
-    "latency": 1490.8703703703704,
+    "throughput": 333.01815043015597,
+    "latency": 1453.5272727272727,
     "aime_2025_score": 0.838,
     "hle_score": null,
     "gpqa_score": 0.712,
@@ -2082,7 +2084,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 5.677818403586509,
+    "coding_arena_score": 5.627642003563891,
     "index_reasoning": 23.18,
     "index_math": 23.37,
     "index_code": 14.77,
@@ -2103,7 +2105,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 3.9982954024169555,
-      "coding-arena": 5.677818403586509
+      "coding-arena": 5.627642003563891
     },
     "license_id": "apache_2_0"
   },
@@ -2521,8 +2523,8 @@
     "knowledge_cutoff": null,
     "input_price": 2.5,
     "output_price": 15,
-    "throughput": 127.47948388563958,
-    "latency": 1387.8333333333333,
+    "throughput": 114.42827167814103,
+    "latency": 1363.25,
     "aime_2025_score": null,
     "hle_score": 0.398,
     "gpqa_score": 0.928,
@@ -2545,7 +2547,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.577,
-    "coding_arena_score": 17.34297187722991,
+    "coding_arena_score": 17.32882160508087,
     "index_reasoning": 57.77,
     "index_math": 46.88,
     "index_code": 42.94,
@@ -2566,7 +2568,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 11.035027335801358,
-      "coding-arena": 17.34297187722991
+      "coding-arena": 17.32882160508087
     },
     "license_id": "proprietary"
   },
@@ -2978,8 +2980,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.4,
     "output_price": 3.2,
-    "throughput": 128.57929584813482,
-    "latency": 37247.53333333333,
+    "throughput": 136.34782613366386,
+    "latency": 35735.125,
     "aime_2025_score": null,
     "hle_score": 0.475,
     "gpqa_score": 0.866,
@@ -3002,7 +3004,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 7.495125165063051,
+    "coding_arena_score": 7.573528528143146,
     "index_reasoning": 43.02,
     "index_math": 44.07,
     "index_code": 25.8,
@@ -3023,7 +3025,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 12.8141543816541,
-      "coding-arena": 7.495125165063051
+      "coding-arena": 7.573528528143146
     },
     "license_id": "apache_2_0"
   },
@@ -3045,8 +3047,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.3,
     "output_price": 2.4,
-    "throughput": 109.76478603430365,
-    "latency": 39975.8,
+    "throughput": 120.35109873433605,
+    "latency": 31507.6,
     "aime_2025_score": null,
     "hle_score": 0.485,
     "gpqa_score": 0.855,
@@ -3069,7 +3071,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 7.479357315449505,
+    "coding_arena_score": 7.514173641712816,
     "index_reasoning": 41.92,
     "index_math": 42.38,
     "index_code": 21.2,
@@ -3090,7 +3092,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 13.874638664510506,
-      "coding-arena": 7.479357315449505
+      "coding-arena": 7.514173641712816
     },
     "license_id": "apache_2_0"
   },
@@ -3112,8 +3114,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.25,
     "output_price": 0.75,
-    "throughput": 893.49412448211,
-    "latency": 2978.608695652174,
+    "throughput": 960.2152069933287,
+    "latency": 1674.2692307692307,
     "aime_2025_score": 0.911,
     "hle_score": null,
     "gpqa_score": 0.74,
@@ -3136,7 +3138,7 @@
     "scicode_score": 0.38,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 4.901561795712083,
+    "coding_arena_score": 5.045123029907897,
     "index_reasoning": 28.56,
     "index_math": 31.07,
     "index_code": 17.96,
@@ -3157,7 +3159,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 3.24033923984649,
-      "coding-arena": 4.901561795712083
+      "coding-arena": 5.045123029907897
     },
     "license_id": "proprietary"
   },
@@ -3179,8 +3181,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.25,
     "output_price": 2,
-    "throughput": 232.67334743616996,
-    "latency": 23319.86666666667,
+    "throughput": 247.4724106969261,
+    "latency": 20550.833333333332,
     "aime_2025_score": null,
     "hle_score": 0.474,
     "gpqa_score": 0.842,
@@ -3203,7 +3205,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 4.245759832451533,
+    "coding_arena_score": 4.25215147452296,
     "index_reasoning": 38.52,
     "index_math": 38.45,
     "index_code": 15.62,
@@ -3224,7 +3226,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 17.14751931653054,
-      "coding-arena": 4.245759832451533
+      "coding-arena": 4.25215147452296
     },
     "license_id": "apache_2_0"
   },
@@ -3246,8 +3248,8 @@
     "knowledge_cutoff": "2025-01-31",
     "input_price": 2.5,
     "output_price": 15,
-    "throughput": 164.39976905401187,
-    "latency": 27002.274193548386,
+    "throughput": 162.1796351095972,
+    "latency": 26995.74193548387,
     "aime_2025_score": null,
     "hle_score": 0.514,
     "gpqa_score": 0.943,
@@ -3270,7 +3272,7 @@
     "scicode_score": 0.59,
     "apex_agents_score": 0.335,
     "swe_bench_pro_score": 0.542,
-    "coding_arena_score": 21.012571590966484,
+    "coding_arena_score": 21.02456772844573,
     "index_reasoning": 59.69,
     "index_math": 55.73,
     "index_code": 43.42,
@@ -3291,7 +3293,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 12.21627810042001,
-      "coding-arena": 21.012571590966484
+      "coding-arena": 21.02456772844573
     },
     "license_id": "proprietary"
   },
@@ -3313,8 +3315,8 @@
     "knowledge_cutoff": null,
     "input_price": 3,
     "output_price": 15,
-    "throughput": 144.09157328675204,
-    "latency": 3865.3076923076924,
+    "throughput": 156.61287124495038,
+    "latency": 3152.4117647058824,
     "aime_2025_score": null,
     "hle_score": 0.49,
     "gpqa_score": 0.899,
@@ -3337,7 +3339,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 17.06431494939611,
+    "coding_arena_score": 16.76641259850133,
     "index_reasoning": 52.34,
     "index_math": 44.2,
     "index_code": 36.71,
@@ -3357,7 +3359,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 9.55726598268478,
-      "coding-arena": 17.06431494939611
+      "coding-arena": 16.76641259850133
     }
   },
   {
@@ -3378,8 +3380,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.6,
     "output_price": 3.6,
-    "throughput": 79.09346316554463,
-    "latency": 11196.8125,
+    "throughput": 85.73476652956757,
+    "latency": 14611.823529411766,
     "aime_2025_score": null,
     "hle_score": 0.287,
     "gpqa_score": 0.884,
@@ -3402,7 +3404,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 12.939458167223618,
+    "coding_arena_score": 12.920464257423502,
     "index_reasoning": 48.67,
     "index_math": 45.83,
     "index_code": 30.17,
@@ -3422,7 +3424,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 9.628406968889184,
-      "coding-arena": 12.939458167223618
+      "coding-arena": 12.920464257423502
     }
   },
   {
@@ -3567,8 +3569,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.3,
     "output_price": 1.2,
-    "throughput": 435.37872923163576,
-    "latency": 1455.5,
+    "throughput": 444.8480359666713,
+    "latency": 1402.75,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -3632,8 +3634,8 @@
     "knowledge_cutoff": null,
     "input_price": 1,
     "output_price": 3.2,
-    "throughput": 350.8421491476084,
-    "latency": 6590.541666666667,
+    "throughput": 393.4852010526822,
+    "latency": 6770.173913043478,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -3656,7 +3658,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 15.929320602482141,
+    "coding_arena_score": 15.903904065232927,
     "index_reasoning": 51.58,
     "index_math": null,
     "index_code": 36.27,
@@ -3676,7 +3678,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 11.660716607567899,
-      "coding-arena": 15.929320602482141
+      "coding-arena": 15.903904065232927
     }
   },
   {
@@ -3759,8 +3761,8 @@
     "knowledge_cutoff": null,
     "input_price": 5,
     "output_price": 25,
-    "throughput": 44.363415008213416,
-    "latency": 2588.353846153846,
+    "throughput": 39.3635119463714,
+    "latency": 1476.58,
     "aime_2025_score": 0.9979,
     "hle_score": 0.531,
     "gpqa_score": 0.913,
@@ -3783,7 +3785,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 21.38070223490458,
+    "coding_arena_score": 21.321392664176233,
     "index_reasoning": 59.75,
     "index_math": 52.98,
     "index_code": 43.92,
@@ -3803,7 +3805,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 14.914903014921457,
-      "coding-arena": 21.38070223490458
+      "coding-arena": 21.321392664176233
     }
   },
   {
@@ -3824,8 +3826,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.75,
     "output_price": 14,
-    "throughput": 208.9087890639017,
-    "latency": 1588,
+    "throughput": 224.73862426754386,
+    "latency": 1478.5,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -3848,7 +3850,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.568,
-    "coding_arena_score": 13.647597532055451,
+    "coding_arena_score": 13.679464797508055,
     "index_reasoning": 56.17,
     "index_math": null,
     "index_code": 43.42,
@@ -3868,7 +3870,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 8.210085967199902,
-      "coding-arena": 13.647597532055451
+      "coding-arena": 13.679464797508055
     }
   },
   {
@@ -3954,8 +3956,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.1,
     "output_price": 0.4,
-    "throughput": 320.3318149629237,
-    "latency": 8401.314285714287,
+    "throughput": 312.2021128512974,
+    "latency": 10298.324324324323,
     "aime_2025_score": 0.973,
     "hle_score": null,
     "gpqa_score": null,
@@ -3978,7 +3980,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 7.305495949615903,
+    "coding_arena_score": 7.361043604851344,
     "index_reasoning": 49.26,
     "index_math": 47.05,
     "index_code": 28.12,
@@ -3998,7 +4000,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 10.522602694939753,
-      "coding-arena": 7.305495949615903
+      "coding-arena": 7.361043604851344
     }
   },
   {
@@ -4273,8 +4275,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.75,
     "output_price": 14,
-    "throughput": 266.2007703614812,
-    "latency": 3114.133333333333,
+    "throughput": 281.86155268419,
+    "latency": 2792.9444444444443,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -4297,7 +4299,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": 0.564,
-    "coding_arena_score": 12.294412377386006,
+    "coding_arena_score": 12.294371483468652,
     "index_reasoning": 52.2,
     "index_math": null,
     "index_code": 39,
@@ -4317,7 +4319,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 8.122720649529066,
-      "coding-arena": 12.294412377386006
+      "coding-arena": 12.294371483468652
     }
   },
   {
@@ -4468,8 +4470,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.3,
     "output_price": 1.2,
-    "throughput": 308.43380599231705,
-    "latency": 1221.5714285714287,
+    "throughput": 380.8449295370032,
+    "latency": 1547.974358974359,
     "aime_2025_score": 0.81,
     "hle_score": 0.22,
     "gpqa_score": 0.81,
@@ -4492,7 +4494,7 @@
     "scicode_score": 0.39,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 8.601438293983488,
+    "coding_arena_score": 8.601419852368506,
     "index_reasoning": 41.24,
     "index_math": 36.05,
     "index_code": 26.78,
@@ -4512,7 +4514,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 10.74371619316056,
-      "coding-arena": 8.601438293983488
+      "coding-arena": 8.601419852368506
     }
   },
   {
@@ -4598,8 +4600,8 @@
     "knowledge_cutoff": "2025-01-31",
     "input_price": 0.5,
     "output_price": 3,
-    "throughput": 241.3103544200569,
-    "latency": 2160.1206896551726,
+    "throughput": 247.43132643511112,
+    "latency": 2169.0172413793102,
     "aime_2025_score": 0.997,
     "hle_score": 0.435,
     "gpqa_score": 0.904,
@@ -4858,8 +4860,8 @@
     "knowledge_cutoff": "2025-08-25",
     "input_price": 1.75,
     "output_price": 14,
-    "throughput": 212.64960675741227,
-    "latency": 36591.416666666664,
+    "throughput": 216.11740488583706,
+    "latency": 35948.470588235294,
     "aime_2025_score": 1,
     "hle_score": 0.345,
     "gpqa_score": 0.924,
@@ -4882,7 +4884,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 15.301860804926124,
+    "coding_arena_score": 15.301998580258907,
     "index_reasoning": 53.79,
     "index_math": 50.28,
     "index_code": 34.76,
@@ -4902,7 +4904,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 11.703660631133229,
-      "coding-arena": 15.301860804926124
+      "coding-arena": 15.301998580258907
     }
   },
   {
@@ -4985,8 +4987,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.5,
     "output_price": 1.5,
-    "throughput": 224.35692546614388,
-    "latency": 1677.8823529411766,
+    "throughput": 214.3831326425148,
+    "latency": 1672.9411764705883,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.439,
@@ -5447,7 +5449,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": 0.94,
+    "index_reasoning": 0.93,
     "index_math": 9.59,
     "index_code": null,
     "index_search": null,
@@ -6042,8 +6044,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.28,
     "output_price": 0.42,
-    "throughput": 317.9347161406636,
-    "latency": 1210,
+    "throughput": 314.6722366825966,
+    "latency": 1202.2564102564102,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -6066,7 +6068,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 9.795380381401534,
+    "coding_arena_score": 9.86361069691163,
     "index_reasoning": null,
     "index_math": null,
     "index_code": null,
@@ -6086,7 +6088,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 9.557280735249975,
-      "coding-arena": 9.795380381401534
+      "coding-arena": 9.86361069691163
     }
   },
   {
@@ -6302,8 +6304,8 @@
     "knowledge_cutoff": "2025-03-31",
     "input_price": null,
     "output_price": null,
-    "throughput": 187.81522763085192,
-    "latency": 1009.1428571428571,
+    "throughput": 204.23212174209274,
+    "latency": 1015.9583333333334,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.87,
@@ -6497,8 +6499,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.2,
     "output_price": 0.5,
-    "throughput": 393.03756934817335,
-    "latency": 998.8333333333334,
+    "throughput": 426.936194143328,
+    "latency": 998.7142857142857,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -6521,7 +6523,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 6.725700907798733,
+    "coding_arena_score": 6.90554293591324,
     "index_reasoning": null,
     "index_math": null,
     "index_code": null,
@@ -6541,7 +6543,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 12.355459101169174,
-      "coding-arena": 6.725700907798733
+      "coding-arena": 6.90554293591324
     }
   },
   {
@@ -6562,8 +6564,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.2,
     "output_price": 0.5,
-    "throughput": 317.8471090956824,
-    "latency": 6116,
+    "throughput": 332.34752252108194,
+    "latency": 6135.7692307692305,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -6816,8 +6818,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.25,
     "output_price": 10,
-    "throughput": 234.3295456610275,
-    "latency": 21952.916666666668,
+    "throughput": 306.8155136135781,
+    "latency": 20342.529411764706,
     "aime_2025_score": 0.984,
     "hle_score": null,
     "gpqa_score": null,
@@ -6840,7 +6842,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 11.83094336469018,
+    "coding_arena_score": 11.674381723303375,
     "index_reasoning": 46.39,
     "index_math": 44.98,
     "index_code": null,
@@ -6860,7 +6862,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 12.372522781162107,
-      "coding-arena": 11.83094336469018
+      "coding-arena": 11.674381723303375
     }
   },
   {
@@ -7011,8 +7013,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.25,
     "output_price": 10,
-    "throughput": 290.977187684079,
-    "latency": 4340.8,
+    "throughput": 301.97566922872994,
+    "latency": 4345.555555555556,
     "aime_2025_score": 0.94,
     "hle_score": null,
     "gpqa_score": 0.881,
@@ -7206,8 +7208,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.3,
     "output_price": 1.2,
-    "throughput": 421.1173292269479,
-    "latency": 1369.090909090909,
+    "throughput": 447.65320396887455,
+    "latency": 1386.6363636363637,
     "aime_2025_score": 0.78,
     "hle_score": 0.125,
     "gpqa_score": 0.78,
@@ -7230,7 +7232,7 @@
     "scicode_score": 0.36,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 9.791827982808291,
+    "coding_arena_score": 9.808070151920365,
     "index_reasoning": 33.47,
     "index_math": 25.28,
     "index_code": 22.97,
@@ -7250,7 +7252,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 10.028079525908918,
-      "coding-arena": 9.791827982808291
+      "coding-arena": 9.808070151920365
     }
   },
   {
@@ -7271,7 +7273,7 @@
     "knowledge_cutoff": "2025-02-01",
     "input_price": 1,
     "output_price": 5,
-    "throughput": 231.32280730591668,
+    "throughput": 237.8134559302884,
     "latency": null,
     "aime_2025_score": 0.807,
     "hle_score": null,
@@ -7401,8 +7403,8 @@
     "knowledge_cutoff": "2025-01-31",
     "input_price": 3,
     "output_price": 15,
-    "throughput": 100.6079543813355,
-    "latency": 1332.12,
+    "throughput": 100.44459402252868,
+    "latency": 1349.76,
     "aime_2025_score": 0.87,
     "hle_score": null,
     "gpqa_score": 0.834,
@@ -7425,7 +7427,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 14.184601041549532,
+    "coding_arena_score": 14.189032938409573,
     "index_reasoning": 39.96,
     "index_math": 32.68,
     "index_code": 31.63,
@@ -7445,7 +7447,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 13.084502511705052,
-      "coding-arena": 14.184601041549532
+      "coding-arena": 14.189032938409573
     }
   },
   {
@@ -7596,8 +7598,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.1,
     "output_price": 1,
-    "throughput": 85.78845515406245,
-    "latency": 2425.625,
+    "throughput": 92.46473237256484,
+    "latency": 1092.5128205128206,
     "aime_2025_score": 0.745,
     "hle_score": null,
     "gpqa_score": 0.641,
@@ -7620,7 +7622,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 6.929910452376413,
+    "coding_arena_score": 7.3530335739160275,
     "index_reasoning": 14.59,
     "index_math": 17.43,
     "index_code": null,
@@ -7639,7 +7641,7 @@
     ],
     "is_open_source": true,
     "arena_scores": {
-      "coding-arena": 6.929910452376413
+      "coding-arena": 7.3530335739160275
     }
   },
   {
@@ -7659,9 +7661,9 @@
     "is_moe": true,
     "knowledge_cutoff": null,
     "input_price": 0.3,
-    "output_price": 1.5,
-    "throughput": 129.02580858090016,
-    "latency": 1256.2,
+    "output_price": 1.49,
+    "throughput": 131.33242572016727,
+    "latency": 1256.0625,
     "aime_2025_score": 0.747,
     "hle_score": null,
     "gpqa_score": null,
@@ -7788,8 +7790,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.18,
     "output_price": 2.09,
-    "throughput": 117.28290170684326,
-    "latency": 848.5,
+    "throughput": 102.66040113165681,
+    "latency": 769,
     "aime_2025_score": 0.803,
     "hle_score": null,
     "gpqa_score": 0.699,
@@ -7812,7 +7814,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 4.806014029848811,
+    "coding_arena_score": 4.837627038614315,
     "index_reasoning": 18.15,
     "index_math": 21.29,
     "index_code": null,
@@ -7831,7 +7833,7 @@
     ],
     "is_open_source": true,
     "arena_scores": {
-      "coding-arena": 4.806014029848811
+      "coding-arena": 4.837627038614315
     }
   },
   {
@@ -7852,8 +7854,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.1,
     "output_price": 0.6,
-    "throughput": 129.6119573876198,
-    "latency": 3302.15,
+    "throughput": 141.83705250733786,
+    "latency": 1049.3636363636363,
     "aime_2025_score": 0.466,
     "hle_score": null,
     "gpqa_score": null,
@@ -7876,7 +7878,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 3.7159247338505614,
+    "coding_arena_score": 3.617226175978604,
     "index_reasoning": 7.61,
     "index_math": 8.2,
     "index_code": null,
@@ -7895,7 +7897,7 @@
     ],
     "is_open_source": true,
     "arena_scores": {
-      "coding-arena": 3.7159247338505614
+      "coding-arena": 3.617226175978604
     }
   },
   {
@@ -7916,8 +7918,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.08,
     "output_price": 0.5,
-    "throughput": 122.21458703221256,
-    "latency": 1490.967741935484,
+    "throughput": 106.54437142831989,
+    "latency": 1503.7666666666667,
     "aime_2025_score": 0.459,
     "hle_score": null,
     "gpqa_score": null,
@@ -8799,8 +8801,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.2,
     "output_price": 0.5,
-    "throughput": 333.5638192742657,
-    "latency": 5108.961538461538,
+    "throughput": 353.0720456364452,
+    "latency": 5064.482758620689,
     "aime_2025_score": 0.92,
     "hle_score": 0.2,
     "gpqa_score": 0.857,
@@ -8823,7 +8825,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 8.973309600340627,
+    "coding_arena_score": 8.966741073983968,
     "index_reasoning": 40.98,
     "index_math": 36.38,
     "index_code": 26.26,
@@ -8842,7 +8844,7 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 8.973309600340627
+      "coding-arena": 8.966741073983968
     }
   },
   {
@@ -8928,8 +8930,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.2,
     "output_price": 0.5,
-    "throughput": 371.79353729379466,
-    "latency": 6599.458333333333,
+    "throughput": 423.6323214481809,
+    "latency": 6120.807692307692,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -8952,7 +8954,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 6.832771469506371,
+    "coding_arena_score": 6.822673747290637,
     "index_reasoning": null,
     "index_math": null,
     "index_code": null,
@@ -8972,7 +8974,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 9.084749952666517,
-      "coding-arena": 6.832771469506371
+      "coding-arena": 6.822673747290637
     }
   },
   {
@@ -9250,8 +9252,8 @@
     "knowledge_cutoff": "2024-05-30",
     "input_price": 0.25,
     "output_price": 2,
-    "throughput": 188.5425800132078,
-    "latency": 17364.181818181816,
+    "throughput": 217.79353653145057,
+    "latency": 17321.285714285714,
     "aime_2025_score": 0.911,
     "hle_score": 0.167,
     "gpqa_score": 0.823,
@@ -9274,7 +9276,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 11.49664659385102,
+    "coding_arena_score": 11.588434884954975,
     "index_reasoning": 36.37,
     "index_math": 32.94,
     "index_code": null,
@@ -9294,7 +9296,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 12.534611782763374,
-      "coding-arena": 11.49664659385102
+      "coding-arena": 11.588434884954975
     }
   },
   {
@@ -9575,8 +9577,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.1,
     "output_price": 0.5,
-    "throughput": 106.6536163586694,
-    "latency": 20886.69230769231,
+    "throughput": 104.21315597765052,
+    "latency": 26533.071428571428,
     "aime_2025_score": 0.925,
     "hle_score": null,
     "gpqa_score": 0.809,
@@ -9599,7 +9601,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 7.204633032109439,
+    "coding_arena_score": 7.8814429674859525,
     "index_reasoning": 31.56,
     "index_math": 28.76,
     "index_code": null,
@@ -9619,7 +9621,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 9.945651160476313,
-      "coding-arena": 7.204633032109439
+      "coding-arena": 7.8814429674859525
     }
   },
   {
@@ -9705,8 +9707,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.09,
     "output_price": 0.45,
-    "throughput": 343.84773761194094,
-    "latency": 2824.8,
+    "throughput": 380.3535104086313,
+    "latency": 2615.9444444444443,
     "aime_2025_score": null,
     "hle_score": 0.149,
     "gpqa_score": 0.801,
@@ -9729,7 +9731,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 4.529729491168021,
+    "coding_arena_score": 4.560761147572969,
     "index_reasoning": 30.53,
     "index_math": 31.55,
     "index_code": null,
@@ -9749,7 +9751,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 9.927180981389876,
-      "coding-arena": 4.529729491168021
+      "coding-arena": 4.560761147572969
     }
   },
   {
@@ -10117,7 +10119,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": 13,
+    "index_reasoning": 13.02,
     "index_math": 15.47,
     "index_code": 16.94,
     "index_search": null,
@@ -10494,7 +10496,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -17.93,
+    "index_reasoning": -17.94,
     "index_math": -11.25,
     "index_code": -9.27,
     "index_search": null,
@@ -10618,7 +10620,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -15.68,
+    "index_reasoning": -15.69,
     "index_math": -9.3,
     "index_code": null,
     "index_search": -3.67,
@@ -10742,7 +10744,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": 1.2436790095858303,
-    "index_reasoning": -19.03,
+    "index_reasoning": -19.04,
     "index_math": -21.71,
     "index_code": null,
     "index_search": null,
@@ -11278,8 +11280,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.55,
     "output_price": 2.19,
-    "throughput": 84.1505226905255,
-    "latency": 2297.5,
+    "throughput": 85.39053840279722,
+    "latency": 2292.3333333333335,
     "aime_2025_score": 0.875,
     "hle_score": 0.177,
     "gpqa_score": 0.81,
@@ -11473,8 +11475,8 @@
     "knowledge_cutoff": "2025-01-31",
     "input_price": 1.25,
     "output_price": 10,
-    "throughput": 216.77294290056398,
-    "latency": 8969,
+    "throughput": 225.46791660500628,
+    "latency": 8988.266666666666,
     "aime_2025_score": 0.83,
     "hle_score": 0.178,
     "gpqa_score": 0.83,
@@ -11497,7 +11499,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 9.99418964682342,
+    "coding_arena_score": 9.950390982704294,
     "index_reasoning": 34.69,
     "index_math": 30.69,
     "index_code": 15.98,
@@ -11517,7 +11519,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 12.776677742065187,
-      "coding-arena": 9.99418964682342
+      "coding-arena": 9.950390982704294
     }
   },
   {
@@ -11538,8 +11540,8 @@
     "knowledge_cutoff": "2025-01-31",
     "input_price": 0.3,
     "output_price": 2.5,
-    "throughput": 166.92755021864073,
-    "latency": 5142.636363636364,
+    "throughput": 188.1313860450812,
+    "latency": 5096.428571428572,
     "aime_2025_score": 0.72,
     "hle_score": 0.11,
     "gpqa_score": 0.828,
@@ -11562,7 +11564,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 9.27008323716766,
+    "coding_arena_score": 9.303436152687137,
     "index_reasoning": 28.09,
     "index_math": 22.43,
     "index_code": 11.07,
@@ -11582,7 +11584,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 11.32429778615549,
-      "coding-arena": 9.27008323716766
+      "coding-arena": 9.303436152687137
     }
   },
   {
@@ -11690,7 +11692,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -17.72,
+    "index_reasoning": -17.71,
     "index_math": -13.07,
     "index_code": -11.68,
     "index_search": -16.91,
@@ -12099,8 +12101,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.1,
     "output_price": 0.44,
-    "throughput": 244.95201417027013,
-    "latency": 361,
+    "throughput": 265.248819045427,
+    "latency": 357.57142857142856,
     "aime_2025_score": 0.729,
     "hle_score": null,
     "gpqa_score": null,
@@ -12123,7 +12125,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 4.089690101407273,
+    "coding_arena_score": 4.075244031759268,
     "index_reasoning": 17.81,
     "index_math": 21.62,
     "index_code": 11.77,
@@ -12143,7 +12145,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 7.410205322299774,
-      "coding-arena": 4.089690101407273
+      "coding-arena": 4.075244031759268
     }
   },
   {
@@ -12164,8 +12166,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.1,
     "output_price": 0.3,
-    "throughput": 305.8029680796087,
-    "latency": 285.125,
+    "throughput": 331.70259711737646,
+    "latency": 285.1666666666667,
     "aime_2025_score": 0.709,
     "hle_score": null,
     "gpqa_score": 0.658,
@@ -12188,7 +12190,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 3.8818817200761893,
+    "coding_arena_score": 3.9547630174741863,
     "index_reasoning": 17.09,
     "index_math": 18.81,
     "index_code": 14.02,
@@ -12208,7 +12210,7 @@
     "is_open_source": true,
     "arena_scores": {
       "chat-arena": 10.033905969841616,
-      "coding-arena": 3.8818817200761893
+      "coding-arena": 3.9547630174741863
     }
   },
   {
@@ -12542,8 +12544,8 @@
     "knowledge_cutoff": "2024-05-31",
     "input_price": 0.4,
     "output_price": 1.6,
-    "throughput": 76.80240595469786,
-    "latency": 683,
+    "throughput": 88.57131074596991,
+    "latency": 715.1666666666666,
     "aime_2025_score": 0.402,
     "hle_score": 0.037,
     "gpqa_score": 0.65,
@@ -12566,7 +12568,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 10.510982747722593,
+    "coding_arena_score": 10.544316796294824,
     "index_reasoning": 15.21,
     "index_math": 15.77,
     "index_code": -2.21,
@@ -12586,7 +12588,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 5.282855787567109,
-      "coding-arena": 10.510982747722593
+      "coding-arena": 10.544316796294824
     }
   },
   {
@@ -12607,8 +12609,8 @@
     "knowledge_cutoff": "2024-06-01",
     "input_price": 2,
     "output_price": 8,
-    "throughput": 335.82715482777166,
-    "latency": 960.0769230769231,
+    "throughput": 392.2347663604468,
+    "latency": 622.1333333333333,
     "aime_2025_score": 0.464,
     "hle_score": 0.054,
     "gpqa_score": 0.663,
@@ -12631,7 +12633,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 8.489403387628538,
+    "coding_arena_score": 8.341776265287166,
     "index_reasoning": 20.67,
     "index_math": 19.6,
     "index_code": 6.85,
@@ -12651,7 +12653,7 @@
     "is_open_source": false,
     "arena_scores": {
       "chat-arena": 12.366383831491312,
-      "coding-arena": 8.489403387628538
+      "coding-arena": 8.341776265287166
     }
   },
   {
@@ -12672,8 +12674,8 @@
     "knowledge_cutoff": "2024-05-31",
     "input_price": 0.1,
     "output_price": 0.4,
-    "throughput": 382.1061452652549,
-    "latency": 613.6315789473684,
+    "throughput": 361.973961860907,
+    "latency": 625.3888888888889,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.503,
@@ -12696,7 +12698,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 5.339018240341915,
+    "coding_arena_score": 5.399633839301812,
     "index_reasoning": 0.25,
     "index_math": 4.93,
     "index_code": -19.41,
@@ -12715,7 +12717,7 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 5.339018240341915
+      "coding-arena": 5.399633839301812
     }
   },
   {
@@ -12984,8 +12986,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.28,
     "output_price": 1.14,
-    "throughput": 98.0448410878153,
-    "latency": 1630.2592592592594,
+    "throughput": 99.51623758370812,
+    "latency": 1636.3703703703704,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.684,
@@ -13008,7 +13010,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 5.466083314335007,
+    "coding_arena_score": 5.313634389456764,
     "index_reasoning": 15.74,
     "index_math": 18.94,
     "index_code": 5.65,
@@ -13027,7 +13029,7 @@
     ],
     "is_open_source": true,
     "arena_scores": {
-      "coding-arena": 5.466083314335007
+      "coding-arena": 5.313634389456764
     }
   },
   {
@@ -13197,7 +13199,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": 2.33,
+    "index_reasoning": 2.32,
     "index_math": 8.3,
     "index_code": 13.15,
     "index_search": null,
@@ -13259,7 +13261,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -2.56,
+    "index_reasoning": -2.58,
     "index_math": 4.98,
     "index_code": null,
     "index_search": null,
@@ -13795,8 +13797,8 @@
     "knowledge_cutoff": "2024-11-17",
     "input_price": 3,
     "output_price": 15,
-    "throughput": 278.0715454093462,
-    "latency": 12477.965517241379,
+    "throughput": 299.1395914630043,
+    "latency": 10791.566666666668,
     "aime_2025_score": 0.933,
     "hle_score": null,
     "gpqa_score": 0.846,
@@ -13819,7 +13821,7 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 11.275539680772134,
+    "coding_arena_score": 11.423081667183066,
     "index_reasoning": 39.71,
     "index_math": 38.79,
     "index_code": 26.07,
@@ -13838,7 +13840,7 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 11.275539680772134
+      "coding-arena": 11.423081667183066
     }
   },
   {
@@ -14262,7 +14264,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": 1.65,
+    "index_reasoning": 1.64,
     "index_math": 7.99,
     "index_code": 4.06,
     "index_search": null,
@@ -14324,7 +14326,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -4.12,
+    "index_reasoning": -4.13,
     "index_math": 3.29,
     "index_code": null,
     "index_search": null,
@@ -17903,8 +17905,8 @@
     "knowledge_cutoff": null,
     "input_price": 2.5,
     "output_price": 10,
-    "throughput": 365.10987075505994,
-    "latency": 1071.8181818181818,
+    "throughput": 345.7510741598633,
+    "latency": 1092.35,
     "aime_2025_score": null,
     "hle_score": 0.053,
     "gpqa_score": 0.701,
@@ -18178,7 +18180,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": 3.57,
+    "index_reasoning": 3.56,
     "index_math": 12.27,
     "index_code": 1.09,
     "index_search": null,
@@ -18364,7 +18366,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": 2.1,
+    "index_reasoning": 2.09,
     "index_math": 12.1,
     "index_code": 0.4,
     "index_search": null,
@@ -18426,7 +18428,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -9.2,
+    "index_reasoning": -9.21,
     "index_math": -8.59,
     "index_code": null,
     "index_search": 18.25,
@@ -18488,7 +18490,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -5.68,
+    "index_reasoning": -5.69,
     "index_math": -2.82,
     "index_code": -15.02,
     "index_search": 23.81,
@@ -18711,8 +18713,8 @@
     "knowledge_cutoff": null,
     "input_price": 2.5,
     "output_price": 10,
-    "throughput": 558.9780336525705,
-    "latency": 554.4761904761905,
+    "throughput": 553.4952962663843,
+    "latency": 542.5263157894736,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.536,
@@ -19088,8 +19090,8 @@
     "knowledge_cutoff": "2023-12-31",
     "input_price": 10,
     "output_price": 30,
-    "throughput": 122.28776692782142,
-    "latency": 1909.0666666666666,
+    "throughput": 122.660844421071,
+    "latency": 1923.2,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.48,
@@ -19487,7 +19489,7 @@
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
     "coding_arena_score": null,
-    "index_reasoning": -13.18,
+    "index_reasoning": -13.19,
     "index_math": -3.97,
     "index_code": null,
     "index_search": null,
@@ -19586,8 +19588,8 @@
     "knowledge_cutoff": "2021-09-30",
     "input_price": 0.5,
     "output_price": 1.5,
-    "throughput": 324.18465925285653,
-    "latency": 842.4615384615385,
+    "throughput": 306.06721493992535,
+    "latency": 1064.4666666666667,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.308,
@@ -19610,8 +19612,8 @@
     "scicode_score": null,
     "apex_agents_score": null,
     "swe_bench_pro_score": null,
-    "coding_arena_score": 1.8571925367698332,
-    "index_reasoning": -13.33,
+    "coding_arena_score": 1.7731991482152663,
+    "index_reasoning": -13.34,
     "index_math": -4.4,
     "index_code": -10.51,
     "index_search": null,
@@ -19629,7 +19631,7 @@
     ],
     "is_open_source": false,
     "arena_scores": {
-      "coding-arena": 1.8571925367698332
+      "coding-arena": 1.7731991482152663
     }
   }
 ]
