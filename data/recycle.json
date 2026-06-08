@@ -201,44 +201,63 @@
       "deleted_at": "2026-06-02 11:26:07"
     },
     {
-      "name": "Qwen3.7-Plus",
+      "name": "豆包Seed 2.0 Pro",
       "connected": "",
       "workflow_progress": "",
-      "company": "阿里巴巴/通义",
+      "company": "字节跳动/豆包",
       "domestic": "国内",
       "open_source": "",
       "size": "",
-      "type": "多模态智能体模型",
+      "type": "大语言模型",
       "reasoning": "",
       "task_type": "",
       "website": "",
-      "note": "阿里发布的全新多模态智能体模型，面向复杂任务编排与具身交互优化。",
-      "release_date": "2026-06-02",
-      "created_date": "2026-06-03",
-      "source": "all",
-      "deleted_at": "2026-06-05 03:18:07"
+      "note": "豆包于2026年5月28日前后正式发布升级版Seed 2.0 Pro，综合性能跻身全球前五，以$1/M token超低价格和MMMU-Pro 68.7%精度成为国产综合能力最强的商用大模型之一。",
+      "release_date": "2026-05-28",
+      "created_date": "2026-05-29",
+      "source": "daily",
+      "source_url": "data/history/20260528_20260528.json",
+      "deleted_at": "2026-06-05 03:25:33"
     },
     {
-      "name": "Qwen3.7-Plus",
+      "name": "GLM-5.1",
       "connected": "",
       "workflow_progress": "",
-      "company": "阿里巴巴/通义",
+      "company": "智谱AI",
       "domestic": "国内",
       "open_source": "",
       "size": "",
-      "type": "多模态智能体模型",
+      "type": "大语言模型",
       "reasoning": "",
       "task_type": "",
       "website": "",
-      "note": "阿里发布的全新多模态智能体模型，面向复杂任务编排与具身交互优化。",
-      "release_date": "2026-06-02",
-      "created_date": "2026-06-03",
+      "note": "智谱新一代旗舰闭源大模型，显著提升数学推理、代码生成与长程规划能力，同步宣布API服务提价10%，为2026年5月前最重磅国产商用模型升级",
+      "release_date": "2026-04-08",
+      "created_date": "2026-06-08",
       "source": "all",
-      "deleted_at": "2026-06-05 03:18:25"
+      "deleted_at": "2026-06-08 09:18:17"
+    },
+    {
+      "name": "Kimi K2.6",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Moonshot AI (月之暗面)",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "开源多模态智能体模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "Kimi K2系列最新版本，强化编程与Agent集群能力，支持动态生成多个子Agent并行协作，已开源（发布时间在搜索窗口前，但为截至2026-06-05最新稳定版，广泛报道于6月初技术综述中）。",
+      "release_date": "2026-04-20",
+      "created_date": "2026-06-06",
+      "source": "all",
+      "deleted_at": "2026-06-08 09:19:27"
     }
   ],
   "meta": {
-    "total": 14,
-    "updated_at": "2026-06-05 03:18:25"
+    "total": 15,
+    "updated_at": "2026-06-08 09:19:27"
   }
 }
