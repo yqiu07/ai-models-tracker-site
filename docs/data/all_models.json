@@ -7089,22 +7089,6 @@
       "created_date": "2026-06-06"
     },
     {
-      "name": "Kimi K2.6",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Moonshot AI (月之暗面)",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "开源多模态智能体模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "Kimi K2系列最新版本，强化编程与Agent集群能力，支持动态生成多个子Agent并行协作，已开源（发布时间在搜索窗口前，但为截至2026-06-05最新稳定版，广泛报道于6月初技术综述中）。",
-      "release_date": "2026-04-20",
-      "created_date": "2026-06-06"
-    },
-    {
       "name": "HKGAI V3",
       "connected": "",
       "workflow_progress": "",
@@ -7506,7 +7490,7 @@
     }
   ],
   "meta": {
-    "total": 469,
-    "generated_at": "2026-06-08 09:18:17"
+    "total": 468,
+    "generated_at": "2026-06-08 09:19:27"
   }
 }
