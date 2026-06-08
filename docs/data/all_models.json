@@ -7457,22 +7457,6 @@
       "created_date": "2026-06-08"
     },
     {
-      "name": "GLM-5.1",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "智谱AI",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "智谱新一代旗舰闭源大模型，显著提升数学推理、代码生成与长程规划能力，同步宣布API服务提价10%，为2026年5月前最重磅国产商用模型升级",
-      "release_date": "2026-04-08",
-      "created_date": "2026-06-08"
-    },
-    {
       "name": "Qwen-Agent v3.2",
       "connected": "",
       "workflow_progress": "",
@@ -7522,8 +7506,7 @@
     }
   ],
   "meta": {
-    "total": 470,
-    "recycled": 10,
-    "generated_at": "2026-06-08 03:35:10"
+    "total": 469,
+    "generated_at": "2026-06-08 09:18:17"
   }
 }
