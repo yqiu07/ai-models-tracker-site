@@ -23,11 +23,18 @@ import argparse
 import json
 import os
 import re
+import time
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
+
+# ---------------------------------------------------------------------------
+# 过滤 & 去重常量
+# ---------------------------------------------------------------------------
+GAP_MAX_DAYS = 7  # release_date 与 created_date 最大允许间隔
+LLM_DEDUP_BATCH_SIZE = 40  # 每批送 LLM 查重的模型数
 
 ROOT = Path(__file__).parent
 EXCEL_PATH = ROOT / "data" / "Object-Models.xlsx"
@@ -130,6 +137,146 @@ def _normalize_date(value) -> str:
     return s
 
 
+def _normalize_name(name: str) -> str:
+    """归一化模型名称用于去重比较。"""
+    return re.sub(r"[-_\s.()\u3000]", "", (name or "")).lower()
+
+
+def _calc_gap(release_date: str, created_date: str) -> int | None:
+    """计算 created_date - release_date 天数差。"""
+    rd = (release_date or "").strip()
+    cd = (created_date or "").strip()
+    if not rd or len(rd) < 10 or "XX" in rd:
+        return None
+    try:
+        rd_dt = datetime.strptime(rd[:10], "%Y-%m-%d")
+        cd_dt = datetime.strptime(cd[:10], "%Y-%m-%d")
+        return (cd_dt - rd_dt).days
+    except (ValueError, TypeError):
+        return None
+
+
+def filter_stale_models(models: list[dict]) -> tuple[list[dict], list[dict]]:
+    """过滤 gap > GAP_MAX_DAYS 的过时模型。
+
+    Returns:
+        (kept, removed) 两个列表。
+    """
+    kept, removed = [], []
+    for m in models:
+        gap = _calc_gap(m.get("release_date"), m.get("created_date"))
+        if gap is not None and gap > GAP_MAX_DAYS:
+            removed.append(m)
+        else:
+            kept.append(m)
+    if removed:
+        print(f"  [filter] stale removed: {len(removed)} (gap>{GAP_MAX_DAYS}d)")
+    return kept, removed
+
+
+def dedup_models_by_name(models: list[dict], existing: list[dict] | None = None) -> tuple[list[dict], list[dict]]:
+    """基于名称归一化去重。保留 created_date 最早的。
+
+    Args:
+        models: 待去重列表。
+        existing: 已有模型（用于跨批次查重），不会被删除。
+    Returns:
+        (kept, removed) 两个列表。
+    """
+    seen = set()
+    if existing:
+        for m in existing:
+            seen.add(_normalize_name(m.get("name", "")))
+
+    kept, removed = [], []
+    # 按 created_date 排序，最早的先进 seen
+    sorted_models = sorted(models, key=lambda x: (x.get("created_date") or "9999"))
+    for m in sorted_models:
+        key = _normalize_name(m.get("name", ""))
+        if key in seen:
+            removed.append(m)
+        else:
+            seen.add(key)
+            kept.append(m)
+    if removed:
+        print(f"  [dedup] name-based removed: {len(removed)}")
+    return kept, removed
+
+
+def dedup_models_by_llm(models: list[dict]) -> tuple[list[dict], list[dict]]:
+    """调用 LLM 做语义级查重（名称/公司相近但不完全相同的模型）。
+
+    Returns:
+        (kept, removed) 两个列表。
+    """
+    api_key = os.environ.get("KUAI_API_KEY", "")
+    if not api_key:
+        print("  [llm-dedup] KUAI_API_KEY not set, skipping LLM dedup")
+        return models, []
+
+    api_base = os.environ.get("KUAI_API_BASE", "https://api.kuai.host/v1")
+    model = os.environ.get("KUAI_MODEL_REVIEW", "gpt-5.5")
+
+    # 构建简洁的模型列表供 LLM 判断
+    entries = []
+    for i, m in enumerate(models):
+        entries.append({
+            "idx": i,
+            "name": m.get("name", ""),
+            "company": m.get("company", ""),
+            "type": m.get("type", ""),
+            "release_date": m.get("release_date", ""),
+        })
+
+    all_remove_indices = set()
+
+    # 分批处理
+    for batch_start in range(0, len(entries), LLM_DEDUP_BATCH_SIZE):
+        batch = entries[batch_start:batch_start + LLM_DEDUP_BATCH_SIZE]
+        prompt = (
+            "以下是一批 AI 模型记录，请找出语义上重复的模型组（同一模型的不同名称写法、"
+            "不同版本后缀但本质相同的条目）。\n\n"
+            "对每组重复，保留 idx 最小的（最早采集），标记其他为移除。\n"
+            "只输出 JSON：{\"remove_indices\": [idx1, idx2, ...]}\n"
+            "如果没有重复，输出 {\"remove_indices\": []}\n\n"
+            f"模型列表：\n{json.dumps(batch, ensure_ascii=False, indent=1)}"
+        )
+
+        try:
+            import urllib.request
+            url = f"{api_base.rstrip('/')}/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            }
+            body = json.dumps({
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0,
+                "response_format": {"type": "json_object"},
+            }).encode()
+            req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                result = json.loads(resp.read().decode())
+
+            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            parsed = json.loads(content)
+            remove_ids = parsed.get("remove_indices", [])
+            all_remove_indices.update(remove_ids)
+            if remove_ids:
+                removed_names = [entries[i]["name"] for i in remove_ids if i < len(entries)]
+                print(f"  [llm-dedup] batch {batch_start}: remove {len(remove_ids)} → {removed_names}")
+        except Exception as e:
+            print(f"  [llm-dedup] batch {batch_start} error: {e}")
+        time.sleep(1)  # 限流
+
+    kept = [m for i, m in enumerate(models) if i not in all_remove_indices]
+    removed = [m for i, m in enumerate(models) if i in all_remove_indices]
+    if removed:
+        print(f"  [llm-dedup] total removed: {len(removed)}")
+    return kept, removed
+
+
 def load_master_table() -> pd.DataFrame:
     """加载总表。"""
     if not EXCEL_PATH.exists():
@@ -159,19 +306,26 @@ def _row_to_model(row) -> dict:
 
 
 def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> dict:
-    """生成日报 JSON 数据。"""
+    """生成日报 JSON 数据。按记录创建时间筛选（总表增量了什么日报就增量什么）。"""
     since_dash = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
     until_dash = f"{until[:4]}-{until[4:6]}-{until[6:8]}"
 
-    if "模型发布时间" not in dataframe.columns:
+    if "记录创建时间" not in dataframe.columns:
         return {"models": [], "meta": {"since": since_dash, "until": until_dash, "count": 0}}
 
-    # 统一日期格式后再筛选
-    normalized_dates = dataframe["模型发布时间"].apply(_normalize_date)
+    # 按记录创建时间筛选
+    normalized_dates = dataframe["记录创建时间"].apply(_normalize_date)
     mask = (normalized_dates >= since_dash) & (normalized_dates <= until_dash)
     filtered = dataframe[mask].copy()
 
     models = [_row_to_model(row) for _, row in filtered.iterrows()]
+
+    # 对日报增量做 gap 过滤 + 名称去重
+    models, stale_removed = filter_stale_models(models)
+    models, name_dedup_removed = dedup_models_by_name(models)
+    models, llm_dedup_removed = dedup_models_by_llm(models)
+
+    total_filtered = len(stale_removed) + len(name_dedup_removed) + len(llm_dedup_removed)
 
     return {
         "models": models,
@@ -179,6 +333,7 @@ def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> di
             "since": since_dash,
             "until": until_dash,
             "count": len(models),
+            "filtered": total_filtered,
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         },
     }
@@ -270,11 +425,19 @@ def main():
     all_models_list = [_row_to_model(row) for _, row in dataframe.iterrows()]
     # 过滤掉回收站中的模型
     active_models = [m for m in all_models_list if m.get("name", "") not in recycled_names]
+
+    # 对全量模型也做 gap 过滤 + 名称去重（LLM 查重只在日报增量做，全量太大）
+    print("[FILTER] applying stale + dedup to all_models...")
+    active_models, stale_rm = filter_stale_models(active_models)
+    active_models, dedup_rm = dedup_models_by_name(active_models)
+
     all_models_data = {
         "models": active_models,
         "meta": {
             "total": len(active_models),
             "recycled": len(recycled_names),
+            "stale_filtered": len(stale_rm),
+            "dedup_filtered": len(dedup_rm),
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         },
     }
