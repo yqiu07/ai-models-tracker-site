@@ -257,38 +257,6 @@
       "created_date": "2026-06-08"
     },
     {
-      "name": "Claude 4.0",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Anthropic",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "Anthropic正式发布Claude 4.0，宣称在1M上下文处理、工具调用稳定性及多智能体协同协议（MCP）原生支持方面实现突破，面向企业级Agent工作流深度优化",
-      "release_date": "2026-05-29",
-      "created_date": "2026-06-08"
-    },
-    {
-      "name": "CUA (Contextual Utility Alignment) Training Framework",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "复旦大学 × 通义实验室",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "智能体训练范式 / 方法论",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "提出全新CUA训练范式，解决Agent在复杂Tool选择中的效用对齐问题，非单一模型但已集成至通义千问Qwen-Agent v3.2（同期上线）",
-      "release_date": "2026-05-31",
-      "created_date": "2026-06-08"
-    },
-    {
       "name": "Qwen-Agent v3.2",
       "connected": "",
       "workflow_progress": "",
@@ -308,7 +276,7 @@
   "meta": {
     "since": "2026-05-29",
     "until": "2026-06-01",
-    "count": 19,
-    "generated_at": "2026-06-08 03:34:14"
+    "count": 17,
+    "generated_at": "2026-06-08 03:35:10"
   }
 }
