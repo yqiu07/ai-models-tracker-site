@@ -218,10 +218,28 @@
       "source": "daily",
       "source_url": "data/history/20260528_20260528.json",
       "deleted_at": "2026-06-05 03:25:33"
+    },
+    {
+      "name": "GLM-5.1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "智谱AI",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "智谱新一代旗舰闭源大模型，显著提升数学推理、代码生成与长程规划能力，同步宣布API服务提价10%，为2026年5月前最重磅国产商用模型升级",
+      "release_date": "2026-04-08",
+      "created_date": "2026-06-08",
+      "source": "all",
+      "deleted_at": "2026-06-08 09:18:17"
     }
   ],
   "meta": {
-    "total": 13,
-    "updated_at": "2026-06-05 03:25:33"
+    "total": 14,
+    "updated_at": "2026-06-08 09:18:17"
   }
 }
