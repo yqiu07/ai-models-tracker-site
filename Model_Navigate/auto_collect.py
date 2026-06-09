@@ -1128,8 +1128,8 @@ PLATFORM_REGISTRY = [
     {
         "name": "酷爱 Kuai",
         "type": "openai",
-        "api_base_env": "KUAI_API_BASE",
-        "api_key_env": "KUAI_API_KEY",
+        "api_base_env": "LLM_API_BASE",
+        "api_key_env": "LLM_API_KEY",
         "default_company": "未知",
         "owner_map": {
             "qwen": "阿里", "deepseek": "深度求索", "glm": "智谱",

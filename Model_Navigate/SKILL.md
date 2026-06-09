@@ -26,7 +26,7 @@ Skill 工作目录为本文件所在目录。核心入口是 `main.py`，运行�
 **修改参数时**：先判断属于哪一层，改对应的文件，**不要在脚本里硬编码 URL 或 Key**。
 
 - 新增中国公司？→ 改 `config.py` 的 `CN_ORGS`
-- 换 API 提供商？→ 改 `.env` 的 `KUAI_API_BASE`
+- 换 API 提供商？→ 改 `.env` 的 `LLM_API_BASE`
 - 调超时阈值？→ 改 `config.py` 的 `SUBPROCESS_TIMEOUT_MINUTES` 等
 - 换爬虫目标页？→ 改 `config.py` 的 `TXRESEARCH_SOHU_URL`
 

@@ -17,8 +17,8 @@
     python review_daily.py --dry-run          # 预览模式，不写回
 
 环境变量:
-    KUAI_API_KEY / KUAI_API_BASE  — 主审核 LLM (GPT-5.5)
-    LLM_API_KEY / LLM_API_BASE / LLM_MODEL — 备选 LLM
+    LLM_API_KEY / LLM_API_BASE  — 主审核 LLM (GPT-5.5)
+    LLM_MODEL — 审核用模型（默认 gpt-5.5）
 """
 
 from __future__ import annotations
@@ -109,18 +109,13 @@ def load_env():
 
 
 def call_llm(prompt: str) -> str:
-    """调用 LLM API。优先 KUAI，降级到 LLM_API。"""
-    api_key = os.environ.get("KUAI_API_KEY", "")
-    api_base = os.environ.get("KUAI_API_BASE", "https://api.kuai.host/v1")
+    """调用 LLM API。"""
+    api_key = os.environ.get("LLM_API_KEY", "")
+    api_base = os.environ.get("LLM_API_BASE", "https://api.kuai.host/v1")
     model = os.environ.get("REVIEW_MODEL", "gpt-5.5")
 
     if not api_key:
-        api_key = os.environ.get("LLM_API_KEY", "")
-        api_base = os.environ.get("LLM_API_BASE", "")
-        model = os.environ.get("LLM_MODEL", "qwen3.6-plus")
-
-    if not api_key:
-        print("[ERROR] No API key configured (KUAI_API_KEY or LLM_API_KEY)")
+        print("[ERROR] No API key configured (LLM_API_KEY)")
         sys.exit(1)
 
     url = f"{api_base}/chat/completions"

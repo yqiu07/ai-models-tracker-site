@@ -209,13 +209,13 @@ def dedup_models_by_llm(models: list[dict]) -> tuple[list[dict], list[dict]]:
     Returns:
         (kept, removed) 两个列表。
     """
-    api_key = os.environ.get("KUAI_API_KEY", "")
+    api_key = os.environ.get("LLM_API_KEY", "")
     if not api_key:
-        print("  [llm-dedup] KUAI_API_KEY not set, skipping LLM dedup")
+        print("  [llm-dedup] LLM_API_KEY not set, skipping LLM dedup")
         return models, []
 
-    api_base = os.environ.get("KUAI_API_BASE", "https://api.kuai.host/v1")
-    model = os.environ.get("KUAI_MODEL_REVIEW", "gpt-5.5")
+    api_base = os.environ.get("LLM_API_BASE", "https://api.kuai.host/v1")
+    model = os.environ.get("LLM_MODEL_REVIEW", "gpt-5.5")
 
     # 构建简洁的模型列表供 LLM 判断
     entries = []

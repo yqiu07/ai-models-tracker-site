@@ -15,8 +15,8 @@ GPT-5.5 审核 + 补全 + 置信度标注
     python review_models.py --batch-size 15           # 每批 15 个模型
 
 环境变量（或 .env 文件）:
-    KUAI_API_KEY=sk-xxx
-    KUAI_API_BASE=https://api.kuai.host/v1
+    LLM_API_KEY=sk-xxx
+    LLM_API_BASE=https://api.kuai.host/v1
     REVIEW_MODEL=gpt-5.5                              # 审核用模型
 
 依赖:
@@ -154,9 +154,9 @@ def load_env():
 
 
 def get_review_model_config() -> tuple[str, str, str]:
-    """获取审核用 LLM API 配置（kuai API — GPT-5.5）。"""
-    api_key = os.environ.get("KUAI_API_KEY", "")
-    api_base = os.environ.get("KUAI_API_BASE", "https://api.kuai.host/v1")
+    """获取审核用 LLM API 配置（GPT-5.5）。"""
+    api_key = os.environ.get("LLM_API_KEY", "")
+    api_base = os.environ.get("LLM_API_BASE", "https://api.kuai.host/v1")
     model = os.environ.get("REVIEW_MODEL", "gpt-5.5")
     return api_key, api_base, model
 
@@ -431,7 +431,7 @@ def main():
     print()
 
     if not api_key and not args.dry_run:
-        print("  ❌ 未配置 KUAI_API_KEY")
+        print("  ❌ 未配置 LLM_API_KEY")
         return
 
     if not EXCEL_PATH.exists():

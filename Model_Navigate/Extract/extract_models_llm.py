@@ -124,10 +124,10 @@ def load_env():
 
 
 def get_llm_config() -> tuple[str, str, str]:
-    """获取主 LLM API 配置（kuai API — Claude Opus 4.6）。"""
-    api_key = os.environ.get("KUAI_API_KEY", "")
-    api_base = os.environ.get("KUAI_API_BASE", "https://api.kuai.host/v1")
-    model = os.environ.get("KUAI_MODEL", "claude-opus-4-6")
+    """获取主 LLM API 配置（Claude Opus 4.6）。"""
+    api_key = os.environ.get("LLM_API_KEY", "")
+    api_base = os.environ.get("LLM_API_BASE", "https://api.kuai.host/v1")
+    model = os.environ.get("LLM_MODEL", "claude-opus-4-6")
     return api_key, api_base, model
 
 def get_fallback_llm_config() -> tuple[str, str, str]:

@@ -183,10 +183,10 @@ BACKUP_DIR = ROOT / "Backup"
 #  五、LLM 模型配置（默认值，可被 .env 覆盖）
 # ============================================================
 
-# 主 API（kuai — 用于 LLM 提取和审核）
-DEFAULT_KUAI_API_BASE = "https://api.kuai.host/v1"
-DEFAULT_KUAI_MODEL_EXTRACT = "claude-opus-4-6"    # LLM 提取用模型
-DEFAULT_KUAI_MODEL_REVIEW = "gpt-5.5"             # 审核用模型
+# 主 API（用于 LLM 提取和审核）
+DEFAULT_LLM_API_BASE = "https://api.kuai.host/v1"
+DEFAULT_LLM_MODEL_EXTRACT = "claude-opus-4-6"    # LLM 提取用模型
+DEFAULT_LLM_MODEL_REVIEW = "gpt-5.5"             # 审核用模型
 
 # 备选 API（DashScope — Qwen）
 DEFAULT_DASHSCOPE_API_BASE = "https://dashscope.aliyuncs.com/compatible-mode/v1"

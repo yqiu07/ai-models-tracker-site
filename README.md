@@ -53,8 +53,8 @@ cp Model_Navigate/.env.example Model_Navigate/.env
 
 | 配置项 | 用途 | 必需？ |
 |--------|------|--------|
-| `LLM_API_KEY` 或 `DASHSCOPE_API_KEY` | LLM 从文章中提取模型信息 | 推荐 |
-| `KUAI_API_KEY` | GPT-5.5 模型审核 + 重要性评级 | 推荐 |
+| `LLM_API_KEY` | LLM 提取 + GPT-5.5 审核 + 重要性评级 | 推荐 |
+| `DASHSCOPE_API_KEY` | 备选 LLM（DashScope / Qwen） | 可选 |
 | `DINGTALK_WEBHOOK` + `DINGTALK_SECRET` | 钉钉日报推送 | 可选 |
 | `HF_TOKEN` | HuggingFace 私有模型校验 | 可选 |
 
@@ -64,7 +64,7 @@ cp Model_Navigate/.env.example Model_Navigate/.env
 >
 > | 域名 | 用途 | 必需？ |
 > |------|------|--------|
-> | `api.kuai.host` | 主 LLM API（GPT-5.5 审核 + LLM 提取） | 推荐 |
+> | `api.kuai.host` | LLM API（GPT-5.5 审核 + LLM 提取） | 推荐 |
 > | `llm-stats.com` | llmstats 数据源（模型排行榜抓取） | 推荐 |
 > | `dashscope.aliyuncs.com` | 备选 LLM API（DashScope / Qwen） | 通常已加白 |
 > | `huggingface.co` | HuggingFace 开源模型校验 | 可选 |

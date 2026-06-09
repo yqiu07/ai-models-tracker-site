@@ -62,8 +62,6 @@ jobs:
           LLM_MODEL: ${{ secrets.LLM_MODEL }}
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
           DASHSCOPE_API_BASE: ${{ secrets.DASHSCOPE_API_BASE }}
-          KUAI_API_KEY: ${{ secrets.KUAI_API_KEY }}
-          KUAI_API_BASE: ${{ secrets.KUAI_API_BASE }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           cd Model_Navigate
@@ -84,8 +82,6 @@ jobs:
 
       - name: Auto review daily report (LLM审核修正)
         env:
-          KUAI_API_KEY: ${{ secrets.KUAI_API_KEY }}
-          KUAI_API_BASE: ${{ secrets.KUAI_API_BASE }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_API_BASE: ${{ secrets.LLM_API_BASE }}
           LLM_MODEL: ${{ secrets.LLM_MODEL }}
