@@ -305,35 +305,25 @@ def _row_to_model(row) -> dict:
     }
 
 
-def generate_daily_report(dataframe: pd.DataFrame, since: str, until: str) -> dict:
-    """生成日报 JSON 数据。按记录创建时间筛选（总表增量了什么日报就增量什么）。"""
+def extract_daily_from_total(total_models: list[dict], since: str, until: str) -> dict:
+    """从已过滤去重的总表中提取日报：created_date 在 [since, until] 范围内的模型。
+
+    总表增量了什么，日报就增量什么——日报是总表的子集，不独立过滤。
+    """
     since_dash = f"{since[:4]}-{since[4:6]}-{since[6:8]}"
     until_dash = f"{until[:4]}-{until[4:6]}-{until[6:8]}"
 
-    if "记录创建时间" not in dataframe.columns:
-        return {"models": [], "meta": {"since": since_dash, "until": until_dash, "count": 0}}
-
-    # 按记录创建时间筛选
-    normalized_dates = dataframe["记录创建时间"].apply(_normalize_date)
-    mask = (normalized_dates >= since_dash) & (normalized_dates <= until_dash)
-    filtered = dataframe[mask].copy()
-
-    models = [_row_to_model(row) for _, row in filtered.iterrows()]
-
-    # 对日报增量做 gap 过滤 + 名称去重
-    models, stale_removed = filter_stale_models(models)
-    models, name_dedup_removed = dedup_models_by_name(models)
-    models, llm_dedup_removed = dedup_models_by_llm(models)
-
-    total_filtered = len(stale_removed) + len(name_dedup_removed) + len(llm_dedup_removed)
+    daily_models = [
+        m for m in total_models
+        if since_dash <= (m.get("created_date") or "") <= until_dash
+    ]
 
     return {
-        "models": models,
+        "models": daily_models,
         "meta": {
             "since": since_dash,
             "until": until_dash,
-            "count": len(models),
-            "filtered": total_filtered,
+            "count": len(daily_models),
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         },
     }
@@ -392,27 +382,7 @@ def main():
     if dataframe.empty:
         print("[WARN] master table is empty, generating empty data")
 
-    # 1. 日报
-    report = generate_daily_report(dataframe, args.since, args.until)
-    report_path = DATA_DIR / "daily_report.json"
-    with open(report_path, "w", encoding="utf-8") as f:
-        json.dump(report, f, ensure_ascii=False, indent=2)
-    print(f"[OK] daily_report: {report_path.name} ({report['meta']['count']} models)")
-
-    # 归档历史
-    history_path = HISTORY_DIR / f"{args.since}_{args.until}.json"
-    with open(history_path, "w", encoding="utf-8") as f:
-        json.dump(report, f, ensure_ascii=False, indent=2)
-    print(f"[OK] history: {history_path.name}")
-
-    # 2. 仪表盘
-    dashboard = generate_dashboard(dataframe)
-    dashboard_path = DATA_DIR / "dashboard.json"
-    with open(dashboard_path, "w", encoding="utf-8") as f:
-        json.dump(dashboard, f, ensure_ascii=False, indent=2)
-    print(f"[OK] dashboard: {dashboard_path.name} (total {dashboard['total']} models)")
-
-    # 3. 全量模型数据（含所有 Excel 列，供前端交互式表格）
+    # ── 第一步：生成总表（过滤 + 去重）──
     # 读取回收站文件，排除其中的模型
     recycle_path = DATA_DIR / "recycle.json"
     recycled_names = set()
@@ -423,10 +393,8 @@ def main():
                 recycled_names.add(item.get("name", ""))
 
     all_models_list = [_row_to_model(row) for _, row in dataframe.iterrows()]
-    # 过滤掉回收站中的模型
     active_models = [m for m in all_models_list if m.get("name", "") not in recycled_names]
 
-    # 对全量模型也做 gap 过滤 + 名称去重（LLM 查重只在日报增量做，全量太大）
     print("[FILTER] applying stale + dedup to all_models...")
     active_models, stale_rm = filter_stale_models(active_models)
     active_models, dedup_rm = dedup_models_by_name(active_models)
@@ -445,6 +413,27 @@ def main():
     with open(all_models_path, "w", encoding="utf-8") as f:
         json.dump(all_models_data, f, ensure_ascii=False, indent=2)
     print(f"[OK] all_models: {all_models_path.name} ({len(active_models)} models, {len(recycled_names)} recycled)")
+
+    # ── 第二步：日报 = 总表中 created_date 在范围内的子集 ──
+    # 总表增量了什么，日报就增量什么
+    report = extract_daily_from_total(active_models, args.since, args.until)
+    report_path = DATA_DIR / "daily_report.json"
+    with open(report_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
+    print(f"[OK] daily_report: {report_path.name} ({report['meta']['count']} models)")
+
+    # 归档历史
+    history_path = HISTORY_DIR / f"{args.since}_{args.until}.json"
+    with open(history_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
+    print(f"[OK] history: {history_path.name}")
+
+    # ── 第三步：仪表盘 ──
+    dashboard = generate_dashboard(dataframe)
+    dashboard_path = DATA_DIR / "dashboard.json"
+    with open(dashboard_path, "w", encoding="utf-8") as f:
+        json.dump(dashboard, f, ensure_ascii=False, indent=2)
+    print(f"[OK] dashboard: {dashboard_path.name} (total {dashboard['total']} models)")
 
     # 3.5 接入站数据（workflow接入进展=1 的模型）
     connected_path = DATA_DIR / "connected.json"
