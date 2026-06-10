@@ -14,7 +14,8 @@
       "website": "",
       "note": "采用‘多维弹性预训练’技术，预训练成本降至同规模模型约6%，总参数压缩至1/3，激活参数压缩至1/2，聚焦长程智能体与效率优化。",
       "release_date": "2026-05-09",
-      "created_date": "2026-05-25"
+      "created_date": "2026-05-25",
+      "reason": "gap过时: 发布5/9→录入5/25, gap=16天, 超过7天阈值"
     },
     {
       "name": "Claude Opus 4.7",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "虽发布于4月，但其争议性表现（幻觉加剧、任务偷懒）在5月24日前持续发酵并被主流媒体集中报道，被行业视为‘倒退型更新’典型，故纳入5月关键模型事件。",
       "release_date": "2026-04-XX",
-      "created_date": "2026-05-25"
+      "created_date": "2026-05-25",
+      "reason": "gap过时: 发布4月→录入5/25, gap>30天; 旧模型争议报道而非新发布"
     },
     {
       "name": "Mythos Preview",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "Anthropic发布的‘史上最强’预览版大模型，因安全评估风险被宣布无限期封印，仅限Glasswing漏洞挖掘计划内部使用",
       "release_date": "2026-05-22",
-      "created_date": "2026-05-24"
+      "created_date": "2026-05-24",
+      "reason": "未公开发布: 无限期封印的内部模型, 无法公开使用或验证"
     },
     {
       "name": "DeepSeek V4",
@@ -62,7 +65,8 @@
       "website": "https://www.deepseek.com/",
       "note": "深度求索新一代开源模型，聚焦长上下文与复杂推理，在多个开源基准测试中刷新SOTA，适配低成本边缘部署。 [重要性:高|DeepSeek新一代主力模型若属实，属于行业广泛关注的重大版本更新。]",
       "release_date": "2026-05-22",
-      "created_date": "2026-05-23"
+      "created_date": "2026-05-23",
+      "reason": "未经证实: 版本号存疑, 无官方发布渠道可验证"
     },
     {
       "name": "Claude Code",
@@ -78,7 +82,8 @@
       "website": "https://docs.anthropic.com/en/docs/claude-code/overview",
       "note": "Anthropic正式发布的编程专用智能体，支持--json工作流、本地IDE深度集成及自动单元测试生成，日均迭代更新。",
       "release_date": "2026-05-22",
-      "created_date": "2026-05-23"
+      "created_date": "2026-05-23",
+      "reason": "非模型: 产品/工具类(编程智能体), 非基座模型或模型版本更新"
     },
     {
       "name": "Doubao-Seed-2.0-lite",
@@ -94,7 +99,8 @@
       "website": "",
       "note": "豆包首款全模态理解模型 | 来源: 腾讯研究院AI速递 20260508 [重要性:高|字节跳动/豆包属于国内重点关注公司，Seed 2.0 lite 若为豆包首款全模态理解模型则属于重要版本更新。]",
       "release_date": "2026-05-06",
-      "created_date": "2026-05-19"
+      "created_date": "2026-05-19",
+      "reason": "gap过时: 发布5/6→录入5/19, gap=13天, 超过7天阈值"
     },
     {
       "name": "文心大模型5.1",
@@ -110,7 +116,8 @@
       "website": "https://yiyan.baidu.com",
       "note": "采用‘多维弹性预训练’技术，总参数压缩至前代约1/3、激活参数约1/2，预训练成本降至业界同规模模型约6%，聚焦效率与商业化落地。 [重要性:中|百度属于国内优秀关注公司，文心大模型5.1若属官方版本更新则为值得关注的旗舰系列迭代。]",
       "release_date": "2026-05-09",
-      "created_date": "2026-05-20"
+      "created_date": "2026-05-20",
+      "reason": "重复+gap过时: 与已有文心大模型5.1重复, 且发布5/9→录入5/20, gap=11天"
     },
     {
       "name": "test",
@@ -126,7 +133,8 @@
       "release_date": "2026-05-29",
       "created_date": "2026-05-29",
       "connected": "",
-      "workflow_progress": ""
+      "workflow_progress": "",
+      "reason": "测试数据: 手动录入的测试记录, 非真实模型"
     },
     {
       "name": "豆包Seed 2.0 Pro",
@@ -144,7 +152,8 @@
       "release_date": "2026-05-28",
       "created_date": "2026-05-29",
       "source": "daily",
-      "deleted_at": "2026-05-29 03:48:45"
+      "deleted_at": "2026-05-29 03:48:45",
+      "reason": "重复: 与Doubao-Seed-2.0-Pro为同一模型的中英文名, 名称归一化后重复"
     },
     {
       "name": "GPT-5.5 Instant",
@@ -162,7 +171,8 @@
       "release_date": "2026-05-05",
       "created_date": "2026-05-30",
       "source": "all",
-      "deleted_at": "2026-06-01 03:50:34"
+      "deleted_at": "2026-06-01 03:50:34",
+      "reason": "gap过时: 发布5/5→录入5/30, gap=25天, 远超7天阈值"
     },
     {
       "name": "Doubao-Seed-2.0-Pro",
@@ -180,7 +190,8 @@
       "release_date": "2026-05-20",
       "created_date": "2026-06-01",
       "source": "daily",
-      "deleted_at": "2026-06-02 11:22:02"
+      "deleted_at": "2026-06-02 11:22:02",
+      "reason": "gap过时: 发布5/20→录入6/1, gap=12天, 超过7天阈值"
     },
     {
       "name": "豆包Seed 2.0 Pro",
@@ -198,7 +209,8 @@
       "release_date": "2026-05-28",
       "created_date": "2026-05-29",
       "source": "daily",
-      "deleted_at": "2026-06-02 11:26:07"
+      "deleted_at": "2026-06-02 11:26:07",
+      "reason": "重复: 多次重复录入, 与已有条目名称归一化后相同"
     },
     {
       "name": "豆包Seed 2.0 Pro",
@@ -217,7 +229,8 @@
       "created_date": "2026-05-29",
       "source": "daily",
       "source_url": "data/history/20260528_20260528.json",
-      "deleted_at": "2026-06-05 03:25:33"
+      "deleted_at": "2026-06-05 03:25:33",
+      "reason": "重复: 第三次重复录入同一模型, 采集流水线未做好去重"
     },
     {
       "name": "GLM-5.1",
@@ -235,7 +248,8 @@
       "release_date": "2026-04-08",
       "created_date": "2026-06-08",
       "source": "all",
-      "deleted_at": "2026-06-08 09:18:17"
+      "deleted_at": "2026-06-08 09:18:17",
+      "reason": "gap过时: 发布4/8→录入6/8, gap=61天, 远超7天阈值"
     },
     {
       "name": "Kimi K2.6",
@@ -253,7 +267,8 @@
       "release_date": "2026-04-20",
       "created_date": "2026-06-06",
       "source": "all",
-      "deleted_at": "2026-06-08 09:19:27"
+      "deleted_at": "2026-06-08 09:19:27",
+      "reason": "gap过时: 发布4/20→录入6/6, gap=47天, 远超7天阈值"
     },
     {
       "name": "Gemini 3",
@@ -272,7 +287,8 @@
       "created_date": "2026-06-10",
       "source": "daily",
       "source_url": "data/history/20260610_20260610.json",
-      "deleted_at": "2026-06-10 08:26:29"
+      "deleted_at": "2026-06-10 08:26:29",
+      "reason": "幻觉数据: LLM生成的虚假模型信息"
     },
     {
       "name": "Kimi-Max",
@@ -292,7 +308,8 @@
       "data_source": "unknown",
       "source": "daily",
       "source_url": "data/history/20260610_20260610.json",
-      "deleted_at": "2026-06-10 11:17:39"
+      "deleted_at": "2026-06-10 11:17:39",
+      "reason": "幻觉数据: LLM生成的虚假模型信息"
     }
   ],
   "meta": {

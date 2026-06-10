@@ -35,6 +35,7 @@ AI 模型追踪 —— 端到端一键更新流水线（v3 精简版）
 import subprocess
 import sys
 import os
+import json
 import argparse
 import shutil
 from datetime import date, datetime
@@ -61,6 +62,52 @@ def _load_env():
             os.environ.setdefault(key.strip(), value)
 
 _load_env()
+
+# ── Pipeline 结构化日志 ──
+_pipeline_trace = {
+    "run_id": "",
+    "since": "",
+    "until": "",
+    "trigger_time": "",
+    "trigger_type": "",
+    "status": "running",
+    "new_count": 0,
+    "source": "",
+    "pushed": False,
+    "duration_seconds": 0,
+    "steps": [],
+}
+
+
+def trace_step_start(number: int, name: str):
+    """记录步骤开始。"""
+    step = {
+        "number": number,
+        "name": name,
+        "status": "running",
+        "started_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "ended_at": "",
+        "duration_seconds": 0,
+        "metrics": {},
+        "errors": [],
+    }
+    _pipeline_trace["steps"].append(step)
+    return step
+
+
+def trace_step_end(step: dict, status: str = "success", metrics: dict = None, errors: list = None):
+    """记录步骤结束。"""
+    step["status"] = status
+    step["ended_at"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    if step["started_at"]:
+        start = datetime.strptime(step["started_at"], "%Y-%m-%dT%H:%M:%S")
+        end = datetime.strptime(step["ended_at"], "%Y-%m-%dT%H:%M:%S")
+        step["duration_seconds"] = int((end - start).total_seconds())
+    if metrics:
+        step["metrics"] = metrics
+    if errors:
+        step["errors"] = errors
+
 
 DATA_DIR = ACTION_DIR / "data"
 REPORT_DIR = ACTION_DIR / "Report"
@@ -808,6 +855,17 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
     """执行 v3 精简流水线。"""
     total_steps = len(STEPS)
     results = {}
+    pipeline_start = datetime.now()
+
+    # 初始化 pipeline trace
+    _pipeline_trace["run_id"] = RUN_ID
+    _pipeline_trace["since"] = str(since_int)
+    _pipeline_trace["until"] = str(until_int)
+    _pipeline_trace["trigger_time"] = pipeline_start.strftime("%Y-%m-%dT%H:%M:%S")
+    _pipeline_trace["trigger_type"] = "manual"
+    _pipeline_trace["source"] = source
+    _pipeline_trace["status"] = "running"
+    _pipeline_trace["steps"] = []
 
     print(f"\n{'#'*60}")
     print(f"  AI 模型追踪 —— 端到端更新流水线 (v3)")
@@ -833,6 +891,7 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
             results[step_num] = "DRY-RUN"
             continue
 
+        current_trace_step = trace_step_start(step_num, step_name)
         success = False
         try:
             if step_num == 1:
@@ -918,10 +977,34 @@ def run_pipeline(since_int, until_int, source="all", start_step=1,
             if not passed:
                 log(f"步骤 {step_num} 验收未通过（仅报警，不终止流水线）", "WARN")
 
+        # 记录步骤 trace
+        trace_step_end(
+            current_trace_step,
+            status="success" if success else "failed",
+            errors=[str(exc)] if not success and 'exc' in dir() else None,
+        )
+
         results[step_num] = "SUCCESS" if success else "FAILED"
         if not success:
             log(f"步骤 {step_num} 失败，流水线终止", "ERROR")
             break
+
+    # 写入结构化 pipeline trace
+    all_success = all(v == "SUCCESS" for v in results.values() if v not in ("SKIPPED", "DRY-RUN", "NOT_RUN"))
+    _pipeline_trace["status"] = "success" if all_success else "failed"
+    _pipeline_trace["pushed"] = push
+    _pipeline_trace["duration_seconds"] = int((datetime.now() - pipeline_start).total_seconds())
+    # 统计新增模型数
+    increment_path = INCREMENT_DIR / f"{RUN_ID}.xlsx"
+    if increment_path.exists():
+        try:
+            import pandas as _pd_trace
+            _pipeline_trace["new_count"] = len(_pd_trace.read_excel(increment_path))
+        except Exception:
+            pass
+    trace_path = DATA_DIR / "pipeline_trace.json"
+    trace_path.write_text(json.dumps(_pipeline_trace, ensure_ascii=False, indent=2), encoding="utf-8")
+    log(f"📋 Pipeline trace: {trace_path}")
 
     # 汇总
     print(f"\n{'='*60}")
