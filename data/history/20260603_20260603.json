@@ -18,23 +18,6 @@
       "data_source": "unknown"
     },
     {
-      "name": "MAI-Thinking-1",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Microsoft",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "推理型大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "微软发布的旗舰推理模型，在编码基准测试中性能媲美 Anthropic Claude Sonnet 4.6，为微软新一代智能体核心推理引擎。",
-      "release_date": "2026-06-03",
-      "created_date": "2026-06-04",
-      "data_source": "unknown"
-    },
-    {
       "name": "MAI-Vision-1",
       "connected": "",
       "workflow_progress": "",
@@ -90,6 +73,8 @@
     "since": "2026-06-03",
     "until": "2026-06-03",
     "count": 5,
-    "generated_at": "2026-06-04 02:37:14"
+    "generated_at": "2026-06-04 02:37:14",
+    "total": 4,
+    "updated_at": "2026-06-10 11:46:33"
   }
 }
