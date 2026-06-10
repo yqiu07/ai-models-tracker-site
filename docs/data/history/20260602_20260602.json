@@ -14,7 +14,8 @@
       "website": "https://huggingface.co/google/CircularNet",
       "note": "HuggingFace",
       "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
+      "created_date": "2026-06-03",
+      "data_source": "huggingface"
     },
     {
       "name": "4D-RGPT-8B",
@@ -30,7 +31,8 @@
       "website": "https://huggingface.co/nvidia/4D-RGPT-8B",
       "note": "HuggingFace video-text-to-text",
       "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
+      "created_date": "2026-06-03",
+      "data_source": "huggingface"
     },
     {
       "name": "Qwen3.7-Plus",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "阿里发布的全新多模态智能体模型，面向复杂任务编排与具身交互优化。",
       "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
+      "created_date": "2026-06-03",
+      "data_source": "unknown"
     },
     {
       "name": "MAI-Thinking-1",
@@ -62,7 +65,8 @@
       "website": "",
       "note": "微软MAI家族首款中型自研推理模型，零蒸馏训练，在软件工程测试中性能媲美Sonnet 4.6。",
       "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
+      "created_date": "2026-06-03",
+      "data_source": "unknown"
     },
     {
       "name": "MAI-Code-1-Flash",
@@ -78,7 +82,8 @@
       "website": "",
       "note": "50亿参数高效编码模型，深度集成GitHub Copilot与VS Code，专为微软技术栈优化。",
       "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
+      "created_date": "2026-06-03",
+      "data_source": "unknown"
     },
     {
       "name": "DobotWAM",
@@ -94,7 +99,8 @@
       "website": "",
       "note": "面向机器人操作的具身大模型，在LIBERO基准登顶第一，任务成功率99.25%。",
       "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
+      "created_date": "2026-06-03",
+      "data_source": "unknown"
     },
     {
       "name": "MiniMax M3",
@@ -110,7 +116,8 @@
       "website": "",
       "note": "京东云率先上线的MiniMax最新多模态基础模型，支持图文音视频联合理解与生成。",
       "release_date": "2026-06-02",
-      "created_date": "2026-06-03"
+      "created_date": "2026-06-03",
+      "data_source": "unknown"
     }
   ],
   "meta": {

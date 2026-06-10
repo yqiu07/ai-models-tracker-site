@@ -14,7 +14,8 @@
       "website": "https://huggingface.co/google/gemma-4-12B-it-qat-w4a16-ct",
       "note": "HuggingFace any-to-any",
       "release_date": "2026-06-05",
-      "created_date": "2026-06-06"
+      "created_date": "2026-06-06",
+      "data_source": "huggingface"
     }
   ],
   "meta": {

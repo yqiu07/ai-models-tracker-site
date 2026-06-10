@@ -14,7 +14,8 @@
       "website": "",
       "note": "面向个人、开发者与组织的通用大语言模型，具备自主拆解并执行100+步复杂工作流的能力，强调高智能密度与高token价值，在GPQA Diamond（87.9分）和GDPVal（72.5分）等权威评测中进入第一梯队。",
       "release_date": "2026-06-08",
-      "created_date": "2026-06-09"
+      "created_date": "2026-06-09",
+      "data_source": "unknown"
     }
   ],
   "meta": {

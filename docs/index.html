@@ -420,6 +420,7 @@ function renderDailyReport(data) {
     if (safe(m.release_date)) html += '<div class="meta-line">发布: ' + escapeHtml(safe(m.release_date)) + '</div>';
     if (safe(m.size)) html += '<div class="meta-line">尺寸: ' + escapeHtml(safe(m.size)) + '</div>';
     if (safe(m.note)) html += '<div class="note-text">' + escapeHtml(safe(m.note)) + '</div>';
+    if (safe(m.data_source)) html += '<span class="badge" style="background:#e0f2fe;color:#0369a1;font-size:.7rem">📡 ' + escapeHtml(safe(m.data_source)) + '</span>';
     if (!currentDailyUrl.endsWith('.md')) {
       html += '<div style="margin-top:10px;display:flex;gap:8px;"><button class="delete-btn-cell" onclick="deleteDailyModel(' + i + ')">删除</button></div>';
     }
@@ -932,7 +933,8 @@ function executeManualAdd(overlay) {
     release_date: overlay.querySelector('#add-release').value || today,
     created_date: today,
     connected: '',
-    workflow_progress: ''
+    workflow_progress: '',
+    data_source: 'manual'
   };
 
   statusEl.textContent = '正在保存...';
@@ -1244,6 +1246,7 @@ var TABLE_COLUMNS = [
   { key: 'note', label: '备注' },
   { key: 'release_date', label: '发布时间' },
   { key: 'created_date', label: '创建时间' },
+  { key: 'data_source', label: '来源' },
   { key: '_action', label: '操作' }
 ];
 
@@ -1260,7 +1263,7 @@ function renderAllTable() {
     endIdx = Math.min(startIdx + pageSize, models.length);
   }
 
-  var COL_CLASSES = { name:'col-name', company:'col-company', domestic:'col-domestic', open_source:'col-opensource', size:'col-size', type:'col-type', reasoning:'col-reasoning', task_type:'col-tasktype', website:'col-website', note:'col-note', release_date:'col-release', created_date:'col-created', _action:'col-action' };
+  var COL_CLASSES = { name:'col-name', company:'col-company', domestic:'col-domestic', open_source:'col-opensource', size:'col-size', type:'col-type', reasoning:'col-reasoning', task_type:'col-tasktype', website:'col-website', note:'col-note', release_date:'col-release', created_date:'col-created', data_source:'col-source', _action:'col-action' };
   var html = '<table class="data-table"><thead><tr>';
   for (var c = 0; c < TABLE_COLUMNS.length; c++) {
     var col = TABLE_COLUMNS[c];
@@ -1287,6 +1290,7 @@ function renderAllTable() {
     html += '<td class="col-note">' + escapeHtml(safe(m.note)) + '</td>';
     html += '<td class="col-release">' + escapeHtml(safe(m.release_date)) + '</td>';
     html += '<td class="col-created">' + escapeHtml(safe(m.created_date)) + '</td>';
+    html += '<td class="col-source">' + escapeHtml(safe(m.data_source)) + '</td>';
     html += '<td class="col-action"><button class="delete-btn-cell" onclick="deleteModel(' + i + ')">删除</button> <button class="connect-btn-cell" onclick="connectModel(' + i + ')">接入</button></td>';
     html += '</tr>';
   }

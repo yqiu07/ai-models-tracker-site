@@ -14,7 +14,8 @@
       "website": "https://huggingface.co/google/gemma-4-E2B-it-qat-mobile-ct",
       "note": "HuggingFace any-to-any",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "WorkBuddy 企业版",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "腾讯云发布的面向中大型企业的AI工作台智能体，集成ClawPro引擎与TokenHub调度系统，支持跨OA/CRM/ERP自动执行审批、报表生成、会议纪要归档等复合任务。",
       "release_date": "2026-06-05",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "unknown"
     },
     {
       "name": "Efficiency Agent Toolkit",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "包含QClaw、ima、元宝、腾讯文档AI插件等开箱即用智能体组件，支持个人与团队级自动化工作流编排，已在医疗、金融、零售等20+行业落地。",
       "release_date": "2026-06-05",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "unknown"
     },
     {
       "name": "gemma-4-E4B-it-qat-mobile-ct",
@@ -62,7 +65,8 @@
       "website": "https://huggingface.co/google/gemma-4-E4B-it-qat-mobile-ct",
       "note": "HuggingFace any-to-any",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     }
   ],
   "meta": {

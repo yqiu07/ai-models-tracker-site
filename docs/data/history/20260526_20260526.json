@@ -14,7 +14,8 @@
       "website": "https://huggingface.co/microsoft/vermeer-XL-CA",
       "note": "HuggingFace",
       "release_date": "2026-05-26",
-      "created_date": "2026-05-27"
+      "created_date": "2026-05-27",
+      "data_source": "huggingface"
     },
     {
       "name": "vermeer-XL",
@@ -30,7 +31,8 @@
       "website": "https://huggingface.co/microsoft/vermeer-XL",
       "note": "HuggingFace",
       "release_date": "2026-05-26",
-      "created_date": "2026-05-27"
+      "created_date": "2026-05-27",
+      "data_source": "huggingface"
     },
     {
       "name": "vermeer-L-AP",
@@ -46,7 +48,8 @@
       "website": "https://huggingface.co/microsoft/vermeer-L-AP",
       "note": "HuggingFace",
       "release_date": "2026-05-26",
-      "created_date": "2026-05-27"
+      "created_date": "2026-05-27",
+      "data_source": "huggingface"
     },
     {
       "name": "vermeer-L",
@@ -62,7 +65,8 @@
       "website": "https://huggingface.co/microsoft/vermeer-L",
       "note": "HuggingFace",
       "release_date": "2026-05-26",
-      "created_date": "2026-05-27"
+      "created_date": "2026-05-27",
+      "data_source": "huggingface"
     },
     {
       "name": "MiniCPM5-1B",
@@ -78,7 +82,8 @@
       "website": "",
       "note": "10.8亿参数开源模型，登顶Artificial Analysis小模型榜单（17.9分），支持INT4量化（约0.5GB），可在手机、浏览器及CPU本地运行。",
       "release_date": "2026-05-26",
-      "created_date": "2026-05-27"
+      "created_date": "2026-05-27",
+      "data_source": "unknown"
     },
     {
       "name": "Gemini 3.5 Flash (Low)",
@@ -94,7 +99,8 @@
       "website": "",
       "note": "Antigravity平台新增的低延迟、低成本推理变体，面向高并发轻负载场景优化，为Gemini 3.5系列首次推出的‘Flash’分级型号。",
       "release_date": "2026-05-26",
-      "created_date": "2026-05-27"
+      "created_date": "2026-05-27",
+      "data_source": "unknown"
     }
   ],
   "meta": {

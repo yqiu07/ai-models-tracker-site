@@ -14,7 +14,8 @@
       "website": "",
       "note": "面向非遗武术领域的AI视频分析智能平台，支持数秒级动作细节诊断、知识问答交互与专业报告生成。",
       "release_date": "2026-05-21",
-      "created_date": "2026-05-22"
+      "created_date": "2026-05-22",
+      "data_source": "unknown"
     },
     {
       "name": "PuduFM 1.0",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "首个面向服务机器人的物理认知大模型，具备3D空间深度感知、物理状态预测与持续进化能力。",
       "release_date": "2026-05-21",
-      "created_date": "2026-05-22"
+      "created_date": "2026-05-22",
+      "data_source": "unknown"
     },
     {
       "name": "烽火工业智能体",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "石油化工行业首个数字专家智能体，可直接操作工业软件、分析实时生产数据并运行工艺仿真。",
       "release_date": "2026-05-21",
-      "created_date": "2026-05-22"
+      "created_date": "2026-05-22",
+      "data_source": "unknown"
     }
   ],
   "meta": {

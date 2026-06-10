@@ -14,7 +14,8 @@
       "website": "",
       "note": "全球首款完全开源的文本/图像/视频/音频/动作五模态物理AI模型，原生支持重力、摩擦、碰撞等物理规则建模，基于混合Transformer（MoT）架构。",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-06"
+      "created_date": "2026-06-06",
+      "data_source": "unknown"
     },
     {
       "name": "Nemotron 3 Ultra",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "千亿参数Dense架构LLM，MMLU-Pro达89.5分，支持INT4量化在RTX 5090上实时推理（首Token延迟低至180ms），面向消费级GPU优化。",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-06"
+      "created_date": "2026-06-06",
+      "data_source": "unknown"
     },
     {
       "name": "MiniMax M3",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "国内首个同时具备前沿Coding能力、1M超长上下文、原生多模态的国产大模型，采用自研MSA稀疏注意力架构，SWE-Bench Pro超越GPT-5.5。",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-06"
+      "created_date": "2026-06-06",
+      "data_source": "unknown"
     },
     {
       "name": "码道（CodeArts）AI编程智能体",
@@ -62,7 +65,8 @@
       "website": "",
       "note": "华为云全新商用AI编程智能体，聚焦全流程智能编码，支持需求理解、架构设计、代码生成、单元测试与部署建议，已于2026年5月30日正式商用。",
       "release_date": "2026-05-30",
-      "created_date": "2026-06-07"
+      "created_date": "2026-06-07",
+      "data_source": "unknown"
     },
     {
       "name": "Cosmos 3 (Super/Base/Tiny)",
@@ -78,7 +82,8 @@
       "website": "",
       "note": "全球首款完全开源的全模态物理AI模型，原生支持文本/图像/视频/音频/动作五模态，精准复刻重力、摩擦、碰撞等物理规则，权重、代码、数据集全部开源至Hugging Face。",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "unknown"
     },
     {
       "name": "Nemotron 3 Ultra",
@@ -94,7 +99,8 @@
       "website": "",
       "note": "千亿参数Dense架构LLM，128层Transformer，MMLU-Pro达89.5分，支持INT4量化在RTX 5090上实时推理，首Token延迟低至180ms，专为气隙部署与消费级GPU优化。",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "unknown"
     },
     {
       "name": "MiniMax M3",
@@ -110,7 +116,8 @@
       "website": "",
       "note": "国内首个同时具备前沿Coding、1M超长上下文、原生多模态能力的大模型，自研MSA稀疏注意力架构，SWE-Bench Pro性能超越GPT-5.5与Gemini 3.1 Pro。",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "unknown"
     },
     {
       "name": "gemma-4-E4B-it-qat-mobile-ct",
@@ -126,7 +133,8 @@
       "website": "https://huggingface.co/google/gemma-4-E4B-it-qat-mobile-ct",
       "note": "HuggingFace any-to-any",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "gemma-4-E2B-it-qat-mobile-ct",
@@ -142,7 +150,8 @@
       "website": "https://huggingface.co/google/gemma-4-E2B-it-qat-mobile-ct",
       "note": "HuggingFace any-to-any",
       "release_date": "2026-06-01",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "gemma-4-31B-it-qat-q4_0-unquantized-assistant",
@@ -158,7 +167,8 @@
       "website": "https://huggingface.co/google/gemma-4-31B-it-qat-q4_0-unquantized-assistant",
       "note": "HuggingFace image-text-to-text",
       "release_date": "2026-05-29",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "gemma-4-26B-A4B-it-qat-q4_0-unquantized-assistant",
@@ -174,7 +184,8 @@
       "website": "https://huggingface.co/google/gemma-4-26B-A4B-it-qat-q4_0-unquantized-assistant",
       "note": "HuggingFace image-text-to-text",
       "release_date": "2026-05-29",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "gemma-4-E4B-it-qat-q4_0-unquantized-assistant",
@@ -190,7 +201,8 @@
       "website": "https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-unquantized-assistant",
       "note": "HuggingFace any-to-any",
       "release_date": "2026-05-29",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "gemma-4-E2B-it-qat-q4_0-unquantized-assistant",
@@ -206,7 +218,8 @@
       "website": "https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-unquantized-assistant",
       "note": "HuggingFace any-to-any",
       "release_date": "2026-05-29",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "GR00T-H-N1.7",
@@ -222,7 +235,8 @@
       "website": "https://huggingface.co/nvidia/GR00T-H-N1.7",
       "note": "HuggingFace",
       "release_date": "2026-05-30",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "dvlt",
@@ -238,7 +252,8 @@
       "website": "https://huggingface.co/nvidia/dvlt",
       "note": "HuggingFace image-to-3d",
       "release_date": "2026-05-29",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "NV-OneFormer",
@@ -254,7 +269,8 @@
       "website": "https://huggingface.co/nvidia/NV-OneFormer",
       "note": "HuggingFace",
       "release_date": "2026-05-29",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "huggingface"
     },
     {
       "name": "Qwen-Agent v3.2",
@@ -270,7 +286,8 @@
       "website": "",
       "note": "基于CUA范式构建的生产级Agent框架，支持自动Tool编排、跨会话状态持久化与可验证决策链，已接入钉钉与阿里云百炼平台",
       "release_date": "2026-05-31",
-      "created_date": "2026-06-08"
+      "created_date": "2026-06-08",
+      "data_source": "unknown"
     }
   ],
   "meta": {

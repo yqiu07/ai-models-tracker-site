@@ -14,7 +14,8 @@
       "website": "https://llm-stats.com/models/claude-fable-5",
       "note": "1000k上下文；顶级编码能力；高端定价",
       "release_date": "2026-06-09",
-      "created_date": "2026-06-10"
+      "created_date": "2026-06-10",
+      "data_source": "llmstats"
     },
     {
       "name": "Kimi-Max",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "专为医疗病理分析优化的Kimi系列新版本，支持200万token文档理解与显微图像-报告联合推理，已在合作三甲医院病理科启动临床验证。",
       "release_date": "2026-06-09",
-      "created_date": "2026-06-10"
+      "created_date": "2026-06-10",
+      "data_source": "unknown"
     }
   ],
   "meta": {
