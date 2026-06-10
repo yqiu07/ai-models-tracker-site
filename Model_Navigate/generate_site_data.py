@@ -34,6 +34,7 @@ import pandas as pd
 # 过滤 & 去重常量
 # ---------------------------------------------------------------------------
 GAP_MAX_DAYS = 7  # release_date 与 created_date 最大允许间隔
+GAP_FILTER_SINCE = "2026-05-28"  # gap 过滤仅对此日期及之后创建的模型生效
 LLM_DEDUP_BATCH_SIZE = 40  # 每批送 LLM 查重的模型数
 
 ROOT = Path(__file__).parent
@@ -159,18 +160,24 @@ def _calc_gap(release_date: str, created_date: str) -> int | None:
 def filter_stale_models(models: list[dict]) -> tuple[list[dict], list[dict]]:
     """过滤 gap > GAP_MAX_DAYS 的过时模型。
 
+    仅对 created_date >= GAP_FILTER_SINCE 的模型生效，更早的历史数据不动。
+
     Returns:
         (kept, removed) 两个列表。
     """
     kept, removed = [], []
     for m in models:
-        gap = _calc_gap(m.get("release_date"), m.get("created_date"))
+        created = m.get("created_date") or ""
+        if created < GAP_FILTER_SINCE:
+            kept.append(m)
+            continue
+        gap = _calc_gap(m.get("release_date"), created)
         if gap is not None and gap > GAP_MAX_DAYS:
             removed.append(m)
         else:
             kept.append(m)
     if removed:
-        print(f"  [filter] stale removed: {len(removed)} (gap>{GAP_MAX_DAYS}d)")
+        print(f"  [filter] stale removed: {len(removed)} (gap>{GAP_MAX_DAYS}d, since {GAP_FILTER_SINCE})")
     return kept, removed
 
 
