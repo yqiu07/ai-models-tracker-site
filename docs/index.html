@@ -590,8 +590,10 @@ function commitFileToGitHub(path, content, message) {
           body: JSON.stringify(body)
         });
       }).then(function(r) {
-        if ((r.status === 409 || r.status === 422) && attempt < 3) {
-          return new Promise(function(resolve) { setTimeout(resolve, 900); }).then(function() { return putFile(attempt + 1); });
+        if ((r.status === 409 || r.status === 422) && attempt < 5) {
+          var delay = 1500 * attempt;
+          console.warn('[commitFile] attempt ' + attempt + ' got ' + r.status + ', retrying in ' + delay + 'ms...');
+          return new Promise(function(resolve) { setTimeout(resolve, delay); }).then(function() { return putFile(attempt + 1); });
         }
         if (!r.ok) {
           return r.json().catch(function() { return {}; }).then(function(errorData) {
@@ -608,11 +610,16 @@ function commitFileToGitHub(path, content, message) {
 function commitFilesSequentially(tasks) {
   var chain = Promise.resolve();
   for (var i = 0; i < tasks.length; i++) {
-    (function(task) {
+    (function(task, isLast) {
       chain = chain.then(function() {
-        return commitFileToGitHub(task.path, task.content, task.message);
+        return commitFileToGitHub(task.path, task.content, task.message).then(function(result) {
+          if (!isLast) {
+            return new Promise(function(resolve) { setTimeout(function() { resolve(result); }, 1500); });
+          }
+          return result;
+        });
       });
-    })(tasks[i]);
+    })(tasks[i], i === tasks.length - 1);
   }
   return chain;
 }

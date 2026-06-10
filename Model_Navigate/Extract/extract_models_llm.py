@@ -530,6 +530,7 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
                 "记录创建时间": now_str,
                 "是否新增": "New",
                 "核实情况": model_info.get("_verified_by", "腾讯研究院AI速递LLM自动提取"),
+                "data_source": "txresearch",
             }
             new_rows.append(row)
 

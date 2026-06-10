@@ -16,23 +16,6 @@
       "release_date": "2026-06-09",
       "created_date": "2026-06-10",
       "data_source": "llmstats"
-    },
-    {
-      "name": "Kimi-Max",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "月之暗面/Kimi",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "长上下文多模态模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "专为医疗病理分析优化的Kimi系列新版本，支持200万token文档理解与显微图像-报告联合推理，已在合作三甲医院病理科启动临床验证。",
-      "release_date": "2026-06-09",
-      "created_date": "2026-06-10",
-      "data_source": "unknown"
     }
   ],
   "meta": {
