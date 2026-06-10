@@ -208,6 +208,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <button class="tab-btn" onclick="switchTab('dashboard')">仪表盘</button>
     <button class="tab-btn" onclick="switchTab('sources')">数据源</button>
     <button class="tab-btn" onclick="switchTab('readme')">README</button>
+    <button class="tab-btn" onclick="switchTab('logs')">日志</button>
   </div>
 </div>
 <div class="container">
@@ -276,6 +277,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <div id="tab-readme" class="tab-content">
     <div class="card"><div id="readme-body" class="readme-content"></div></div>
   </div>
+  <div id="tab-logs" class="tab-content">
+    <div class="report-header">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <h2>Pipeline 日志</h2>
+        <select id="log-select" onchange="loadLogByDate(this.value)" style="padding:6px 12px;border-radius:6px;border:1px solid #d1d5db;font-size:.9rem;"></select>
+      </div>
+    </div>
+    <div id="log-content"><div class="empty-state"><div class="icon">📋</div><p>选择日期查看 Pipeline 执行日志</p></div></div>
+  </div>
   <div class="footer">
     <p>数据来源：AI Models Tracker Pipeline &nbsp;|&nbsp; <span id="footer-time">-</span> &nbsp;|&nbsp; <a href="https://github.com/yqiu07/ai-models-tracker-site" target="_blank" rel="noopener">GitHub</a></p>
   </div>
@@ -336,7 +346,7 @@ function switchTab(tabName) {
   for (var i = 0; i < btns.length; i++) {
     btns[i].classList.remove('active');
   }
-  var tabNames = ['daily', 'all', 'dashboard', 'sources', 'readme'];
+  var tabNames = ['daily', 'all', 'dashboard', 'sources', 'readme', 'logs'];
   var idx = tabNames.indexOf(tabName);
   if (idx >= 0 && idx < btns.length) btns[idx].classList.add('active');
 
@@ -344,6 +354,7 @@ function switchTab(tabName) {
   if (tabName === 'dashboard' && !tabsLoaded.dashboard) { loadDashboard(); tabsLoaded.dashboard = true; }
   if (tabName === 'sources' && !tabsLoaded.sources) { loadSources(); tabsLoaded.sources = true; }
   if (tabName === 'readme' && !tabsLoaded.readme) { loadReadme(); tabsLoaded.readme = true; }
+  if (tabName === 'logs' && !tabsLoaded.logs) { loadPipelineLogs(); tabsLoaded.logs = true; }
 }
 
 /* ===== Daily Report ===== */
@@ -416,6 +427,7 @@ function renderDailyReport(data) {
     if (safe(m.open_source)) html += '<span class="badge ' + (safe(m.open_source) === '开源' ? 'badge-open' : 'badge-closed') + '">' + escapeHtml(safe(m.open_source)) + '</span>';
     if (safe(m.type)) html += '<span class="badge badge-type">' + escapeHtml(safe(m.type)) + '</span>';
     if (safe(m.size)) html += '<span class="badge badge-type">' + escapeHtml(safe(m.size)) + '</span>';
+    if (safe(m.data_source)) html += '<span class="badge" style="background:#e0f2fe;color:#0369a1;font-size:.7rem">📡 ' + escapeHtml(safe(m.data_source)) + '</span>';
     html += '</div>';
     if (safe(m.release_date)) html += '<div class="meta-line">发布: ' + escapeHtml(safe(m.release_date)) + '</div>';
     if (safe(m.size)) html += '<div class="meta-line">尺寸: ' + escapeHtml(safe(m.size)) + '</div>';
@@ -433,7 +445,8 @@ var recycleData = [];
 var recycleLoaded = false;
 var connectedData = [];
 var GITHUB_REPO = 'yqiu07/ai-models-tracker-site';
-var GITHUB_BRANCH = '20260519-暂停平台目录与自动化平台';
+var GITHUB_BRANCH = 'gh-pages';
+var GITHUB_SOURCE_BRANCH = '20260519-暂停平台目录与自动化平台';
 
 function loadAllModels() {
   Promise.all([
@@ -641,7 +654,7 @@ function stripRecycleMeta(model) {
 
 function getDailyGitHubPath(url) {
   if (!url || url.endsWith('.md')) return '';
-  if (url.indexOf('data/') === 0) return 'docs/' + url;
+  if (url.indexOf('data/') === 0) return url;
   return url;
 }
 
@@ -683,8 +696,8 @@ function deleteModel(idx) {
   updateRecycleBadge();
 
   commitFilesSequentially([
-    { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
-    { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
+    { path: 'data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
+    { path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
   ]).then(function() {
     filterAllModels();
     renderRecycleList();
@@ -718,8 +731,8 @@ function deleteDailyModel(idx) {
 
     return commitFilesSequentially([
       { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
-      { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
-      { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
+      { path: 'data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
+      { path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
     ]).then(function() {
       renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
@@ -751,11 +764,11 @@ function restoreModel(idx) {
       if (isSameModel(allModelsData[i], restoredModel)) existsInAll = true;
     }
     if (!existsInAll) allModelsData.unshift(restoredModel);
-    commitTasks.push({ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: restore model "' + safe(restoredModel.name) + '" from recycle' });
+    commitTasks.push({ path: 'data/all_models.json', content: buildAllModelsContent(), message: 'chore: restore model "' + safe(restoredModel.name) + '" from recycle' });
 
     if (source === 'daily') {
       var sourceUrl = safe(recycledModel.source_url) || 'data/daily_report.json';
-      var sourcePath = getDailyGitHubPath(sourceUrl) || 'docs/data/daily_report.json';
+      var sourcePath = getDailyGitHubPath(sourceUrl) || 'data/daily_report.json';
       var dailyDataPromise = sourceUrl === currentDailyUrl ? Promise.resolve(currentDailyData) : fetch(sourceUrl).then(function(r) { return r.json(); });
       return dailyDataPromise.then(function(targetDailyData) {
         targetDailyData.models = targetDailyData.models || [];
@@ -766,7 +779,7 @@ function restoreModel(idx) {
         if (!existsInDaily) targetDailyData.models.unshift(restoredModel);
         if (sourceUrl === currentDailyUrl) currentDailyData = targetDailyData;
         commitTasks.push({ path: sourcePath, content: buildDailyDataContent(targetDailyData), message: 'chore: restore daily model "' + safe(restoredModel.name) + '"' });
-        commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
+        commitTasks.push({ path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
         updateRecycleBadge();
         return commitFilesSequentially(commitTasks).then(function() {
           if (sourceUrl === currentDailyUrl) renderDailyReport(currentDailyData);
@@ -777,7 +790,7 @@ function restoreModel(idx) {
       });
     }
 
-    commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
+    commitTasks.push({ path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
     updateRecycleBadge();
 
     return commitFilesSequentially(commitTasks).then(function() {
@@ -798,7 +811,7 @@ function permanentlyDeleteModel(idx) {
   recycleData.splice(idx, 1);
   updateRecycleBadge();
 
-  commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: permanently remove "' + safe(model.name) + '" from recycle bin').then(function() {
+  commitFileToGitHub('data/recycle.json', buildRecycleContent(), 'chore: permanently remove "' + safe(model.name) + '" from recycle bin').then(function() {
     renderRecycleList();
     alert('已彻底清除「' + safe(model.name) + '」 ✓');
   }).catch(function(e) {
@@ -853,7 +866,7 @@ function connectModel(idx) {
   updateConnectedBadge();
 
   var connContent = JSON.stringify({ models: connectedData, meta: { total: connectedData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-  commitFileToGitHub('docs/data/connected.json', connContent, 'chore: connect model "' + safe(model.name) + '"').then(function() {
+  commitFileToGitHub('data/connected.json', connContent, 'chore: connect model "' + safe(model.name) + '"').then(function() {
     renderConnectedList();
     alert('已将「' + safe(model.name) + '」加入接入站 ✓');
   }).catch(function(e) {
@@ -871,7 +884,7 @@ function disconnectModel(idx) {
   updateConnectedBadge();
 
   var connContent = JSON.stringify({ models: connectedData, meta: { total: connectedData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-  commitFileToGitHub('docs/data/connected.json', connContent, 'chore: disconnect model "' + safe(model.name) + '"').then(function() {
+  commitFileToGitHub('data/connected.json', connContent, 'chore: disconnect model "' + safe(model.name) + '"').then(function() {
     renderConnectedList();
     alert('已将「' + safe(model.name) + '」移出接入站 ✓');
   }).catch(function(e) {
@@ -947,12 +960,12 @@ function executeManualAdd(overlay) {
     }
 
     allModelsData.unshift(newModel);
-    var commitTasks = [{ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'feat: manually add model "' + name + '"' }];
+    var commitTasks = [{ path: 'data/all_models.json', content: buildAllModelsContent(), message: 'feat: manually add model "' + name + '"' }];
 
     if (target === 'daily') {
       currentDailyData.models = currentDailyData.models || [];
       currentDailyData.models.unshift(newModel);
-      commitTasks.push({ path: 'docs/data/daily_report.json', content: buildDailyContent(), message: 'feat: manually add daily model "' + name + '"' });
+      commitTasks.push({ path: 'data/daily_report.json', content: buildDailyContent(), message: 'feat: manually add daily model "' + name + '"' });
     }
 
     return commitFilesSequentially(commitTasks).then(function() {
@@ -1008,7 +1021,7 @@ function executeSmartAdd(overlay) {
         'Accept': 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        ref: GITHUB_BRANCH,
+        ref: GITHUB_SOURCE_BRANCH,
         inputs: {
           content: input,
           target: target
@@ -1135,7 +1148,7 @@ function executeUpdate(overlay) {
 
     // 保存到 GitHub
     var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-    return commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: update ' + newModels.length + ' models from daily reports (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
+    return commitFileToGitHub('data/all_models.json', allContent, 'chore: update ' + newModels.length + ' models from daily reports (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
       statusEl.textContent = '✓ 成功新增 ' + newModels.length + ' 条模型到总表！';
       progressEl.style.width = '100%';
       filterAllModels();
@@ -1244,6 +1257,7 @@ var TABLE_COLUMNS = [
   { key: 'note', label: '备注' },
   { key: 'release_date', label: '发布时间' },
   { key: 'created_date', label: '创建时间' },
+  { key: 'data_source', label: '来源' },
   { key: '_action', label: '操作' }
 ];
 
@@ -1260,7 +1274,7 @@ function renderAllTable() {
     endIdx = Math.min(startIdx + pageSize, models.length);
   }
 
-  var COL_CLASSES = { name:'col-name', company:'col-company', domestic:'col-domestic', open_source:'col-opensource', size:'col-size', type:'col-type', reasoning:'col-reasoning', task_type:'col-tasktype', website:'col-website', note:'col-note', release_date:'col-release', created_date:'col-created', _action:'col-action' };
+  var COL_CLASSES = { name:'col-name', company:'col-company', domestic:'col-domestic', open_source:'col-opensource', size:'col-size', type:'col-type', reasoning:'col-reasoning', task_type:'col-tasktype', website:'col-website', note:'col-note', release_date:'col-release', created_date:'col-created', data_source:'col-source', _action:'col-action' };
   var html = '<table class="data-table"><thead><tr>';
   for (var c = 0; c < TABLE_COLUMNS.length; c++) {
     var col = TABLE_COLUMNS[c];
@@ -1287,6 +1301,7 @@ function renderAllTable() {
     html += '<td class="col-note">' + escapeHtml(safe(m.note)) + '</td>';
     html += '<td class="col-release">' + escapeHtml(safe(m.release_date)) + '</td>';
     html += '<td class="col-created">' + escapeHtml(safe(m.created_date)) + '</td>';
+    html += '<td class="col-source">' + escapeHtml(safe(m.data_source)) + '</td>';
     html += '<td class="col-action"><button class="delete-btn-cell" onclick="deleteModel(' + i + ')">删除</button> <button class="connect-btn-cell" onclick="connectModel(' + i + ')">接入</button></td>';
     html += '</tr>';
   }
@@ -1540,7 +1555,7 @@ function triggerReview() {
         'Accept': 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        ref: GITHUB_BRANCH,
+        ref: GITHUB_SOURCE_BRANCH,
         inputs: {
           since: since,
           until: until
@@ -1564,6 +1579,77 @@ function triggerPush() {
   if (confirm(msg)) {
     window.open('https://github.com/yqiu07/ai-models-tracker-site/actions/workflows/push-dingtalk.yml', '_blank');
   }
+}
+
+/* ===== Pipeline Logs ===== */
+function loadPipelineLogs() {
+  fetch('data/pipeline_log.json').then(function(r) { return r.json(); }).then(function(data) {
+    var runs = data.runs || [];
+    var select = document.getElementById('log-select');
+    var html = '';
+    for (var i = 0; i < runs.length; i++) {
+      var r = runs[i];
+      var label = safe(r.since) + ' ~ ' + safe(r.until) + ' (' + safe(r.status) + ')';
+      html += '<option value="' + i + '">' + escapeHtml(label) + '</option>';
+    }
+    select.innerHTML = html;
+    window._pipelineRuns = runs;
+    if (runs.length > 0) renderPipelineLog(runs[0]);
+    else document.getElementById('log-content').innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>暂无日志数据</p></div>';
+  }).catch(function() {
+    document.getElementById('log-content').innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>暂无日志数据（pipeline_log.json 尚未生成）</p></div>';
+  });
+}
+
+function loadLogByDate(idx) {
+  if (window._pipelineRuns && window._pipelineRuns[idx]) {
+    renderPipelineLog(window._pipelineRuns[idx]);
+  }
+}
+
+function renderPipelineLog(run) {
+  var html = '<div style="margin-bottom:16px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">';
+  html += '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">';
+  html += '<strong>Run:</strong> ' + escapeHtml(safe(run.run_id));
+  html += '<span>⏱ ' + escapeHtml(safe(run.trigger_time)) + '</span>';
+  var statusIcon = run.status === 'success' ? '✅' : run.status === 'partial' ? '⚠️' : '❌';
+  html += '<span>' + statusIcon + ' ' + escapeHtml(safe(run.status)) + '</span>';
+  if (run.duration_seconds) html += '<span>耗时 ' + run.duration_seconds + 's</span>';
+  if (run.new_count !== undefined) html += '<span>新增 ' + run.new_count + ' 个模型</span>';
+  html += '</div></div>';
+
+  var steps = run.steps || [];
+  if (steps.length === 0) {
+    html += '<p style="color:#64748b;">该运行无步骤详情</p>';
+  } else {
+    html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+    for (var i = 0; i < steps.length; i++) {
+      var s = steps[i];
+      var sIcon = s.status === 'success' ? '✅' : s.status === 'skipped' ? '⏭️' : s.status === 'failed' ? '❌' : '⏳';
+      var bgColor = s.status === 'success' ? '#f0fdf4' : s.status === 'failed' ? '#fef2f2' : s.status === 'skipped' ? '#f8fafc' : '#fffbeb';
+      html += '<div style="padding:10px 14px;border-radius:6px;background:' + bgColor + ';border:1px solid #e2e8f0;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+      html += '<span><strong>Step ' + (s.number || (i+1)) + ':</strong> ' + sIcon + ' ' + escapeHtml(safe(s.name)) + '</span>';
+      if (s.duration_seconds) html += '<span style="font-size:.8rem;color:#64748b;">' + s.duration_seconds + 's</span>';
+      html += '</div>';
+      if (s.metrics) {
+        html += '<div style="margin-top:6px;font-size:.8rem;color:#475569;">';
+        var keys = Object.keys(s.metrics);
+        for (var j = 0; j < keys.length; j++) {
+          html += '<span style="margin-right:12px;">' + escapeHtml(keys[j]) + ': <strong>' + s.metrics[keys[j]] + '</strong></span>';
+        }
+        html += '</div>';
+      }
+      if (s.errors && s.errors.length > 0) {
+        html += '<div style="margin-top:6px;font-size:.8rem;color:#dc2626;">';
+        for (var j = 0; j < s.errors.length; j++) html += '<div>⚠ ' + escapeHtml(s.errors[j]) + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('log-content').innerHTML = html;
 }
 
 /* ===== Init ===== */
