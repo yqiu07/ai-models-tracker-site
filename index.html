@@ -433,7 +433,8 @@ var recycleData = [];
 var recycleLoaded = false;
 var connectedData = [];
 var GITHUB_REPO = 'yqiu07/ai-models-tracker-site';
-var GITHUB_BRANCH = '20260519-暂停平台目录与自动化平台';
+var GITHUB_BRANCH = 'gh-pages';
+var GITHUB_SOURCE_BRANCH = '20260519-暂停平台目录与自动化平台';
 
 function loadAllModels() {
   Promise.all([
@@ -641,7 +642,7 @@ function stripRecycleMeta(model) {
 
 function getDailyGitHubPath(url) {
   if (!url || url.endsWith('.md')) return '';
-  if (url.indexOf('data/') === 0) return 'docs/' + url;
+  if (url.indexOf('data/') === 0) return url;
   return url;
 }
 
@@ -683,8 +684,8 @@ function deleteModel(idx) {
   updateRecycleBadge();
 
   commitFilesSequentially([
-    { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
-    { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
+    { path: 'data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" to recycle' },
+    { path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: add "' + safe(model.name) + '" to recycle bin' }
   ]).then(function() {
     filterAllModels();
     renderRecycleList();
@@ -718,8 +719,8 @@ function deleteDailyModel(idx) {
 
     return commitFilesSequentially([
       { path: dailyPath, content: buildDailyContent(), message: 'chore: delete daily model "' + safe(model.name) + '"' },
-      { path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
-      { path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
+      { path: 'data/all_models.json', content: buildAllModelsContent(), message: 'chore: delete model "' + safe(model.name) + '" from all models' },
+      { path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: add daily model "' + safe(model.name) + '" to recycle bin' }
     ]).then(function() {
       renderDailyReport(currentDailyData);
       if (tabsLoaded.all) filterAllModels();
@@ -751,11 +752,11 @@ function restoreModel(idx) {
       if (isSameModel(allModelsData[i], restoredModel)) existsInAll = true;
     }
     if (!existsInAll) allModelsData.unshift(restoredModel);
-    commitTasks.push({ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'chore: restore model "' + safe(restoredModel.name) + '" from recycle' });
+    commitTasks.push({ path: 'data/all_models.json', content: buildAllModelsContent(), message: 'chore: restore model "' + safe(restoredModel.name) + '" from recycle' });
 
     if (source === 'daily') {
       var sourceUrl = safe(recycledModel.source_url) || 'data/daily_report.json';
-      var sourcePath = getDailyGitHubPath(sourceUrl) || 'docs/data/daily_report.json';
+      var sourcePath = getDailyGitHubPath(sourceUrl) || 'data/daily_report.json';
       var dailyDataPromise = sourceUrl === currentDailyUrl ? Promise.resolve(currentDailyData) : fetch(sourceUrl).then(function(r) { return r.json(); });
       return dailyDataPromise.then(function(targetDailyData) {
         targetDailyData.models = targetDailyData.models || [];
@@ -766,7 +767,7 @@ function restoreModel(idx) {
         if (!existsInDaily) targetDailyData.models.unshift(restoredModel);
         if (sourceUrl === currentDailyUrl) currentDailyData = targetDailyData;
         commitTasks.push({ path: sourcePath, content: buildDailyDataContent(targetDailyData), message: 'chore: restore daily model "' + safe(restoredModel.name) + '"' });
-        commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
+        commitTasks.push({ path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
         updateRecycleBadge();
         return commitFilesSequentially(commitTasks).then(function() {
           if (sourceUrl === currentDailyUrl) renderDailyReport(currentDailyData);
@@ -777,7 +778,7 @@ function restoreModel(idx) {
       });
     }
 
-    commitTasks.push({ path: 'docs/data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
+    commitTasks.push({ path: 'data/recycle.json', content: buildRecycleContent(), message: 'chore: remove "' + safe(restoredModel.name) + '" from recycle bin' });
     updateRecycleBadge();
 
     return commitFilesSequentially(commitTasks).then(function() {
@@ -798,7 +799,7 @@ function permanentlyDeleteModel(idx) {
   recycleData.splice(idx, 1);
   updateRecycleBadge();
 
-  commitFileToGitHub('docs/data/recycle.json', buildRecycleContent(), 'chore: permanently remove "' + safe(model.name) + '" from recycle bin').then(function() {
+  commitFileToGitHub('data/recycle.json', buildRecycleContent(), 'chore: permanently remove "' + safe(model.name) + '" from recycle bin').then(function() {
     renderRecycleList();
     alert('已彻底清除「' + safe(model.name) + '」 ✓');
   }).catch(function(e) {
@@ -853,7 +854,7 @@ function connectModel(idx) {
   updateConnectedBadge();
 
   var connContent = JSON.stringify({ models: connectedData, meta: { total: connectedData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-  commitFileToGitHub('docs/data/connected.json', connContent, 'chore: connect model "' + safe(model.name) + '"').then(function() {
+  commitFileToGitHub('data/connected.json', connContent, 'chore: connect model "' + safe(model.name) + '"').then(function() {
     renderConnectedList();
     alert('已将「' + safe(model.name) + '」加入接入站 ✓');
   }).catch(function(e) {
@@ -871,7 +872,7 @@ function disconnectModel(idx) {
   updateConnectedBadge();
 
   var connContent = JSON.stringify({ models: connectedData, meta: { total: connectedData.length, updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-  commitFileToGitHub('docs/data/connected.json', connContent, 'chore: disconnect model "' + safe(model.name) + '"').then(function() {
+  commitFileToGitHub('data/connected.json', connContent, 'chore: disconnect model "' + safe(model.name) + '"').then(function() {
     renderConnectedList();
     alert('已将「' + safe(model.name) + '」移出接入站 ✓');
   }).catch(function(e) {
@@ -947,12 +948,12 @@ function executeManualAdd(overlay) {
     }
 
     allModelsData.unshift(newModel);
-    var commitTasks = [{ path: 'docs/data/all_models.json', content: buildAllModelsContent(), message: 'feat: manually add model "' + name + '"' }];
+    var commitTasks = [{ path: 'data/all_models.json', content: buildAllModelsContent(), message: 'feat: manually add model "' + name + '"' }];
 
     if (target === 'daily') {
       currentDailyData.models = currentDailyData.models || [];
       currentDailyData.models.unshift(newModel);
-      commitTasks.push({ path: 'docs/data/daily_report.json', content: buildDailyContent(), message: 'feat: manually add daily model "' + name + '"' });
+      commitTasks.push({ path: 'data/daily_report.json', content: buildDailyContent(), message: 'feat: manually add daily model "' + name + '"' });
     }
 
     return commitFilesSequentially(commitTasks).then(function() {
@@ -1008,7 +1009,7 @@ function executeSmartAdd(overlay) {
         'Accept': 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        ref: GITHUB_BRANCH,
+        ref: GITHUB_SOURCE_BRANCH,
         inputs: {
           content: input,
           target: target
@@ -1135,7 +1136,7 @@ function executeUpdate(overlay) {
 
     // 保存到 GitHub
     var allContent = JSON.stringify({ models: allModelsData, meta: { total: allModelsData.length, generated_at: new Date().toISOString().replace('T', ' ').substring(0, 19) } }, null, 2);
-    return commitFileToGitHub('docs/data/all_models.json', allContent, 'chore: update ' + newModels.length + ' models from daily reports (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
+    return commitFileToGitHub('data/all_models.json', allContent, 'chore: update ' + newModels.length + ' models from daily reports (' + document.getElementById('update-start').value + ' ~ ' + document.getElementById('update-end').value + ')').then(function() {
       statusEl.textContent = '✓ 成功新增 ' + newModels.length + ' 条模型到总表！';
       progressEl.style.width = '100%';
       filterAllModels();
@@ -1540,7 +1541,7 @@ function triggerReview() {
         'Accept': 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        ref: GITHUB_BRANCH,
+        ref: GITHUB_SOURCE_BRANCH,
         inputs: {
           since: since,
           until: until
