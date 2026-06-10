@@ -14,7 +14,8 @@
       "website": "https://huggingface.co/nvidia/ArtiFixer",
       "note": "HuggingFace",
       "release_date": "2026-06-04",
-      "created_date": "2026-06-05"
+      "created_date": "2026-06-05",
+      "data_source": "huggingface"
     }
   ],
   "meta": {

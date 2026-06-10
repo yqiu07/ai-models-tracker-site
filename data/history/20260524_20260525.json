@@ -14,7 +14,8 @@
       "website": "https://huggingface.co/nvidia/gamma-world-test",
       "note": "HuggingFace",
       "release_date": "2026-05-24",
-      "created_date": "2026-05-25"
+      "created_date": "2026-05-25",
+      "data_source": "huggingface"
     },
     {
       "name": "Fun-ASR-Nano-2512-hf",
@@ -30,7 +31,8 @@
       "website": "https://huggingface.co/FunAudioLLM/Fun-ASR-Nano-2512-hf",
       "note": "HuggingFace",
       "release_date": "2026-05-24",
-      "created_date": "2026-05-25"
+      "created_date": "2026-05-25",
+      "data_source": "huggingface"
     }
   ],
   "meta": {

@@ -14,7 +14,8 @@
       "website": "https://llm-stats.com/models/claude-opus-4-8",
       "note": "1000k上下文；顶级推理能力；顶级编码能力；高端定价 [重要性:高|Anthropic Claude Opus 主线高端模型若属实属于旗舰级重大版本更新。]",
       "release_date": "2026-05-28",
-      "created_date": "2026-05-29"
+      "created_date": "2026-05-29",
+      "data_source": "llmstats"
     },
     {
       "name": "DeepSeek-V4 Flash",
@@ -30,7 +31,25 @@
       "website": "",
       "note": "DeepSeek于2026年5月28日最新发布的高性价比推理优化版本，提供$0.14/M token定价及每日200万Token免费额度，主打高并发、低成本商用场景。",
       "release_date": "2026-05-28",
-      "created_date": "2026-05-29"
+      "created_date": "2026-05-29",
+      "data_source": "unknown"
+    },
+    {
+      "name": "豆包Seed 2.0 Pro",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "字节跳动/豆包",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "豆包于2026年5月28日前后正式发布升级版Seed 2.0 Pro，综合性能跻身全球前五，以$1/M token超低价格和MMMU-Pro 68.7%精度成为国产综合能力最强的商用大模型之一。",
+      "release_date": "2026-05-28",
+      "created_date": "2026-05-29",
+      "data_source": "unknown"
     },
     {
       "name": "HappyHorse 1.0",
@@ -46,7 +65,8 @@
       "website": "",
       "note": "2026年5月28日官宣发布的首个专注高质量长时序视频生成的多模态基础模型，被列为2026年5月AI模型排行榜‘视频生成’唯一代表，以SOTA视频质量定位内容创作者市场。",
       "release_date": "2026-05-28",
-      "created_date": "2026-05-29"
+      "created_date": "2026-05-29",
+      "data_source": "unknown"
     },
     {
       "name": "稀宇极智MoE大模型（未公开命名）",
@@ -62,15 +82,14 @@
       "website": "",
       "note": "稀宇极智于2026年5月28日国务院新闻办中外记者见面会上确认发布的国内首个全自研MoE架构大模型，以不到行业巨头1%算力成本实现顶尖性能，覆盖文本理解、语音合成、视频生成及智能体全栈能力。",
       "release_date": "2026-05-28",
-      "created_date": "2026-05-29"
+      "created_date": "2026-05-29",
+      "data_source": "unknown"
     }
   ],
   "meta": {
     "since": "2026-05-28",
     "until": "2026-05-28",
     "count": 5,
-    "generated_at": "2026-05-29 02:05:13",
-    "total": 4,
-    "updated_at": "2026-06-05 03:25:33"
+    "generated_at": "2026-05-29 02:05:13"
   }
 }

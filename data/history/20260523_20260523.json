@@ -14,7 +14,8 @@
       "website": "",
       "note": "官方称推理速度达400 tokens/s，面向高吞吐低延迟场景优化的GLM系列新版本",
       "release_date": "2026-05-23",
-      "created_date": "2026-05-24"
+      "created_date": "2026-05-24",
+      "data_source": "unknown"
     },
     {
       "name": "BitCPM-CANN",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "基于华为昇腾910B芯片全栈原生训练的开源大模型，适配CANN生态，强调国产算力高效部署",
       "release_date": "2026-05-23",
-      "created_date": "2026-05-24"
+      "created_date": "2026-05-24",
+      "data_source": "unknown"
     },
     {
       "name": "Confucius4-TTS",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "支持14种语言零样本语音克隆的TTS引擎，即将全量开源",
       "release_date": "2026-05-23",
-      "created_date": "2026-05-24"
+      "created_date": "2026-05-24",
+      "data_source": "unknown"
     },
     {
       "name": "AlphaProof Nexus",
@@ -62,7 +65,8 @@
       "website": "",
       "note": "首个端到端可验证数学证明生成系统，集成强化学习驱动的搜索与Coq/Galaxy形式化验证闭环",
       "release_date": "2026-05-23",
-      "created_date": "2026-05-24"
+      "created_date": "2026-05-24",
+      "data_source": "unknown"
     }
   ],
   "meta": {

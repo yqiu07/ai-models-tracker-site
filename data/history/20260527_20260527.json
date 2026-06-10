@@ -14,7 +14,8 @@
       "website": "https://huggingface.co/nvidia/Assemble_Trocar",
       "note": "HuggingFace",
       "release_date": "2026-05-27",
-      "created_date": "2026-05-28"
+      "created_date": "2026-05-28",
+      "data_source": "huggingface"
     },
     {
       "name": "Protenix-v2",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "开源蛋白质语言模型v2版本，支持端到端突变效应预测与条件性折叠生成，在CAMEO基准上刷新SOTA",
       "release_date": "2026-05-27",
-      "created_date": "2026-05-28"
+      "created_date": "2026-05-28",
+      "data_source": "unknown"
     },
     {
       "name": "WholebodyVLA",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "首个覆盖全身运动控制（含手指微操、步态平衡、双臂协同）的视觉-语言-动作联合模型，专为通用机器人任务设计",
       "release_date": "2026-05-27",
-      "created_date": "2026-05-28"
+      "created_date": "2026-05-28",
+      "data_source": "unknown"
     }
   ],
   "meta": {

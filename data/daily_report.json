@@ -1,58 +1,27 @@
 {
   "models": [
     {
-      "name": "Claude Fable 5",
+      "name": "ArtiFixer",
       "connected": "",
       "workflow_progress": "",
-      "company": "Anthropic",
+      "company": "英伟达",
       "domestic": "国外",
-      "open_source": "闭源",
+      "open_source": "开源",
       "size": "",
-      "type": "多模态",
-      "reasoning": "thinking",
-      "task_type": "通用对话",
-      "website": "https://llm-stats.com/models/claude-fable-5",
-      "note": "1000k上下文；顶级编码能力；高端定价",
-      "release_date": "2026-06-09",
-      "created_date": "2026-06-10"
-    },
-    {
-      "name": "Gemini 3",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Google/DeepMind",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "多模态大语言模型",
-      "reasoning": "",
+      "type": "未知",
+      "reasoning": "non-thinking",
       "task_type": "",
-      "website": "",
-      "note": "Google在WWDC26期间确认Gemini 3已集成至新版Siri，为苹果iOS 27提供底层AI能力，支持实时多模态推理与长上下文对话。",
-      "release_date": "2026-06-09",
-      "created_date": "2026-06-10"
-    },
-    {
-      "name": "Kimi-Max",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "月之暗面/Kimi",
-      "domestic": "国内",
-      "open_source": "",
-      "size": "",
-      "type": "长上下文多模态模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "专为医疗病理分析优化的Kimi系列新版本，支持200万token文档理解与显微图像-报告联合推理，已在合作三甲医院病理科启动临床验证。",
-      "release_date": "2026-06-09",
-      "created_date": "2026-06-10"
+      "website": "https://huggingface.co/nvidia/ArtiFixer",
+      "note": "HuggingFace",
+      "release_date": "2026-06-04",
+      "created_date": "2026-06-05",
+      "data_source": "huggingface"
     }
   ],
   "meta": {
-    "since": "2026-06-10",
-    "until": "2026-06-10",
-    "count": 3,
-    "generated_at": "2026-06-10 11:09:51"
+    "since": "2026-06-04",
+    "until": "2026-06-04",
+    "count": 1,
+    "generated_at": "2026-06-05 02:11:44"
   }
 }

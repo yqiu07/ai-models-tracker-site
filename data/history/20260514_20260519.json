@@ -14,7 +14,8 @@
       "website": "https://llm-stats.com/models/gemini-3.5-flash",
       "note": "1048k上下文 [重要性:高|Google DeepMind 重点模型 Gemini 系列的重大版本更新子型号，具备较高行业关注度。]",
       "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
+      "created_date": "2026-05-20",
+      "data_source": "llmstats"
     },
     {
       "name": "Gemini 3.5 Pro",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "Gemini 3.5系列中更强大的版本，具备更强推理与长程任务能力，当前处于内部测试阶段，后续将向更多用户分批发布。",
       "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
+      "created_date": "2026-05-20",
+      "data_source": "unknown"
     },
     {
       "name": "Gemini Omni",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "基于世界模型技术的新型视频生成模型，支持文本/图像/音频/视频混合输入，可对话式编辑视频（如修改角色、背景、风格），并支持自拍驱动内容生成。",
       "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
+      "created_date": "2026-05-20",
+      "data_source": "unknown"
     },
     {
       "name": "远征A3 全栈物理AI大模型（含多模态感知系统、全身运动控制模型）",
@@ -62,7 +65,8 @@
       "website": "",
       "note": "支撑第10000台通用具身机器人量产的全栈自研模型体系，覆盖视觉-语言-动作闭环，在汽车制造、3C装配等真实工业场景实现24小时稳定作业",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-19"
+      "created_date": "2026-05-19",
+      "data_source": "unknown"
     },
     {
       "name": "DiscoRL（双层元强化学习框架）",
@@ -78,7 +82,8 @@
       "website": "",
       "note": "通过底层策略试错与上层元网络自主优化规则，实现AI算法的自我设计与跨游戏泛化，在57款游戏中超越MuZero等人工设计算法",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-19"
+      "created_date": "2026-05-19",
+      "data_source": "unknown"
     },
     {
       "name": "GPT-5.6",
@@ -94,7 +99,8 @@
       "website": "",
       "note": "尚未正式发布，仅内测代号曝光（ember-alpha/beacon-alpha）；下月或升级发布",
       "release_date": "2026-05-15",
-      "created_date": "2026-05-19"
+      "created_date": "2026-05-19",
+      "data_source": "unknown"
     },
     {
       "name": "Grok Build (Early Access v0.1)",
@@ -110,7 +116,8 @@
       "website": "",
       "note": "xAI发布的首个面向开发者任务的编程智能体，支持计划模式、并行子Agent机制与深度worktree集成，兼容AGENTS.md和MCP协议。",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-19"
+      "created_date": "2026-05-19",
+      "data_source": "unknown"
     },
     {
       "name": "Mavis",
@@ -126,7 +133,8 @@
       "website": "",
       "note": "MiniMax升级Agent平台",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-19"
+      "created_date": "2026-05-19",
+      "data_source": "unknown"
     },
     {
       "name": "MiniCPM-V 4.6",
@@ -142,7 +150,8 @@
       "website": "",
       "note": "面壁开源端侧多模态模型",
       "release_date": "2026-05-14",
-      "created_date": "2026-05-19"
+      "created_date": "2026-05-19",
+      "data_source": "unknown"
     }
   ],
   "meta": {

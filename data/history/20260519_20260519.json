@@ -14,7 +14,8 @@
       "website": "https://llm-stats.com/models/gemini-3.5-flash",
       "note": "1048k上下文 [重要性:高|Google DeepMind 重点模型 Gemini 系列的重大版本更新子型号，具备较高行业关注度。]",
       "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
+      "created_date": "2026-05-20",
+      "data_source": "llmstats"
     },
     {
       "name": "Gemini 3.5 Pro",
@@ -30,7 +31,8 @@
       "website": "",
       "note": "Gemini 3.5系列中更强大的版本，具备更强推理与长程任务能力，当前处于内部测试阶段，后续将向更多用户分批发布。",
       "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
+      "created_date": "2026-05-20",
+      "data_source": "unknown"
     },
     {
       "name": "Gemini Omni",
@@ -46,7 +48,8 @@
       "website": "",
       "note": "基于世界模型技术的新型视频生成模型，支持文本/图像/音频/视频混合输入，可对话式编辑视频（如修改角色、背景、风格），并支持自拍驱动内容生成。",
       "release_date": "2026-05-19",
-      "created_date": "2026-05-20"
+      "created_date": "2026-05-20",
+      "data_source": "unknown"
     }
   ],
   "meta": {
