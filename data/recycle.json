@@ -269,10 +269,71 @@
       "source": "all",
       "deleted_at": "2026-06-08 09:19:27",
       "reason": "gap过时: 发布4/20→录入6/6, gap=47天, 远超7天阈值"
+    },
+    {
+      "name": "Gemini 3",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Google/DeepMind",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "多模态大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "Google在WWDC26期间确认Gemini 3已集成至新版Siri，为苹果iOS 27提供底层AI能力，支持实时多模态推理与长上下文对话。",
+      "release_date": "2026-06-09",
+      "created_date": "2026-06-10",
+      "source": "daily",
+      "source_url": "data/history/20260610_20260610.json",
+      "deleted_at": "2026-06-10 08:26:29",
+      "reason": "幻觉数据: LLM生成的虚假模型信息"
+    },
+    {
+      "name": "Kimi-Max",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "月之暗面/Kimi",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "长上下文多模态模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "专为医疗病理分析优化的Kimi系列新版本，支持200万token文档理解与显微图像-报告联合推理，已在合作三甲医院病理科启动临床验证。",
+      "release_date": "2026-06-09",
+      "created_date": "2026-06-10",
+      "data_source": "unknown",
+      "source": "daily",
+      "source_url": "data/history/20260610_20260610.json",
+      "deleted_at": "2026-06-10 11:17:39",
+      "reason": "幻觉数据: LLM生成的虚假模型信息"
+    },
+    {
+      "name": "MAI-Thinking-1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Microsoft",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "推理型大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "微软发布的旗舰推理模型，在编码基准测试中性能媲美 Anthropic Claude Sonnet 4.6，为微软新一代智能体核心推理引擎。",
+      "release_date": "2026-06-03",
+      "created_date": "2026-06-04",
+      "data_source": "unknown",
+      "source": "daily",
+      "source_url": "data/history/20260603_20260603.json",
+      "deleted_at": "2026-06-10 11:46:33"
     }
   ],
   "meta": {
-    "total": 15,
-    "updated_at": "2026-06-08 09:19:27"
+    "total": 18,
+    "updated_at": "2026-06-10 11:46:33"
   }
 }
