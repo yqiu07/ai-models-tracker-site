@@ -17,8 +17,8 @@
     python review_daily.py --dry-run          # 预览模式，不写回
 
 环境变量:
-    KUAI_API_KEY / KUAI_API_BASE  — 主审核 LLM (GPT-5.5)
-    LLM_API_KEY / LLM_API_BASE / LLM_MODEL — 备选 LLM
+    LLM_API_KEY / LLM_API_BASE  — 主审核 LLM (GPT-5.5)
+    LLM_MODEL — 审核用模型（默认 gpt-5.5）
 """
 
 from __future__ import annotations
@@ -40,6 +40,63 @@ DATA_DIR = ROOT / "data"
 DOCS_DATA_DIR = ROOT.parent / "docs" / "data"
 DAILY_REPORT_PATH = DOCS_DATA_DIR / "daily_report.json"
 EXCEL_PATH = DATA_DIR / "Object-Models.xlsx"
+
+# ── 回收站历史删除案例（RAG 参考） ──
+RECYCLE_JSON_PATH = DOCS_DATA_DIR / "recycle.json"
+
+
+def _load_recycle_examples() -> str:
+    """从 recycle.json 加载删除历史，提炼为 few-shot 参考文本。"""
+    if not RECYCLE_JSON_PATH.exists():
+        return ""
+    try:
+        with open(RECYCLE_JSON_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        models = data.get("models", [])
+        if not models:
+            return ""
+        seen_categories = {}
+        for m in reversed(models):
+            reason = m.get("reason", "")
+            if not reason:
+                continue
+            category = reason.split(":")[0].strip()
+            if category not in seen_categories:
+                seen_categories[category] = m
+        if not seen_categories:
+            return ""
+        lines = []
+        for category, m in seen_categories.items():
+            lines.append(
+                f'  - {m["name"]}（{m.get("company", "")}）→ 已删除，原因: {m.get("reason", "")}'
+            )
+        return "\n".join(lines)
+    except Exception:
+        return ""
+
+
+REVIEW_PROMPT_PREFIX = """## ⚠️ 历史删除参考（重要）
+以下模型曾被人工审核后从追踪列表中删除。请参考这些案例的删除原因，在审核时避免放行同类问题：
+
+### 典型删除案例（few-shot）
+1. **gap 过时**：GPT-5.5 Instant（OpenAI）— 发布 2026-05-05，录入 2026-05-30，gap=25 天。只追踪近期新发布的模型，发布日期距离录入超过 7 天的应标记删除。
+2. **重复录入**：豆包 Seed 2.0 Pro / Doubao-Seed-2.0-Pro — 同一模型的中英文名，名称归一化后重复。注意识别中英文、连字符/空格等变体。
+3. **非模型**：Claude Code（Anthropic）— 编程智能体/产品工具，非基座模型或模型版本更新。
+4. **未经证实**：DeepSeek V4 — 版本号存疑，无官方发布渠道可验证。
+5. **未公开发布**：Mythos Preview（Anthropic）— 无限期封印的内部模型。
+
+### 动态历史记录
+{recycle_examples}
+
+### 审核原则
+- 遇到与上述案例同类模式的模型，应标记 should_remove = true
+- gap 过时规则：created_date - release_date > 7 天 → 建议删除（仅对 2026-05-28 及之后创建的模型生效）
+- 重复检测：注意中英文名、连字符/空格/大小写变体
+- 产品 vs 模型：编程工具、搜索引擎、聊天产品等不是模型本身
+
+---
+
+"""
 
 REVIEW_PROMPT = """你是一名资深 AI 模型追踪分析师。请审核以下日报中的模型数据。
 
@@ -109,18 +166,13 @@ def load_env():
 
 
 def call_llm(prompt: str) -> str:
-    """调用 LLM API。优先 KUAI，降级到 LLM_API。"""
-    api_key = os.environ.get("KUAI_API_KEY", "")
-    api_base = os.environ.get("KUAI_API_BASE", "https://api.kuai.host/v1")
+    """调用 LLM API。"""
+    api_key = os.environ.get("LLM_API_KEY", "")
+    api_base = os.environ.get("LLM_API_BASE", "https://api.kuai.host/v1")
     model = os.environ.get("REVIEW_MODEL", "gpt-5.5")
 
     if not api_key:
-        api_key = os.environ.get("LLM_API_KEY", "")
-        api_base = os.environ.get("LLM_API_BASE", "")
-        model = os.environ.get("LLM_MODEL", "qwen3.6-plus")
-
-    if not api_key:
-        print("[ERROR] No API key configured (KUAI_API_KEY or LLM_API_KEY)")
+        print("[ERROR] No API key configured (LLM_API_KEY)")
         sys.exit(1)
 
     url = f"{api_base}/chat/completions"
@@ -226,9 +278,11 @@ def main():
 
     print(f"[INFO] Reviewing daily report: {since_dash} ~ {until_dash}, {len(models)} models")
 
-    # 构造审核 prompt
+    # 构造审核 prompt（前缀含历史删除案例 few-shot）
+    recycle_examples = _load_recycle_examples()
+    prefix = REVIEW_PROMPT_PREFIX.format(recycle_examples=recycle_examples) if recycle_examples else ""
     models_json = json.dumps(models, ensure_ascii=False, indent=2)
-    prompt = REVIEW_PROMPT.format(
+    prompt = prefix + REVIEW_PROMPT.format(
         since=since_dash,
         until=until_dash,
         models_json=models_json,
