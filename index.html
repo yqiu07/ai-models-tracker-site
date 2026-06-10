@@ -945,7 +945,8 @@ function executeManualAdd(overlay) {
     release_date: overlay.querySelector('#add-release').value || today,
     created_date: today,
     connected: '',
-    workflow_progress: ''
+    workflow_progress: '',
+    data_source: 'manual'
   };
 
   statusEl.textContent = '正在保存...';
