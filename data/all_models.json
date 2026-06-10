@@ -15,7 +15,7 @@
       "note": "官方认为目前moral对齐最好的模型",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "o4 mini",
@@ -32,7 +32,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Claude 3 Opus",
@@ -49,7 +49,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3-32b",
@@ -66,7 +66,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-max",
@@ -83,7 +83,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "o3",
@@ -100,7 +100,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "GPT 5",
@@ -117,7 +117,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "TBStars2.0-42B-A3.5B",
@@ -134,7 +134,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "DeepSeek-V3.2",
@@ -151,7 +151,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "claude37_sonnet",
@@ -168,7 +168,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Claude 4 Opus",
@@ -202,7 +202,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-72b",
@@ -219,7 +219,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-31",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Oyster_7B_dpo",
@@ -236,7 +236,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-10-31",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Minimax M2",
@@ -253,7 +253,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual,txresearch"
     },
     {
       "name": "Gemini 3 Flash",
@@ -270,7 +270,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "x-ai/grok-4",
@@ -287,7 +287,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Gemini 3 Pro",
@@ -304,7 +304,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen2.5-32b-instruct",
@@ -321,7 +321,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-72b-instruct",
@@ -338,7 +338,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Meta-Llama-3-1-405B-Instruct",
@@ -355,7 +355,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "llama-4-maverick-17b-128e-instruct",
@@ -372,7 +372,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Seed-OSS-36B-Base",
@@ -389,7 +389,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-14b",
@@ -406,7 +406,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "GLM-4.7",
@@ -423,7 +423,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen-plus-character",
@@ -457,7 +457,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "doubao-seed-1-6-thinking-250715",
@@ -474,7 +474,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-04",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Claude 4.5 Sonnet",
@@ -508,7 +508,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-06",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "DeepSeek-V3",
@@ -525,7 +525,7 @@
       "note": "对标GPT-4-turbo / Claude 3 Opus",
       "release_date": "",
       "created_date": "2025-11-06",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "qwen2.5-14b",
@@ -542,7 +542,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-07",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "GPT 4o",
@@ -559,7 +559,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-11-10",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "deepseek-r1",
@@ -576,7 +576,7 @@
       "note": "对标GPT-o1 / Gemini 2.5 Flash Thinking",
       "release_date": "",
       "created_date": "2025-11-11",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MiMo-V2-Flash",
@@ -593,7 +593,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-12-23",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "gpt-oss-120b",
@@ -627,7 +627,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-12-23",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "doubao-seed-1-6-251015",
@@ -644,7 +644,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-12-23",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "kimi-k2-thinking",
@@ -661,7 +661,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-12-23",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Llama-3.3-70B-Instruct",
@@ -678,7 +678,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-12-23",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-235b-a22b",
@@ -695,7 +695,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-12-23",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "gpt-5.2-1211-global",
@@ -712,7 +712,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2025-12-23",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "MiniMax M2.1",
@@ -729,7 +729,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-04",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "ERNIE-5.0-Preview-1203",
@@ -746,7 +746,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-10",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "K-EXAONE-236B-A23B",
@@ -763,7 +763,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-10",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwq-plus",
@@ -780,7 +780,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwq-32b",
@@ -797,7 +797,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3-omni-flash",
@@ -814,7 +814,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-next-80b-a3b-thinking",
@@ -831,7 +831,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3-next-80b-a3b-instruct",
@@ -848,7 +848,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3-1.7b",
@@ -865,7 +865,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-235b-a22b-thinking-2507",
@@ -882,7 +882,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3-235b-a22b-instruct-2507",
@@ -899,7 +899,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3-30b-a3b-instruct-2507",
@@ -916,7 +916,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-8b",
@@ -933,7 +933,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-30b-a3b",
@@ -950,7 +950,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-max-preview",
@@ -967,7 +967,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-flash",
@@ -984,7 +984,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-14b-instruct-1m",
@@ -1001,7 +1001,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-30b-a3b-thinking-2507",
@@ -1018,7 +1018,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-0.6b",
@@ -1035,7 +1035,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-3b-instruct",
@@ -1052,7 +1052,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-long",
@@ -1069,7 +1069,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-turbo",
@@ -1086,7 +1086,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-0.5b-instruct",
@@ -1103,7 +1103,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-1.5b-instruct",
@@ -1120,7 +1120,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-plus",
@@ -1137,7 +1137,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-7b-instruct",
@@ -1154,7 +1154,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-7b-instruct-1m",
@@ -1171,7 +1171,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-omni-7b",
@@ -1188,7 +1188,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen2.5-14b-instruct",
@@ -1205,7 +1205,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-4b",
@@ -1222,7 +1222,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-13",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "LongCat-Flash-Thinking-2601",
@@ -1239,7 +1239,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-19",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "Baichuan-M3",
@@ -1273,7 +1273,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-28",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3-max-thinking",
@@ -1290,7 +1290,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-28",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-flash-no-guard",
@@ -1307,7 +1307,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-plus-no-guard",
@@ -1324,7 +1324,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-plus-character-no-guard",
@@ -1341,7 +1341,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen-long-no-guard",
@@ -1358,7 +1358,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-14b-instruct-1m-no-guard",
@@ -1375,7 +1375,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "GLM-4.7-Flash",
@@ -1392,7 +1392,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen2.5-0.5b-instruct-no-guard",
@@ -1409,7 +1409,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-1.5b-instruct-no-guard",
@@ -1426,7 +1426,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen2.5-3b-instruct-no-guard",
@@ -1443,7 +1443,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-01-30",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "doubao-seed-2.0",
@@ -1460,7 +1460,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "MiniMax M2.5",
@@ -1477,7 +1477,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "FireRed-Image-Edit-1.0",
@@ -1494,7 +1494,7 @@
       "note": "小红书；通用图像编辑模型",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "qwen3.5-397b-a17b",
@@ -1511,7 +1511,7 @@
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "claude-opus-4-6-thinking",
@@ -1528,7 +1528,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "MiniMax Music 2.5",
@@ -1562,7 +1562,7 @@
       "note": "AI Lab；科学领域多模态大模型",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Grok 4.20 Beta",
@@ -1596,7 +1596,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "Protenix-v1",
@@ -1664,7 +1664,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "claude-opus-4-6",
@@ -1681,7 +1681,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-24",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Xiaomi-Robotics-0 series",
@@ -1698,7 +1698,7 @@
       "note": "VLA模型；具身智能基座类",
       "release_date": "",
       "created_date": "2026-02-25",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "GLM-OCR",
@@ -1732,7 +1732,7 @@
       "note": "NVIDIA；earth-2系列最新模型，用于极端天气预测",
       "release_date": "",
       "created_date": "2026-02-25",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Emu3.5",
@@ -1749,7 +1749,7 @@
       "note": "智源；世界模型",
       "release_date": "",
       "created_date": "2026-02-25",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Genie 3",
@@ -1783,7 +1783,7 @@
       "note": "蚂蚁；世界模型",
       "release_date": "",
       "created_date": "2026-02-25",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "UniFolM-VLA-0",
@@ -1800,7 +1800,7 @@
       "note": "宇树科技；VLA模型；具身智能基座类",
       "release_date": "",
       "created_date": "2026-02-25",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "SkyReels-V3-A2V-19B",
@@ -1817,7 +1817,7 @@
       "note": "Skywork AI/昆仑万维；视频生成模型",
       "release_date": "",
       "created_date": "2026-02-25",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Qwen3-Coder-Next",
@@ -1834,7 +1834,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-25",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Ming-flash-omni-2.0",
@@ -1851,7 +1851,7 @@
       "note": "inclusionAI（蚂蚁）；图像、音频...",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "ernie-5.0-0110",
@@ -1868,7 +1868,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "Kling 3.0 series (video, image, etc.,)",
@@ -1885,7 +1885,7 @@
       "note": "可灵（快手）；视频生成世界模型",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats,txresearch"
     },
     {
       "name": "GPT-5.3-Codex-Spark",
@@ -1902,7 +1902,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "PaperBanana",
@@ -1919,7 +1919,7 @@
       "note": "google+Peking University；",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Seedance 2.0 Pro",
@@ -1953,7 +1953,7 @@
       "note": "腾讯混元；主打on-device，边缘计算",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats,txresearch"
     },
     {
       "name": "Ace-Step 1.5",
@@ -1970,7 +1970,7 @@
       "note": "AMD；音乐生成",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "qwen3.5-122b-a10b",
@@ -1987,7 +1987,7 @@
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Seedream 5.0",
@@ -2021,7 +2021,7 @@
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Abot-N0",
@@ -2038,7 +2038,7 @@
       "note": "VLA模型；具身智能基座类；暂未完全开源；导航",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "qwen3.5-35b-a3b",
@@ -2055,7 +2055,7 @@
       "note": "同时支持thinking & non-thinking；支持多模态",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Mercury 2",
@@ -2072,7 +2072,7 @@
       "note": "Inception AI (USA)；聚焦提速",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "ABot-M0",
@@ -2089,7 +2089,7 @@
       "note": "VLA模型；具身智能基座类；暂未完全开源",
       "release_date": "",
       "created_date": "2026-02-27",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Qwen-Image-2.0",
@@ -2140,7 +2140,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-28",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "dola-seed-2.0-preview",
@@ -2157,7 +2157,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-02-28",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "miclaw",
@@ -2174,7 +2174,7 @@
       "note": "移动端app；推理llm为Mimo",
       "release_date": "",
       "created_date": "2026-03-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "GPT-5.4",
@@ -2191,7 +2191,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-09",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "Solaris",
@@ -2225,7 +2225,7 @@
       "note": "Karparthy(个人)；无人工干预agent",
       "release_date": "",
       "created_date": "2026-03-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Tabbit",
@@ -2259,7 +2259,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-09",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "大圣",
@@ -2276,7 +2276,7 @@
       "note": "上智、复旦、无限光年联合发布；科研助手agent；内置于“星河启智平台”",
       "release_date": "",
       "created_date": "2026-03-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Fun-CosyVoice3-0.5B-2512",
@@ -2293,7 +2293,7 @@
       "note": "text-to-speech；零样本多语种生成",
       "release_date": "",
       "created_date": "2026-03-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Gemini 3.1 Flash-Lite",
@@ -2310,7 +2310,7 @@
       "note": "0.25$/M",
       "release_date": "",
       "created_date": "2026-03-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MiniMax Music 2.5+",
@@ -2344,7 +2344,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-10",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "WorkBuddy",
@@ -2361,7 +2361,7 @@
       "note": "腾讯；个人工作助手；使用方式：APP",
       "release_date": "",
       "created_date": "2026-03-10",
-      "data_source": "unknown"
+      "data_source": "llmstats,txresearch"
     },
     {
       "name": "ArkClaw",
@@ -2378,7 +2378,7 @@
       "note": "功能：一键部署openclaw；使用方式：API",
       "release_date": "",
       "created_date": "2026-03-10",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "FireRed-Image-Edit-1.1",
@@ -2395,7 +2395,7 @@
       "note": "小红书；通用图像编辑基座模型；1.1版人像、化妆功能升级",
       "release_date": "",
       "created_date": "2026-03-10",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "UniScientist-30B-A3B",
@@ -2429,7 +2429,7 @@
       "note": "功能：一键部署openclaw；使用方式：PC端安装",
       "release_date": "",
       "created_date": "2026-03-11",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "doubao-seed1.8",
@@ -2446,7 +2446,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-11",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "qwen3.5-0.8B",
@@ -2463,7 +2463,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-11",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3.5-9B",
@@ -2480,7 +2480,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-11",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3.5-4B",
@@ -2497,7 +2497,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-11",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "qwen3.5-2B",
@@ -2514,7 +2514,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-11",
-      "data_source": "unknown"
+      "data_source": "llmstats,manual"
     },
     {
       "name": "GLM-5-Turbo",
@@ -2548,7 +2548,7 @@
       "note": "基于Manus；全本地资源调用+云端智能规划；强制人审",
       "release_date": "",
       "created_date": "2026-03-18",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "DuMeta+DuClaw+RedClaw",
@@ -2599,7 +2599,7 @@
       "note": "沙盒部署+强可视化；可自定义标准化skill，用于标准化经验沉淀",
       "release_date": "",
       "created_date": "2026-03-18",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MiroThinker-1.7",
@@ -2650,7 +2650,7 @@
       "note": "NVIDIA；针对agent的复杂任务规划和精准工具调用",
       "release_date": "",
       "created_date": "2026-03-18",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "SkillHub",
@@ -2684,7 +2684,7 @@
       "note": "",
       "release_date": "",
       "created_date": "2026-03-18",
-      "data_source": "unknown"
+      "data_source": "manual"
     },
     {
       "name": "PixVerse R1",
@@ -2718,7 +2718,7 @@
       "note": "微软自研图像生成模型；Arena.ai文本转图像排行榜第三；已集成至Copilot/Bing/PowerPoint",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Psi-W0",
@@ -2769,7 +2769,7 @@
       "note": "全球首个影视行业大模型；最高15秒1080P音画同步；支持多宫格智能分镜；多角色运动精准调度",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "PixVerse V6",
@@ -2786,7 +2786,7 @@
       "note": "通用视频模型V6；1080P几十秒生成；新增Team Plan协同功能",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Reve",
@@ -2803,7 +2803,7 @@
       "note": "Luma AI旗下图像生成+编辑模型；拖拽式编辑器；Image\nArena排名第16；$0.18/img",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Qwen3.6-27B",
@@ -2837,7 +2837,7 @@
       "note": "原生全双工语音大模型；边听边说；已上线豆包App；误回复率和误打断率降低一半；通话满意度提升8.34%",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Qwen3.6-35B-A3B",
@@ -2871,7 +2871,7 @@
       "note": "千问3.6-Plus；100万上下文窗口；智能体编程能力领先；多模态推理升级；兼容OpenClaw/Claude\nCode；GPQA 90.4%；AIME 78.8%；MMMLU 89.5%",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Spark 2.0",
@@ -2888,7 +2888,7 @@
       "note": "开源3D高斯溅射渲染引擎；配合Marble世界模型使用",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Sarvam-30B",
@@ -2905,7 +2905,7 @@
       "note": "印度AI实验室；GPQA 96.7%；与105B同期发布",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Sarvam-105B",
@@ -2939,7 +2939,7 @@
       "note": "策略模型；登顶MolmoSpaces",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Mamba-3",
@@ -2956,7 +2956,7 @@
       "note": "CMU+Princeton；SSM架构；ICLR\n2026；2x更小状态；超长文本和低延时优于Transformer",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Meoo/秒悟",
@@ -2973,7 +2973,7 @@
       "note": "阿里ATH团队AI开发工具；集成多模型",
       "release_date": "2026-04-15",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "step-3.5-flash",
@@ -3007,7 +3007,7 @@
       "note": "字节Seed团队图像生成模型；多图组合一致性；海报排版+Logo设计；最高4K；支持最多14张参考图",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Voxtral Mini",
@@ -3024,7 +3024,7 @@
       "note": "Mistral语音转文字模型；STT Arena排名第8；ELO\n-517",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MiniMax Music 2.6",
@@ -3075,7 +3075,7 @@
       "note": "通义万相2.7图像生成与编辑统一模型；千人千面捏脸；调色盘精准色彩控制；3K\ntoken超长文本渲染；支持12种语言",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Whisper Large V3 Turbo",
@@ -3092,7 +3092,7 @@
       "note": "OpenAI语音转文字模型；STT Arena排名第1；ELO\n2262；$0.35/min",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "XChat",
@@ -3109,7 +3109,7 @@
       "note": "集成Grok AI的社交应用；马斯克/X Corp.",
       "release_date": "2026-04-17",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "YOYO Claw",
@@ -3143,7 +3143,7 @@
       "note": "南加州大学；人形机器人基座模型；具身智能",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "mistral-small-4-119b-2603",
@@ -3177,7 +3177,7 @@
       "note": "小米旗舰基座模型；MoE+混合注意力架构；1M超长上下文；全球排名第八国内第二；专为Agent工作场景",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Midjourney V8 Alpha",
@@ -3194,7 +3194,7 @@
       "note": "2026年3月17日发布Alpha；生成速度5x提升；原生2K分辨率；文字渲染改进",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Marble 1.1-Plus",
@@ -3211,7 +3211,7 @@
       "note": "李飞飞团队世界模型增强版；专为大规模场景；自动补出更大范围3D世界",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Marble 1.1",
@@ -3228,7 +3228,7 @@
       "note": "李飞飞团队世界模型；照片生成可探索3D空间；光照和对比度优化",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MAI-Voice-1",
@@ -3245,7 +3245,7 @@
       "note": "微软自研语音生成模型；1秒可产出60秒音频；Mustafa\nSuleyman团队",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "veo-3.1-lite",
@@ -3262,7 +3262,7 @@
       "note": "Veo 3系列成本优化版；成本减半；720p\n$0.05/秒；支持文本转视频和图像转视频；4-8秒",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MAI-Transcribe-1",
@@ -3279,7 +3279,7 @@
       "note": "微软自研语音转写模型；批量转录速度是Azure\nFast的2.5倍；支持25种语言；Mustafa Suleyman团队",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Gemini Robotics-ER 1.6",
@@ -3296,7 +3296,7 @@
       "note": "具身机器人模型；Gemini Robotics系列升级版",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "lyria-3-pro",
@@ -3313,7 +3313,7 @@
       "note": "AI音乐生成模型；最长3分钟完整歌曲；支持结构化编排（前奏/主歌/副歌）；可精确控制节奏与歌词时间轴",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Imagen 4 Ultra",
@@ -3330,7 +3330,7 @@
       "note": "Google最高保真图像生成模型；超高画质；$0.10/img",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "LibTV",
@@ -3364,7 +3364,7 @@
       "note": "预测专用模型；General AI Prediction\nLeaderboard Elo 1034.2排名第一；政治治理领域对人类胜率63.2%",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Lantay",
@@ -3398,7 +3398,7 @@
       "note": "数字人大模型；支持分钟级长视频生成；唇形同步；已服务超7万家商家；另有Flash轻量版",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Flux 2 Max",
@@ -3415,7 +3415,7 @@
       "note": "FLUX.2系列最高质量版；4MP输出；支持10张参考图；$0.06/img",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "JoyAI-Image-Edit",
@@ -3432,7 +3432,7 @@
       "note": "京东开源图像编辑模型；240B参数",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Antigravity",
@@ -3449,7 +3449,7 @@
       "note": "谷歌编码Agent；收购Windsurf后推出；定位编程助手",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Being-H 0.7",
@@ -3466,7 +3466,7 @@
       "note": "通用具身世界模型；6项国际评测综合全球第一（4项登顶）；20万小时人类视频训练；基于潜空间推理",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Claude Managed Agents",
@@ -3483,7 +3483,7 @@
       "note": "全托管智能体运行环境；开发周期从数月压缩至数天；按使用量计费$0.08/活跃会话小时",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "claude-mythos-preview",
@@ -3500,7 +3500,7 @@
       "note": "Anthropic最强模型；可自主发现零日漏洞；超越Opus\n4.6；API定价为前代5倍；暂不全面开放",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Composer 2",
@@ -3517,7 +3517,7 @@
       "note": "Cursor内置编程模型；Terminal-Bench\n2.0超越Opus 4.6；价格降低80%",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Ising",
@@ -3551,7 +3551,7 @@
       "note": "Deepgram语音转文字模型；STT Arena排名第5；ELO\n294",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Gen-4 Aleph",
@@ -3568,7 +3568,7 @@
       "note": "Runway旗舰视频模型；in-context video\nmodel；支持多任务视觉生成；角色/场景一致性",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "LongCat-AudioDiT",
@@ -3602,7 +3602,7 @@
       "note": "多模态Coding基座模型；预训练阶段融合视觉与文本；200K上下文；可理解设计稿截图直接生成代码",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "gemini-3.1-flash-live-preview",
@@ -3619,7 +3619,7 @@
       "note": "实时语音+视觉Agent模型；低延迟audio-to-audio；支持WebSocket连续音视频流；支持工具调用和Google\nSearch",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "gemma-4-26B-A4B",
@@ -3636,7 +3636,7 @@
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "gemma-4-E2B",
@@ -3653,7 +3653,7 @@
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "gemma-4-E4B",
@@ -3670,7 +3670,7 @@
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "HY-Embodied-0.5",
@@ -3687,7 +3687,7 @@
       "note": "腾讯混元+Robotics\nX具身基础模型；混合Transformer架构；22项评测16项最佳；超100M具身专属数据；代码和权重已开源",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats,txresearch"
     },
     {
       "name": "MuonClip",
@@ -3721,7 +3721,7 @@
       "note": "FLUX.2系列专业版；$0.02/img",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "GPT-5.5 Pro",
@@ -3755,7 +3755,7 @@
       "note": "xAI图像生成模型；Image\nArena排名第5；$0.02/img；另有Pro版$0.07/img",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Grok Imagine Video",
@@ -3772,7 +3772,7 @@
       "note": "xAI视频生成模型；Video\nArena排名第1；支持文本转视频和图像转视频；$0.05/s",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "HappyHorse-1.0",
@@ -3789,7 +3789,7 @@
       "note": "匿名模型登顶Video Arena；Elo\n1332/1391；疑似阿里淘天未来生活实验室团队；可能采用Transfusion架构",
       "release_date": "2026-04-17",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Hermes Agent",
@@ -3806,7 +3806,7 @@
       "note": "开源Agent；内置学习循环机制；可从交互中持续学习",
       "release_date": "",
       "created_date": "2026-04-17",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "GPT-5.5",
@@ -3840,7 +3840,7 @@
       "note": "Gemma 4系列；Apache\n2.0全面开源；4款尺寸；E2B可手机离线运行；128K上下文；AIME 2026数学89.2%；Code Arena 978；GPQA\n82.3%；MMMLU 86.3%；262.1K上下文；.13/.4 per M tokens；135 tok/s",
       "release_date": "",
       "created_date": "2026-04-24",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Imagen 4 Standard",
@@ -3857,7 +3857,7 @@
       "note": "Google最新图像生成模型；支持2K分辨率；$0.05/img",
       "release_date": "",
       "created_date": "2026-04-24",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Revo 3",
@@ -3874,7 +3874,7 @@
       "note": "灵巧手硬件+算法；具身智能",
       "release_date": "",
       "created_date": "2026-04-24",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "NemoClaw",
@@ -4112,7 +4112,7 @@
       "note": "腾讯混元重建后首个开源MoE模型 [重要性:高|若确为腾讯混元重建后的首个开源MoE模型，属于重点关注公司的重大版本。]",
       "release_date": "2026-04-24",
       "created_date": "2026-04-28",
-      "data_source": "websearch"
+      "data_source": "txresearch,websearch"
     },
     {
       "name": "DeepSeek-V4-Pro-Max",
@@ -4129,7 +4129,7 @@
       "note": "MoE架构；2T参数；1048k上下文；顶级推理能力；顶级编码能力；MIT [重要性:高|若属DeepSeek主线旗舰重大版本，则具备高行业关注度。]",
       "release_date": "2026-04-23",
       "created_date": "2026-04-28",
-      "data_source": "llmstats"
+      "data_source": "llmstats,websearch"
     },
     {
       "name": "Hunyuan Hy3 preview",
@@ -4146,7 +4146,7 @@
       "note": "腾讯混元MoE开源模型",
       "release_date": "2026-04-24",
       "created_date": "2026-04-28",
-      "data_source": "unknown"
+      "data_source": "txresearch"
     },
     {
       "name": "ChatGPT Images 2.0",
@@ -4197,7 +4197,7 @@
       "note": "MoE架构；284B参数；1048k上下文；强推理能力；顶级编码能力；低成本；MIT [重要性:中|若属DeepSeek主线的Flash/低成本变体，属于重点模型的非旗舰子变体。]",
       "release_date": "2026-04-23",
       "created_date": "2026-04-28",
-      "data_source": "llmstats"
+      "data_source": "llmstats,websearch"
     },
     {
       "name": "可灵AI视频3.0",
@@ -4282,7 +4282,7 @@
       "note": "xAI旗舰API模型；Intelligence Index 53分超Claude Sonnet 4.6；输入.25/M输出.50/M比上代降40-60%；输出速度196 tok/s；准确率提升但非幻觉率下降；仍落后GPT-5.5与Opus 4.7",
       "release_date": "2026-05-06",
       "created_date": "2026-05-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Luma Uni-1.1",
@@ -4299,7 +4299,7 @@
       "note": "Uni-1升级到1.1并开放API；LMArena图像榜单全球前三；单图最低$0.0404；decoder-only自回归架构；支持9张参考图融合与多轮按句编辑；团队仅15人",
       "release_date": "",
       "created_date": "2026-05-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "SubQ",
@@ -4316,7 +4316,7 @@
       "note": "全球首个亚二次方稀疏注意力SSA架构模型；12M Token上下文；100万Token下比FlashAttention快52倍；1200万Token FLOP暴减近1000倍；RULER 128K得分95%；SWE-Bench 81.8%；13人团队；存争议：可能基于Kimi/DeepSeek稀疏注意力微调",
       "release_date": "2026-05-05",
       "created_date": "2026-05-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Orbit (Claude Cowork)",
@@ -4333,7 +4333,7 @@
       "note": "主动式简报与洞察系统（功能曝光/未正式发布）；集成Gmail/Slack/GitHub/Calendar/Drive/Figma六大连接器；每日生成跨工具个性化简报；从被动prompt切换到主动推送；瞄准开发者和产品经理",
       "release_date": "",
       "created_date": "2026-05-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "ring-2.6-1t:free",
@@ -4350,7 +4350,7 @@
       "note": "引入可调节Reasoning Effort机制支持high与xhigh两档推理强度；万亿参数旗舰思考模型；针对高频Agent工作流与高难推理任务优化；具备低Token开销与高效多步执行能力",
       "release_date": "2026-05-09",
       "created_date": "2026-05-13",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "perceptron-mk1",
@@ -4367,7 +4367,7 @@
       "note": "多模态视频与空间推理模型；专注物理世界动态与因果关系理解；具备极高成本效益",
       "release_date": "2026-05-13",
       "created_date": "2026-05-13",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "nemotron-climb-fasttext-classifiers",
@@ -4622,7 +4622,7 @@
       "note": "翁荔创业首个实时交互模型 | 来源: 腾讯研究院AI速递 20260513 [重要性:中|高关注海外创业公司的首个实时多模态交互模型，如属实具有较高跟踪价值，但不在重点关注公司清单且需核验。]",
       "release_date": "2026-05-12",
       "created_date": "2026-05-19",
-      "data_source": "txresearch"
+      "data_source": "txresearch,websearch"
     },
     {
       "name": "AnyFlow-FAR-Wan2.1-14B-Diffusers",
@@ -4690,7 +4690,7 @@
       "note": "1048k上下文 [重要性:高|Google DeepMind 重点模型 Gemini 系列的重大版本更新子型号，具备较高行业关注度。]",
       "release_date": "2026-05-19",
       "created_date": "2026-05-20",
-      "data_source": "llmstats"
+      "data_source": "llmstats,websearch"
     },
     {
       "name": "Gemini Omni",
@@ -5234,7 +5234,7 @@
       "note": "1000k上下文；顶级推理能力；顶级编码能力；高端定价 [重要性:高|Anthropic Claude Opus 主线高端模型若属实属于旗舰级重大版本更新。]",
       "release_date": "2026-05-28",
       "created_date": "2026-05-29",
-      "data_source": "llmstats"
+      "data_source": "llmstats,websearch"
     },
     {
       "name": "DeepSeek-V4 Flash",
@@ -5305,6 +5305,23 @@
       "data_source": "unknown"
     },
     {
+      "name": "MAI-Thinking-1",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Microsoft",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "旗舰推理大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "微软MAI家族首款中型自研推理模型，零蒸馏训练，在软件工程测试中性能媲美Sonnet 4.6。",
+      "release_date": "2026-06-02",
+      "created_date": "2026-06-03",
+      "data_source": "llmstats"
+    },
+    {
       "name": "LobsterAI Image-Video Matrix",
       "connected": "",
       "workflow_progress": "",
@@ -5353,7 +5370,7 @@
       "note": "50亿参数高效编码模型，深度集成GitHub Copilot与VS Code，专为微软技术栈优化。",
       "release_date": "2026-06-02",
       "created_date": "2026-06-03",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MiniMax M3",
@@ -5370,7 +5387,7 @@
       "note": "京东云率先上线的MiniMax最新多模态基础模型，支持图文音视频联合理解与生成。",
       "release_date": "2026-06-02",
       "created_date": "2026-06-03",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Qwen3.7-Plus",
@@ -5693,7 +5710,7 @@
       "note": "腾讯云发布的面向中大型企业的AI工作台智能体，集成ClawPro引擎与TokenHub调度系统，支持跨OA/CRM/ERP自动执行审批、报表生成、会议纪要归档等复合任务。",
       "release_date": "2026-06-05",
       "created_date": "2026-06-08",
-      "data_source": "unknown"
+      "data_source": "txresearch"
     },
     {
       "name": "Efficiency Agent Toolkit",
@@ -5710,7 +5727,7 @@
       "note": "包含QClaw、ima、元宝、腾讯文档AI插件等开箱即用智能体组件，支持个人与团队级自动化工作流编排，已在医疗、金融、零售等20+行业落地。",
       "release_date": "2026-06-05",
       "created_date": "2026-06-08",
-      "data_source": "unknown"
+      "data_source": "txresearch"
     },
     {
       "name": "gemma-4-E4B-it-qat-mobile-ct",
@@ -5744,7 +5761,7 @@
       "note": "面向个人、开发者与组织的通用大语言模型，具备自主拆解并执行100+步复杂工作流的能力，强调高智能密度与高token价值，在GPQA Diamond（87.9分）和GDPVal（72.5分）等权威评测中进入第一梯队。",
       "release_date": "2026-06-08",
       "created_date": "2026-06-09",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Claude Fable 5",
@@ -5765,7 +5782,7 @@
     }
   ],
   "meta": {
-    "total": 339,
-    "generated_at": "2026-06-10 11:46:33"
+    "total": 340,
+    "generated_at": "2026-06-10 11:17:39"
   }
 }

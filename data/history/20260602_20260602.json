@@ -66,7 +66,7 @@
       "note": "微软MAI家族首款中型自研推理模型，零蒸馏训练，在软件工程测试中性能媲美Sonnet 4.6。",
       "release_date": "2026-06-02",
       "created_date": "2026-06-03",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MAI-Code-1-Flash",
@@ -83,7 +83,7 @@
       "note": "50亿参数高效编码模型，深度集成GitHub Copilot与VS Code，专为微软技术栈优化。",
       "release_date": "2026-06-02",
       "created_date": "2026-06-03",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "DobotWAM",
@@ -117,7 +117,7 @@
       "note": "京东云率先上线的MiniMax最新多模态基础模型，支持图文音视频联合理解与生成。",
       "release_date": "2026-06-02",
       "created_date": "2026-06-03",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     }
   ],
   "meta": {

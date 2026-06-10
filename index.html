@@ -197,6 +197,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   .table-controls { flex-direction: column; align-items: stretch; }
   .table-count { margin-left: 0; }
 }
+/* === Raw Sources Browser === */
+.raw-sources-browser { margin-top: 24px; }
+.raw-sources-browser h2 { font-size: 1.2rem; margin-bottom: 12px; }
+.sub-tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+.sub-tab-btn { padding: 8px 16px; border: 1px solid var(--border); background: #fff; border-radius: 8px; cursor: pointer; font-size: .85rem; transition: all .2s; }
+.sub-tab-btn:hover { background: #f1f5f9; }
+.sub-tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.sub-tab-content { display: none; }
+.sub-tab-content.active { display: block; }
+.tx-article { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden; }
+.tx-article-header { padding: 14px 18px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background .2s; }
+.tx-article-header:hover { background: #f8fafc; }
+.tx-article-header .arrow { font-size: .8rem; color: var(--text-sec); transition: transform .2s; min-width: 16px; }
+.tx-article-header .arrow.open { transform: rotate(90deg); }
+.tx-article-header .date-badge { background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 6px; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+.tx-article-header .title { font-weight: 500; font-size: .95rem; flex: 1; }
+.tx-article-body { padding: 0 18px 18px; display: none; border-top: 1px solid var(--border); }
+.tx-article-body.open { display: block; padding-top: 14px; }
+.tx-article-body pre { white-space: pre-wrap; word-break: break-all; font-size: .82rem; line-height: 1.6; background: #f8fafc; border-radius: 8px; padding: 14px; max-height: 500px; overflow-y: auto; }
+.llm-model-row { display: grid; grid-template-columns: 2fr 1fr 1fr repeat(4, 80px); gap: 8px; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: .83rem; align-items: center; }
+.llm-model-row:hover { background: #f8fafc; }
+.llm-model-row.header-row { background: #f1f5f9; font-weight: 600; position: sticky; top: 0; z-index: 1; }
+.llm-score { text-align: center; }
+.llm-score-bar { display: inline-block; height: 6px; border-radius: 3px; background: var(--primary); vertical-align: middle; }
+.llm-list-wrapper { max-height: 600px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
+.hf-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; margin-bottom: 12px; }
+.hf-card h4 { margin-bottom: 8px; }
+.hf-card .hf-meta { font-size: .83rem; color: var(--text-sec); margin-bottom: 4px; }
+.raw-search { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; min-width: 240px; margin-bottom: 12px; }
+.raw-count { font-size: .85rem; color: var(--text-sec); margin-left: 12px; }
+@media (max-width: 768px) {
+  .llm-model-row { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
@@ -266,6 +299,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   </div>
   <div id="tab-sources" class="tab-content">
     <div id="source-grid" class="source-grid"></div>
+    <div class="raw-sources-browser">
+      <h2>📦 原始数据浏览器</h2>
+      <div class="sub-tabs">
+        <button class="sub-tab-btn active" onclick="switchRawTab('tx')">🗞️ 腾讯AI速递</button>
+        <button class="sub-tab-btn" onclick="switchRawTab('llm')">📊 LLM Stats</button>
+        <button class="sub-tab-btn" onclick="switchRawTab('hf')">🤗 HuggingFace</button>
+      </div>
+      <div id="raw-tx" class="sub-tab-content active">
+        <input type="text" class="raw-search" id="tx-search" placeholder="搜索日期或内容..." oninput="filterTxArticles()">
+        <span id="tx-count" class="raw-count"></span>
+        <div id="tx-list"></div>
+      </div>
+      <div id="raw-llm" class="sub-tab-content">
+        <input type="text" class="raw-search" id="llm-search" placeholder="搜索模型名称..." oninput="filterLlmModels()">
+        <span id="llm-count" class="raw-count"></span>
+        <div id="llm-list"></div>
+      </div>
+      <div id="raw-hf" class="sub-tab-content">
+        <span id="hf-count" class="raw-count"></span>
+        <div id="hf-list"></div>
+      </div>
+    </div>
   </div>
   <div id="tab-push" class="tab-content">
     <div class="card push-card">
@@ -432,6 +487,7 @@ function renderDailyReport(data) {
     if (safe(m.release_date)) html += '<div class="meta-line">发布: ' + escapeHtml(safe(m.release_date)) + '</div>';
     if (safe(m.size)) html += '<div class="meta-line">尺寸: ' + escapeHtml(safe(m.size)) + '</div>';
     if (safe(m.note)) html += '<div class="note-text">' + escapeHtml(safe(m.note)) + '</div>';
+    if (safe(m.data_source)) html += '<span class="badge" style="background:#e0f2fe;color:#0369a1;font-size:.7rem">📡 ' + escapeHtml(safe(m.data_source)) + '</span>';
     if (!currentDailyUrl.endsWith('.md')) {
       html += '<div style="margin-top:10px;display:flex;gap:8px;"><button class="delete-btn-cell" onclick="deleteDailyModel(' + i + ')">删除</button></div>';
     }
@@ -602,8 +658,10 @@ function commitFileToGitHub(path, content, message) {
           body: JSON.stringify(body)
         });
       }).then(function(r) {
-        if ((r.status === 409 || r.status === 422) && attempt < 3) {
-          return new Promise(function(resolve) { setTimeout(resolve, 900); }).then(function() { return putFile(attempt + 1); });
+        if ((r.status === 409 || r.status === 422) && attempt < 5) {
+          var delay = 1500 * attempt;
+          console.warn('[commitFile] attempt ' + attempt + ' got ' + r.status + ', retrying in ' + delay + 'ms...');
+          return new Promise(function(resolve) { setTimeout(resolve, delay); }).then(function() { return putFile(attempt + 1); });
         }
         if (!r.ok) {
           return r.json().catch(function() { return {}; }).then(function(errorData) {
@@ -620,11 +678,16 @@ function commitFileToGitHub(path, content, message) {
 function commitFilesSequentially(tasks) {
   var chain = Promise.resolve();
   for (var i = 0; i < tasks.length; i++) {
-    (function(task) {
+    (function(task, isLast) {
       chain = chain.then(function() {
-        return commitFileToGitHub(task.path, task.content, task.message);
+        return commitFileToGitHub(task.path, task.content, task.message).then(function(result) {
+          if (!isLast) {
+            return new Promise(function(resolve) { setTimeout(function() { resolve(result); }, 1500); });
+          }
+          return result;
+        });
       });
-    })(tasks[i]);
+    })(tasks[i], i === tasks.length - 1);
   }
   return chain;
 }
@@ -1489,6 +1552,7 @@ function loadSources() {
   }).catch(function() {
     document.getElementById('source-grid').innerHTML = '<div class="empty-state"><div class="icon">🔗</div><p>加载数据源失败</p></div>';
   });
+  loadRawSources();
 }
 
 function renderSources(data) {
@@ -1523,6 +1587,176 @@ function renderSources(data) {
     html += '</div>';
   }
   grid.innerHTML = html;
+}
+
+/* ===== Raw Sources Browser ===== */
+var rawSourcesData = null;
+var rawSourcesLoaded = false;
+
+function loadRawSources() {
+  if (rawSourcesLoaded) return;
+  rawSourcesLoaded = true;
+  fetch('data/sources.json').then(function(r) { return r.json(); }).then(function(data) {
+    rawSourcesData = data;
+    renderTxArticles();
+    renderLlmModels();
+    renderHfModels();
+  }).catch(function(err) {
+    console.error('Failed to load sources.json:', err);
+    document.getElementById('tx-list').innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>加载原始数据失败</p></div>';
+  });
+}
+
+function switchRawTab(tabName) {
+  var tabs = document.querySelectorAll('.sub-tab-content');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  document.getElementById('raw-' + tabName).classList.add('active');
+  var btns = document.querySelectorAll('.sub-tab-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  var names = ['tx', 'llm', 'hf'];
+  var idx = names.indexOf(tabName);
+  if (idx >= 0 && idx < btns.length) btns[idx].classList.add('active');
+}
+
+function toggleTxArticle(idx) {
+  var body = document.getElementById('tx-body-' + idx);
+  var arrow = document.getElementById('tx-arrow-' + idx);
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    arrow.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    arrow.classList.add('open');
+  }
+}
+
+/* --- Tencent AI Express --- */
+function renderTxArticles(filterText) {
+  if (!rawSourcesData || !rawSourcesData.txresearch) {
+    document.getElementById('tx-list').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无腾讯AI速递数据</p></div>';
+    return;
+  }
+  var articles = rawSourcesData.txresearch.articles || [];
+  var query = (filterText || '').toLowerCase();
+  var filtered = [];
+  for (var i = 0; i < articles.length; i++) {
+    var a = articles[i];
+    if (query && (a.date || '').toLowerCase().indexOf(query) < 0 && (a.title || '').toLowerCase().indexOf(query) < 0 && (a.content || '').toLowerCase().indexOf(query) < 0) continue;
+    filtered.push({ article: a, origIdx: i });
+  }
+  document.getElementById('tx-count').textContent = '共 ' + filtered.length + ' 篇' + (query ? '（筛选自 ' + articles.length + ' 篇）' : '');
+  if (filtered.length === 0) {
+    document.getElementById('tx-list').innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>无匹配结果</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var a = filtered[i].article;
+    var idx = filtered[i].origIdx;
+    var preview = (a.content || '').substring(0, 120).replace(/\n/g, ' ');
+    html += '<div class="tx-article">';
+    html += '<div class="tx-article-header" onclick="toggleTxArticle(' + idx + ')">';
+    html += '<span class="arrow" id="tx-arrow-' + idx + '">▶</span>';
+    html += '<span class="date-badge">' + escapeHtml(safe(a.date)) + '</span>';
+    html += '<span class="title">' + escapeHtml(safe(a.title)) + '</span>';
+    html += '</div>';
+    html += '<div class="tx-article-body" id="tx-body-' + idx + '">';
+    html += '<pre>' + escapeHtml(safe(a.content)) + '</pre>';
+    html += '</div></div>';
+  }
+  document.getElementById('tx-list').innerHTML = html;
+}
+
+function filterTxArticles() {
+  var query = document.getElementById('tx-search').value;
+  renderTxArticles(query);
+}
+
+/* --- LLM Stats --- */
+function renderLlmModels(filterText) {
+  if (!rawSourcesData || !rawSourcesData.llmstats) {
+    document.getElementById('llm-list').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无 LLM Stats 数据</p></div>';
+    return;
+  }
+  var models = rawSourcesData.llmstats.models || [];
+  var query = (filterText || '').toLowerCase();
+  var filtered = [];
+  for (var i = 0; i < models.length; i++) {
+    var m = models[i];
+    if (query && (m.name || '').toLowerCase().indexOf(query) < 0 && (m.organization || '').toLowerCase().indexOf(query) < 0) continue;
+    filtered.push(m);
+  }
+  document.getElementById('llm-count').textContent = '共 ' + filtered.length + ' 个模型' + (query ? '（筛选自 ' + models.length + ' 个）' : '');
+  if (filtered.length === 0) {
+    document.getElementById('llm-list').innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>无匹配结果</p></div>';
+    return;
+  }
+  var html = '<div class="llm-list-wrapper">';
+  html += '<div class="llm-model-row header-row">';
+  html += '<div>模型名称</div><div>组织</div><div>许可证</div>';
+  html += '<div class="llm-score">Arena</div><div class="llm-score">MMLU</div><div class="llm-score">GPQA</div><div class="llm-score">MATH</div>';
+  html += '</div>';
+  for (var i = 0; i < filtered.length; i++) {
+    var m = filtered[i];
+    html += '<div class="llm-model-row">';
+    html += '<div style="font-weight:500">' + escapeHtml(safe(m.name)) + '</div>';
+    html += '<div>' + escapeHtml(safe(m.organization)) + '</div>';
+    html += '<div style="font-size:.78rem">' + escapeHtml(safe(m.license)) + '</div>';
+    html += renderScoreCell(m.arena_score, 1400);
+    html += renderScoreCell(m.mmlu_score, 100);
+    html += renderScoreCell(m.gpqa_score, 100);
+    html += renderScoreCell(m.math_score, 100);
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('llm-list').innerHTML = html;
+}
+
+function renderScoreCell(score, maxVal) {
+  if (!score && score !== 0) return '<div class="llm-score">-</div>';
+  var pct = Math.min(100, (score / maxVal) * 100);
+  var color = pct > 70 ? '#10b981' : pct > 40 ? '#f59e0b' : '#94a3b8';
+  return '<div class="llm-score"><span class="llm-score-bar" style="width:' + pct + '%;background:' + color + '"></span> ' + score + '</div>';
+}
+
+function filterLlmModels() {
+  var query = document.getElementById('llm-search').value;
+  renderLlmModels(query);
+}
+
+/* --- HuggingFace --- */
+function renderHfModels() {
+  if (!rawSourcesData || !rawSourcesData.huggingface) {
+    document.getElementById('hf-list').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无 HuggingFace 数据</p></div>';
+    return;
+  }
+  var models = rawSourcesData.huggingface.models || [];
+  document.getElementById('hf-count').textContent = '共 ' + models.length + ' 个模型';
+  if (models.length === 0) {
+    document.getElementById('hf-list').innerHTML = '<div class="empty-state"><div class="icon">🤗</div><p>暂无 HuggingFace 采集数据</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < models.length; i++) {
+    var m = models[i];
+    html += '<div class="hf-card">';
+    html += '<h4>' + escapeHtml(safe(m.name || m.modelId)) + '</h4>';
+    if (safe(m.organization)) html += '<div class="hf-meta">🏢 组织：' + escapeHtml(safe(m.organization)) + '</div>';
+    if (safe(m.pipeline_tag)) html += '<div class="hf-meta">🔧 Pipeline：' + escapeHtml(safe(m.pipeline_tag)) + '</div>';
+    if (m.downloads !== undefined) html += '<div class="hf-meta">⬇️ 下载量：' + Number(m.downloads).toLocaleString() + '</div>';
+    if (m.likes !== undefined) html += '<div class="hf-meta">❤️ 点赞：' + Number(m.likes).toLocaleString() + '</div>';
+    if (safe(m.lastModified)) html += '<div class="hf-meta">📅 更新：' + escapeHtml(safe(m.lastModified)) + '</div>';
+    if (m.tags && m.tags.length > 0) {
+      html += '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">';
+      for (var j = 0; j < Math.min(m.tags.length, 10); j++) {
+        html += '<span class="badge badge-type">' + escapeHtml(m.tags[j]) + '</span>';
+      }
+      if (m.tags.length > 10) html += '<span class="badge badge-type">+' + (m.tags.length - 10) + '</span>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('hf-list').innerHTML = html;
 }
 
 /* ===== README ===== */

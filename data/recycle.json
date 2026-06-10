@@ -310,30 +310,10 @@
       "source_url": "data/history/20260610_20260610.json",
       "deleted_at": "2026-06-10 11:17:39",
       "reason": "幻觉数据: LLM生成的虚假模型信息"
-    },
-    {
-      "name": "MAI-Thinking-1",
-      "connected": "",
-      "workflow_progress": "",
-      "company": "Microsoft",
-      "domestic": "国外",
-      "open_source": "",
-      "size": "",
-      "type": "推理型大语言模型",
-      "reasoning": "",
-      "task_type": "",
-      "website": "",
-      "note": "微软发布的旗舰推理模型，在编码基准测试中性能媲美 Anthropic Claude Sonnet 4.6，为微软新一代智能体核心推理引擎。",
-      "release_date": "2026-06-03",
-      "created_date": "2026-06-04",
-      "data_source": "unknown",
-      "source": "daily",
-      "source_url": "data/history/20260603_20260603.json",
-      "deleted_at": "2026-06-10 11:46:33"
     }
   ],
   "meta": {
-    "total": 18,
-    "updated_at": "2026-06-10 11:46:33"
+    "total": 17,
+    "updated_at": "2026-06-10 11:17:39"
   }
 }
