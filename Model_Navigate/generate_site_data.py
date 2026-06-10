@@ -139,7 +139,7 @@ def load_master_table() -> pd.DataFrame:
 
 
 def _row_to_model(row) -> dict:
-    """将 DataFrame 行转为标准模型字典（14列，去掉是否新增和核实情况）。"""
+    """将 DataFrame 行转为标准模型字典（15列，去掉是否新增和核实情况）。"""
     return {
         "name": _clean_value(row.get("模型名称")),
         "connected": _clean_value(row.get("是否接入")),
@@ -155,6 +155,7 @@ def _row_to_model(row) -> dict:
         "note": _clean_value(row.get("备注")),
         "release_date": _normalize_date(row.get("模型发布时间")),
         "created_date": _normalize_date(row.get("记录创建时间")),
+        "data_source": _clean_value(row.get("data_source")),
     }
 
 

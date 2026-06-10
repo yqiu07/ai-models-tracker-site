@@ -368,6 +368,7 @@ def collect_llmstats(since_int: int, until_int: int) -> list[dict]:
             "模型发布时间": date_str,
             "是否新增": "New",
             "核实情况": "llm-stats.com 排行榜",
+            "data_source": "llmstats",
         }
         rows.append(row)
 
