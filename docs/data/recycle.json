@@ -270,13 +270,12 @@
       "note": "Google在WWDC26期间确认Gemini 3已集成至新版Siri，为苹果iOS 27提供底层AI能力，支持实时多模态推理与长上下文对话。",
       "release_date": "2026-06-09",
       "created_date": "2026-06-10",
-      "source": "daily",
-      "source_url": "data/daily_report.json",
-      "deleted_at": "2026-06-10 08:24:46"
+      "source": "all",
+      "deleted_at": "2026-06-10 08:25:12"
     }
   ],
   "meta": {
     "total": 16,
-    "updated_at": "2026-06-10 08:24:46"
+    "updated_at": "2026-06-10 08:25:12"
   }
 }
