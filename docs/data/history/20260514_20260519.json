@@ -15,7 +15,7 @@
       "note": "1048k上下文 [重要性:高|Google DeepMind 重点模型 Gemini 系列的重大版本更新子型号，具备较高行业关注度。]",
       "release_date": "2026-05-19",
       "created_date": "2026-05-20",
-      "data_source": "llmstats"
+      "data_source": "llmstats,websearch"
     },
     {
       "name": "Gemini 3.5 Pro",
@@ -100,7 +100,7 @@
       "note": "尚未正式发布，仅内测代号曝光（ember-alpha/beacon-alpha）；下月或升级发布",
       "release_date": "2026-05-15",
       "created_date": "2026-05-19",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "Grok Build (Early Access v0.1)",

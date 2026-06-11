@@ -15,7 +15,7 @@
       "note": "微软在 Build 2026 大会上发布的首款自研代码生成模型，支持自然语言到应用程序/网站源代码的端到端生成，已集成至 GitHub Copilot 和 VS Code。",
       "release_date": "2026-06-03",
       "created_date": "2026-06-04",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MAI-Thinking-1",
@@ -32,7 +32,7 @@
       "note": "微软发布的旗舰推理模型，在编码基准测试中性能媲美 Anthropic Claude Sonnet 4.6，为微软新一代智能体核心推理引擎。",
       "release_date": "2026-06-03",
       "created_date": "2026-06-04",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "MAI-Vision-1",

@@ -36,6 +36,7 @@ import pandas as pd
 GAP_MAX_DAYS = 7  # release_date 与 created_date 最大允许间隔
 GAP_FILTER_SINCE = "2026-05-28"  # gap 过滤仅对此日期及之后创建的模型生效
 LLM_DEDUP_BATCH_SIZE = 40  # 每批送 LLM 查重的模型数
+DEDUP_LOOKBACK_DAYS = 30   # 去重时回看总表最近N天的模型
 
 ROOT = Path(__file__).parent
 EXCEL_PATH = ROOT / "data" / "Object-Models.xlsx"
@@ -43,6 +44,7 @@ README_PATH = ROOT.parent / "README.md"
 DOCS_DIR = ROOT.parent / "docs"
 DATA_DIR = DOCS_DIR / "data"
 HISTORY_DIR = DATA_DIR / "history"
+DROPOUT_PATH = DATA_DIR / "dropout.json"
 
 # 当前启用的数据源（与 auto_collect.py 同步维护）
 ACTIVE_DATA_SOURCES = [
@@ -143,6 +145,34 @@ def _normalize_name(name: str) -> str:
     return re.sub(r"[-_\s.()\u3000]", "", (name or "")).lower()
 
 
+def _is_substring_match(name_a: str, name_b: str) -> bool:
+    """检查两个归一化名称是否存在子串包含关系（语义重复）。
+
+    例如 "fable5" 是 "claudefable5" 的子串 → 视为重复。
+
+    排除规则（避免误杀同系列不同规格的模型）：
+      - 短名称至少4字符才触发
+      - 差异部分若仅是参数量后缀（如 235b、7b）则不算重复
+      - 短名占长名比例 < 50% 时不匹配（避免公共前缀误伤）
+    """
+    if not name_a or not name_b or name_a == name_b:
+        return name_a == name_b
+    short, long = (name_a, name_b) if len(name_a) <= len(name_b) else (name_b, name_a)
+    if len(short) < 4:
+        return False
+    if short not in long:
+        return False
+    # 差异部分（去掉匹配后的残余）
+    residue = long.replace(short, "", 1)
+    # 若残余仅为参数量后缀（数字+b/m/k），视为不同规格而非重复
+    if re.fullmatch(r"\d+[bmk]?", residue):
+        return False
+    # 短名占比过低（<50%）不匹配，避免 "qwen" 匹配 "qwen3turbo235b" 这种
+    if len(short) / len(long) < 0.5:
+        return False
+    return True
+
+
 def _calc_gap(release_date: str, created_date: str) -> int | None:
     """计算 created_date - release_date 天数差。"""
     rd = (release_date or "").strip()
@@ -181,33 +211,123 @@ def filter_stale_models(models: list[dict]) -> tuple[list[dict], list[dict]]:
     return kept, removed
 
 
-def dedup_models_by_name(models: list[dict], existing: list[dict] | None = None) -> tuple[list[dict], list[dict]]:
-    """基于名称归一化去重。保留 created_date 最早的。
+def dedup_models_by_name(models: list[dict], existing: list[dict] | None = None) -> tuple[list[dict], list[dict], list[dict]]:
+    """基于名称归一化+子串包含关系去重。保留 created_date 最早的。
+
+    两层检查：
+      1. 精确匹配：归一化名称完全相同
+      2. 子串匹配：短名称是长名称的子串（≥4字符）
 
     Args:
         models: 待去重列表。
         existing: 已有模型（用于跨批次查重），不会被删除。
     Returns:
-        (kept, removed) 两个列表。
+        (kept, removed, dropout_records) 三个列表。
+        dropout_records: 包含 {name, reason, matched_with, removed_at} 的记录。
     """
-    seen = set()
+    seen: dict[str, str] = {}  # normalized_name → original_name
     if existing:
         for m in existing:
-            seen.add(_normalize_name(m.get("name", "")))
+            norm = _normalize_name(m.get("name", ""))
+            if norm:
+                seen[norm] = m.get("name", "")
 
     kept, removed = [], []
-    # 按 created_date 排序，最早的先进 seen
+    dropout_records = []
     sorted_models = sorted(models, key=lambda x: (x.get("created_date") or "9999"))
+
     for m in sorted_models:
-        key = _normalize_name(m.get("name", ""))
+        name = m.get("name", "")
+        key = _normalize_name(name)
+        if not key:
+            kept.append(m)
+            continue
+
+        # 层1：精确匹配
         if key in seen:
             removed.append(m)
-        else:
-            seen.add(key)
-            kept.append(m)
+            dropout_records.append({
+                "name": name,
+                "reason": f"name_exact_match: '{seen[key]}'",
+                "matched_with": seen[key],
+                "removed_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            })
+            continue
+
+        # 层2：子串包含关系
+        substring_match = None
+        for existing_key, existing_name in seen.items():
+            if _is_substring_match(key, existing_key):
+                substring_match = existing_name
+                break
+
+        if substring_match:
+            removed.append(m)
+            dropout_records.append({
+                "name": name,
+                "reason": f"name_substring_match: '{substring_match}'",
+                "matched_with": substring_match,
+                "removed_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            })
+            continue
+
+        seen[key] = name
+        kept.append(m)
+
     if removed:
         print(f"  [dedup] name-based removed: {len(removed)}")
-    return kept, removed
+        for d in dropout_records:
+            print(f"    - drop '{d['name']}' : {d['reason']}")
+    return kept, removed, dropout_records
+
+
+def _append_dropout_records(dedup_records: list[dict], stale_removed: list[dict]):
+    """将去重/过滤丢弃的模型追加到 dropout.json（范例学习库）。
+
+    dropout.json 结构：
+    {
+      "description": "采集过程中被丢弃的模型记录，作为未来去重/过滤的范例学习库",
+      "total": N,
+      "records": [...]
+    }
+    """
+    new_records = list(dedup_records)  # dedup已有完整记录
+
+    # stale过滤的也记录
+    for m in stale_removed:
+        new_records.append({
+            "name": m.get("name", ""),
+            "reason": f"stale_gap: release={m.get('release_date', '')} created={m.get('created_date', '')}",
+            "matched_with": "",
+            "removed_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        })
+
+    if not new_records:
+        return
+
+    # 读取已有记录
+    existing = {"description": "采集过程中被丢弃的模型记录，作为去重/过滤的范例学习库", "total": 0, "records": []}
+    if DROPOUT_PATH.exists():
+        try:
+            with open(DROPOUT_PATH, "r", encoding="utf-8") as f:
+                existing = json.load(f)
+        except (json.JSONDecodeError, Exception):
+            pass
+
+    records = existing.get("records", [])
+    records.extend(new_records)
+
+    # 保留最近500条，避免无限增长
+    if len(records) > 500:
+        records = records[-500:]
+
+    existing["records"] = records
+    existing["total"] = len(records)
+    existing["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with open(DROPOUT_PATH, "w", encoding="utf-8") as f:
+        json.dump(existing, f, ensure_ascii=False, indent=2)
+    print(f"  [dropout] appended {len(new_records)} records → {DROPOUT_PATH.name} (total: {len(records)})")
 
 
 def dedup_models_by_llm(models: list[dict]) -> tuple[list[dict], list[dict]]:
@@ -405,7 +525,10 @@ def main():
 
     print("[FILTER] applying stale + dedup to all_models...")
     active_models, stale_rm = filter_stale_models(active_models)
-    active_models, dedup_rm = dedup_models_by_name(active_models)
+    active_models, dedup_rm, dropout_records = dedup_models_by_name(active_models)
+
+    # 写入 dropout.json（追加模式，保留历史记录作为范例学习库）
+    _append_dropout_records(dropout_records, stale_rm)
 
     all_models_data = {
         "models": active_models,
@@ -538,6 +661,68 @@ def main():
     with open(site_meta_path, "w", encoding="utf-8") as f:
         json.dump(site_meta, f, ensure_ascii=False, indent=2)
     print(f"[OK] site_meta: {site_meta_path.name} (readme {len(readme_content)} chars)")
+
+    # 6. Pipeline 日志（从 pipeline_trace.json 转换为前端可消费格式）
+    _generate_pipeline_log()
+
+
+def _generate_pipeline_log():
+    """将 Model_Navigate/data/pipeline_trace.json 转换为 docs/data/pipeline_log.json。
+
+    前端日志Tab读取 pipeline_log.json 按日期展示pipeline执行记录。
+    """
+    trace_path = ROOT / "data" / "pipeline_trace.json"
+    log_path = DATA_DIR / "pipeline_log.json"
+
+    # 读取已有日志（追加模式）
+    existing_runs = []
+    if log_path.exists():
+        try:
+            with open(log_path, "r", encoding="utf-8") as f:
+                existing_data = json.load(f)
+                existing_runs = existing_data.get("runs", [])
+        except (json.JSONDecodeError, Exception):
+            pass
+
+    existing_run_ids = {r.get("run_id") for r in existing_runs}
+
+    # 读取最新trace
+    if trace_path.exists():
+        try:
+            with open(trace_path, "r", encoding="utf-8") as f:
+                trace = json.load(f)
+            run_id = trace.get("run_id", "")
+            if run_id and run_id not in existing_run_ids:
+                run_entry = {
+                    "run_id": run_id,
+                    "date": trace.get("trigger_time", "")[:10],
+                    "trigger_time": trace.get("trigger_time", ""),
+                    "trigger_type": trace.get("trigger_type", ""),
+                    "status": trace.get("status", ""),
+                    "new_count": trace.get("new_count", 0),
+                    "duration_seconds": trace.get("duration_seconds", 0),
+                    "since": trace.get("since", ""),
+                    "until": trace.get("until", ""),
+                    "steps": trace.get("steps", []),
+                }
+                existing_runs.insert(0, run_entry)  # 最新的排前面
+                print(f"  [pipeline_log] added run: {run_id}")
+        except (json.JSONDecodeError, Exception) as exc:
+            print(f"  [pipeline_log] failed to read trace: {exc}")
+
+    # 保留最近90条
+    if len(existing_runs) > 90:
+        existing_runs = existing_runs[:90]
+
+    log_data = {
+        "description": "Pipeline 执行日志，供前端日志Tab展示",
+        "total": len(existing_runs),
+        "runs": existing_runs,
+        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    with open(log_path, "w", encoding="utf-8") as f:
+        json.dump(log_data, f, ensure_ascii=False, indent=2)
+    print(f"[OK] pipeline_log: {log_path.name} ({len(existing_runs)} runs)")
 
 
 if __name__ == "__main__":

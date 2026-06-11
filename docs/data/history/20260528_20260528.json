@@ -15,7 +15,7 @@
       "note": "1000k上下文；顶级推理能力；顶级编码能力；高端定价 [重要性:高|Anthropic Claude Opus 主线高端模型若属实属于旗舰级重大版本更新。]",
       "release_date": "2026-05-28",
       "created_date": "2026-05-29",
-      "data_source": "llmstats"
+      "data_source": "llmstats,websearch"
     },
     {
       "name": "DeepSeek-V4 Flash",

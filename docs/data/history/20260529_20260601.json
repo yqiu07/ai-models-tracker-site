@@ -49,7 +49,7 @@
       "note": "国内首个同时具备前沿Coding能力、1M超长上下文、原生多模态的国产大模型，采用自研MSA稀疏注意力架构，SWE-Bench Pro超越GPT-5.5。",
       "release_date": "2026-06-01",
       "created_date": "2026-06-06",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "码道（CodeArts）AI编程智能体",
@@ -117,7 +117,7 @@
       "note": "国内首个同时具备前沿Coding、1M超长上下文、原生多模态能力的大模型，自研MSA稀疏注意力架构，SWE-Bench Pro性能超越GPT-5.5与Gemini 3.1 Pro。",
       "release_date": "2026-06-01",
       "created_date": "2026-06-08",
-      "data_source": "unknown"
+      "data_source": "llmstats"
     },
     {
       "name": "gemma-4-E4B-it-qat-mobile-ct",
@@ -168,7 +168,7 @@
       "note": "HuggingFace image-text-to-text",
       "release_date": "2026-05-29",
       "created_date": "2026-06-08",
-      "data_source": "huggingface"
+      "data_source": "huggingface,txresearch"
     },
     {
       "name": "gemma-4-26B-A4B-it-qat-q4_0-unquantized-assistant",
@@ -185,7 +185,7 @@
       "note": "HuggingFace image-text-to-text",
       "release_date": "2026-05-29",
       "created_date": "2026-06-08",
-      "data_source": "huggingface"
+      "data_source": "huggingface,txresearch"
     },
     {
       "name": "gemma-4-E4B-it-qat-q4_0-unquantized-assistant",
@@ -253,7 +253,7 @@
       "note": "HuggingFace image-to-3d",
       "release_date": "2026-05-29",
       "created_date": "2026-06-08",
-      "data_source": "huggingface"
+      "data_source": "huggingface,txresearch"
     },
     {
       "name": "NV-OneFormer",
