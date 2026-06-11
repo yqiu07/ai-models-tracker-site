@@ -30,7 +30,14 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+
+try:
+    from webdriver_manager.chrome import ChromeDriverManager
+    _USE_WDM = True
+except ImportError:
+    _USE_WDM = False
 
 # ============================================================
 #  配置区 - 修改以下变量即可适配不同搜狐号
@@ -75,6 +82,9 @@ def create_driver():
         "Chrome/131.0.0.0 Safari/537.36"
     )
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    if _USE_WDM:
+        service = Service(ChromeDriverManager().install())
+        return webdriver.Chrome(service=service, options=chrome_options)
     return webdriver.Chrome(options=chrome_options)
 
 # 全文抓取配置
@@ -312,7 +322,7 @@ def scroll_and_collect(driver, since_int: int, until_int: int):
                     consecutive_old_count = 0  # 重置
                     matched_articles.append(article)
                     print(f"[Match] '{article['title'][:40]}' "
-                          f"日期={article_date_int} ✅")
+                          f"date={article_date_int} [OK]")
             else:
                 # 无法解析日期 → 也收集（保守策略，避免遗漏）
                 # 不重置 consecutive_old_count：无日期文章不影响判断
@@ -392,7 +402,7 @@ def fetch_all_fulltexts(articles: list[dict]) -> list[dict]:
         print(f"  [{idx}/{total}] 抓取全文: {article['title'][:40]}...")
         article["fulltext"] = fetch_fulltext(url)
         content_len = len(article["fulltext"])
-        status = "✓" if content_len > 100 else "⚠"
+        status = "[OK]" if content_len > 100 else "[WARN]"
         print(f"  {status} {content_len} 字")
         if idx < total:
             time.sleep(FULLTEXT_DELAY_SECONDS)
@@ -598,7 +608,7 @@ def main():
 
     # 打印结果摘要
     print(f"\n{'='*60}")
-    print(f"  📊 爬取完成！")
+    print(f"  [DONE] crawl finished!")
     print(f"  时间窗口: {since_int} ~ {until_int}")
     print(f"  匹配文章: {len(articles)} 篇")
     if not args.no_fulltext:

@@ -43,16 +43,16 @@ EXTRACT_PROMPT = """你是一名 AI 模型追踪分析师。请从以下腾讯�
 ## 核心原则：只提取"新发布"，不提取"被提及"
 
 AI 速递文章中会大量提及已有的模型/产品作为背景信息。你必须严格区分：
-- ✅ 提取：文章报道的**新发布、新版本、新上线、新开源**的模型
-- ❌ 不提取：文章中作为背景/对比/引用提及的**已有模型或产品**
+- [OK] 提取：文章报道的**新发布、新版本、新上线、新开源**的模型
+- [ERR] 不提取：文章中作为背景/对比/引用提及的**已有模型或产品**
 
 ## 排除清单（绝对不要提取以下类型）
 
 1. **没有版本号的产品/平台泛称**：
    如"ChatGPT"、"Cursor"、"豆包"、"元宝"、"千问"、"即梦"、"Copilot"
    → 但如果有具体版本号，必须提取！例如：
-     ✅ GPT-5.5、GPT-5.5 Pro、DeepSeek-V4-Pro-Max、DeepSeek-V4-Flash-Max、Cursor 3.0
-     ❌ ChatGPT（泛称）、Cursor（泛称）、豆包（泛称）
+     [OK] GPT-5.5、GPT-5.5 Pro、DeepSeek-V4-Pro-Max、DeepSeek-V4-Flash-Max、Cursor 3.0
+     [ERR] ChatGPT（泛称）、Cursor（泛称）、豆包（泛称）
 2. **品牌名/公司名当模型名**：如"千问 (阿里巴巴)"→ 不是具体模型，应写"Qwen3.6-27B"
 3. **纯硬件发布**、**纯算法论文**、**纯商业事件**（投融资/人事变动）、**benchmark/评测工具**
 4. **发布时间明显不在文章日期附近**的旧模型（如文章是2026年4月但模型2025年发布）
@@ -68,7 +68,7 @@ AI 速递文章中会大量提及已有的模型/产品作为背景信息。你�
 - 错误：`千问`、`豆包`、`元宝`、`ChatGPT`、`Cursor`、`Sora`（这些是产品泛称）
 - 如果只有泛称没有版本号，**不要提取**
 
-## ⚠️ 关键警告："被报道" ≠ "当天发布"
+## [WARN] 关键警告："被报道" ≠ "当天发布"
 
 腾讯研究院 AI 速递是**新闻汇编**，一篇4月27日的速递可能报道4月20日～27日期间发布的模型。
 你必须从文章正文中寻找**明确的发布时间锚点**（如"4月24日发布""昨日上线""今日宣布"等），
@@ -220,34 +220,34 @@ def call_llm(article_text: str, api_key: str, api_base: str, model: str,
         result = _call_llm_once(article_text, api_key, api_base, model, article_date)
         elapsed = time.time() - start
         if result:
-            print(f"    ✅ {model} 提取到 {len(result)} 个模型（{elapsed:.1f}s）")
+            print(f"    [OK] {model} 提取到 {len(result)} 个模型（{elapsed:.1f}s）")
             return result
     except requests.exceptions.HTTPError as exc:
         elapsed = time.time() - start
-        print(f"    ⚠️ 主 API ({model}) 失败（{elapsed:.1f}s）: {exc}")
+        print(f"    [WARN] 主 API ({model}) 失败（{elapsed:.1f}s）: {exc}")
         if exc.response is not None:
             print(f"    响应: {exc.response.text[:200]}")
     except json.JSONDecodeError as exc:
         elapsed = time.time() - start
-        print(f"    ⚠️ 主 API ({model}) 输出非法 JSON（{elapsed:.1f}s）: {exc}")
+        print(f"    [WARN] 主 API ({model}) 输出非法 JSON（{elapsed:.1f}s）: {exc}")
     except Exception as exc:
         elapsed = time.time() - start
-        print(f"    ⚠️ 主 API ({model}) 调用失败（{elapsed:.1f}s）: {exc}")
+        print(f"    [WARN] 主 API ({model}) 调用失败（{elapsed:.1f}s）: {exc}")
 
     # Fallback 到备选 API（DashScope — Qwen）
     fb_key, fb_base, fb_model = get_fallback_llm_config()
     if fb_key and fb_key != api_key:
-        print(f"    🔄 Fallback 到备选 API ({fb_model})...")
+        print(f"    [SYNC] Fallback 到备选 API ({fb_model})...")
         fb_start = time.time()
         try:
             result = _call_llm_once(article_text, fb_key, fb_base, fb_model, article_date)
             fb_elapsed = time.time() - fb_start
             if result:
-                print(f"    ✅ {fb_model} 提取到 {len(result)} 个模型（{fb_elapsed:.1f}s）")
+                print(f"    [OK] {fb_model} 提取到 {len(result)} 个模型（{fb_elapsed:.1f}s）")
             return result
         except Exception as exc:
             fb_elapsed = time.time() - fb_start
-            print(f"    ❌ 备选 API ({fb_model}) 也失败（{fb_elapsed:.1f}s）: {exc}")
+            print(f"    [ERR] 备选 API ({fb_model}) 也失败（{fb_elapsed:.1f}s）: {exc}")
 
     return []
 
@@ -364,7 +364,7 @@ def cross_verify_with_llmstats(models: list[dict]) -> list[dict]:
     """
     llmstats_json = ROOT / "Crawl" / "Arena_x" / "llmstats_models.json"
     if not llmstats_json.exists():
-        print("\n  ⚠️ llmstats JSON 不存在，跳过交叉核实")
+        print("\n  [WARN] llmstats JSON 不存在，跳过交叉核实")
         return models
 
     with open(llmstats_json, "r", encoding="utf-8") as f:
@@ -430,7 +430,7 @@ def cross_verify_with_llmstats(models: list[dict]) -> list[dict]:
         # 升级核实情况
         model_info["_verified_by"] = "腾讯研究院+llmstats交叉核实"
 
-    print(f"\n  🔗 交叉核实: {matched_count}/{len(models)} 个模型匹配到 llmstats 数据")
+    print(f"\n  [LINK] 交叉核实: {matched_count}/{len(models)} 个模型匹配到 llmstats 数据")
     return models
 
 
@@ -472,11 +472,11 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
     from datetime import datetime as _dt
 
     if not untracked_models:
-        print("\n  📭 无新模型需要写入主表格")
+        print("\n  [EMPTY] 无新模型需要写入主表格")
         return 0
 
     if not EXISTING_XLSX.exists():
-        print(f"\n  ❌ 主表格不存在: {EXISTING_XLSX}")
+        print(f"\n  [ERR] 主表格不存在: {EXISTING_XLSX}")
         return 0
 
     df = pd.read_excel(EXISTING_XLSX, engine="openpyxl")
@@ -536,7 +536,7 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
 
     # 打印过滤日志
     if filtered_generic:
-        print(f"\n  🚫 过滤掉 {len(filtered_generic)} 个产品泛称: {', '.join(filtered_generic[:10])}")
+        print(f"\n  [SKIP] 过滤掉 {len(filtered_generic)} 个产品泛称: {', '.join(filtered_generic[:10])}")
 
     # 处理已存在模型的字段合并更新（覆盖空字段）
     merged_count = 0
@@ -580,13 +580,13 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
             if updated_fields:
                 merged_count += 1
                 model_name = model_info.get("model_name", norm_name)
-                print(f"  🔄 合并更新: {model_name} ← {', '.join(updated_fields)}")
+                print(f"  [SYNC] 合并更新: {model_name} ← {', '.join(updated_fields)}")
 
     if merged_count > 0:
-        print(f"\n  🔄 合并更新了 {merged_count} 个已有模型的空字段")
+        print(f"\n  [SYNC] 合并更新了 {merged_count} 个已有模型的空字段")
 
     if not new_rows and merged_count == 0:
-        print("\n  📭 无新模型需要写入，也无已有模型需要更新")
+        print("\n  [EMPTY] 无新模型需要写入，也无已有模型需要更新")
         return 0
 
     try:
@@ -594,7 +594,7 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
             df_new = pd.DataFrame(new_rows)
             df = pd.concat([df, df_new], ignore_index=True)
         df.to_excel(EXISTING_XLSX, index=False, engine="openpyxl")
-        print(f"\n  📊 主表格已更新: {EXISTING_XLSX}")
+        print(f"\n  [STAT] 主表格已更新: {EXISTING_XLSX}")
         print(f"     原有: {len(df) - len(new_rows)} 行")
         if new_rows:
             print(f"     新增: {len(new_rows)} 行")
@@ -605,10 +605,10 @@ def write_to_main_excel(untracked_models: list[dict], existing_names: set[str],
             print(f"     + [{row['公司']}] {row['模型名称']} — {row['备注'][:30]}")
         return len(new_rows) + merged_count
     except PermissionError:
-        print(f"\n  ❌ 主表格被占用（请关闭 Excel）: {EXISTING_XLSX}")
+        print(f"\n  [ERR] 主表格被占用（请关闭 Excel）: {EXISTING_XLSX}")
         return 0
     except Exception as exc:
-        print(f"\n  ❌ 写入主表格失败: {exc}")
+        print(f"\n  [ERR] 写入主表格失败: {exc}")
         return 0
 
 def main():
@@ -630,47 +630,47 @@ def main():
     load_env()
     api_key, api_base, model = get_llm_config()
 
-    print("📚 LLM 自动提取腾讯研究院模型信息")
+    print("[INFO] LLM 自动提取腾讯研究院模型信息")
     print(f"  API: {api_base}")
     print(f"  模型: {model}")
     print(f"  时间: {since_int or '全部'} ~ {until_int or '全部'}")
     if args.dry_run:
-        print("  模式: 🔍 DRY-RUN")
+        print("  模式: [SCAN] DRY-RUN")
     print()
 
     if not api_key and not args.dry_run:
-        print("  ❌ 未配置 LLM API Key")
-        print("  💡 请设置环境变量 LLM_API_KEY 或在 .env 中配置")
-        print("  💡 也可使用 TRACKER_FIELD_API_KEY 或 DASHSCOPE_API_KEY")
+        print("  [ERR] 未配置 LLM API Key")
+        print("  [TIP] 请设置环境变量 LLM_API_KEY 或在 .env 中配置")
+        print("  [TIP] 也可使用 TRACKER_FIELD_API_KEY 或 DASHSCOPE_API_KEY")
         return
 
     # 加载文章
     articles = load_articles(since_int, until_int)
     if not articles:
-        print("  📭 未找到符合条件的文章")
-        print(f"  💡 请确认 {ARTICLES_DIR} 目录下有 .txt 文件")
+        print("  [EMPTY] 未找到符合条件的文章")
+        print(f"  [TIP] 请确认 {ARTICLES_DIR} 目录下有 .txt 文件")
         return
 
-    print(f"  📄 找到 {len(articles)} 篇文章")
+    print(f"  [FILE] 找到 {len(articles)} 篇文章")
 
     # --list 模式：仅列出文章
     if args.list_only:
         for i, a in enumerate(articles, 1):
             print(f"  [{i}] {a['标题']}（{len(a['全文'])} 字）")
-        print(f"\n  💡 使用 --index N 处理单篇文章")
+        print(f"\n  [TIP] 使用 --index N 处理单篇文章")
         return
 
     # --index 模式：仅处理指定文章
     if args.index is not None:
         if args.index < 1 or args.index > len(articles):
-            print(f"  ❌ --index {args.index} 超出范围（共 {len(articles)} 篇）")
+            print(f"  [ERR] --index {args.index} 超出范围（共 {len(articles)} 篇）")
             return
         articles = [articles[args.index - 1]]
-        print(f"  🎯 仅处理第 {args.index} 篇")
+        print(f"  [TARGET] 仅处理第 {args.index} 篇")
 
     # 加载已追踪模型
     existing_models = load_existing_models()
-    print(f"  📊 已追踪 {len(existing_models)} 个模型")
+    print(f"  [STAT] 已追踪 {len(existing_models)} 个模型")
     print()
 
     # 逐篇提取
@@ -699,7 +699,7 @@ def main():
         print(f"  {title}（{len(body)} 字）")
 
         if args.dry_run:
-            print(f"    🔍 DRY-RUN: 跳过 LLM 调用")
+            print(f"    [SCAN] DRY-RUN: 跳过 LLM 调用")
             article_results.append({
                 "序号": article["序号"],
                 "标题": title,
@@ -717,7 +717,7 @@ def main():
         models = call_llm(body, api_key, api_base, model, article_date=article_date_str)
 
         if not models:
-            print(f"    ⚠️ 未提取到模型")
+            print(f"    [WARN] 未提取到模型")
             article_results.append({
                 "序号": article["序号"],
                 "标题": title,
@@ -759,7 +759,7 @@ def main():
             })
 
         tracked_count = len(mentioned_names) - len(untracked_names)
-        print(f"    ✅ 提取 {len(mentioned_names)} 个模型（已追踪 {tracked_count}，未追踪 {len(untracked_names)}）")
+        print(f"    [OK] 提取 {len(mentioned_names)} 个模型（已追踪 {tracked_count}，未追踪 {len(untracked_names)}）")
 
         article_results.append({
             "序号": article["序号"],
@@ -779,13 +779,13 @@ def main():
         # 保存文章级结果到 TXCrawl_result.xlsx
         df_result = pd.DataFrame(article_results)
         df_result.to_excel(RESULT_XLSX, index=False, engine="openpyxl")
-        print(f"\n  💾 文章级结果: {RESULT_XLSX}")
+        print(f"\n  [SAVE] 文章级结果: {RESULT_XLSX}")
 
         # 保存完整提取结果到 JSON
         extracted_json_path = EXTRACT_DIR / "extracted_models_llm.json"
         with open(extracted_json_path, "w", encoding="utf-8") as f:
             json.dump(all_extracted, f, ensure_ascii=False, indent=2)
-        print(f"  💾 完整提取结果: {extracted_json_path}")
+        print(f"  [SAVE] 完整提取结果: {extracted_json_path}")
 
     # ── 汇总 ──
     total_elapsed = time.time() - total_start
@@ -794,8 +794,8 @@ def main():
     print(f"{'='*60}")
 
     if args.dry_run:
-        print(f"  📄 文章数: {len(articles)}")
-        print(f"  🔍 DRY-RUN 模式，未调用 LLM")
+        print(f"  [FILE] 文章数: {len(articles)}")
+        print(f"  [SCAN] DRY-RUN 模式，未调用 LLM")
         return
 
     untracked_all = {}
@@ -805,9 +805,9 @@ def main():
             if key not in untracked_all:
                 untracked_all[key] = model_info
 
-    print(f"  📄 文章数: {len(articles)}")
-    print(f"  🤖 提取到的模型总数: {len(all_extracted)}")
-    print(f"  🆕 未追踪的新模型: {len(untracked_all)}")
+    print(f"  [FILE] 文章数: {len(articles)}")
+    print(f"  [BOT] 提取到的模型总数: {len(all_extracted)}")
+    print(f"  [NEW] 未追踪的新模型: {len(untracked_all)}")
 
     if untracked_all:
         print(f"\n  未追踪模型列表:")
@@ -829,16 +829,16 @@ def main():
     if args.write_excel and untracked_list:
         written = write_to_main_excel(untracked_list, existing_models, since_int, until_int)
         if written > 0:
-            print(f"\n  ✅ 已将 {written} 个新模型写入主表格")
+            print(f"\n  [OK] 已将 {written} 个新模型写入主表格")
         else:
-            print(f"\n  ⚠️ 未能写入主表格（可能已存在或文件被占用）")
+            print(f"\n  [WARN] 未能写入主表格（可能已存在或文件被占用）")
     elif args.write_excel and not untracked_all:
-        print(f"\n  📭 无未追踪模型，无需写入主表格")
+        print(f"\n  [EMPTY] 无未追踪模型，无需写入主表格")
     elif not args.write_excel and untracked_all:
-        print(f"\n  💡 使用 --write-excel 参数可将 {len(untracked_all)} 个新模型自动写入主表格")
+        print(f"\n  [TIP] 使用 --write-excel 参数可将 {len(untracked_all)} 个新模型自动写入主表格")
 
-    print(f"\n  💡 主方案：在对话中让 AI Copilot 读取文章并提取（更准确）")
-    print(f"  💡 次级方案：本脚本通过 LLM API 自动提取（更快速）")
+    print(f"\n  [TIP] 主方案：在对话中让 AI Copilot 读取文章并提取（更准确）")
+    print(f"  [TIP] 次级方案：本脚本通过 LLM API 自动提取（更快速）")
 
 
 if __name__ == "__main__":
