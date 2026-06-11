@@ -15,15 +15,13 @@
       "note": "1000k上下文；顶级编码能力；高端定价",
       "release_date": "2026-06-09",
       "created_date": "2026-06-10",
-      "data_source": "llmstats"
+      "data_source": ""
     }
   ],
   "meta": {
     "since": "2026-06-10",
     "until": "2026-06-10",
-    "count": 3,
-    "generated_at": "2026-06-10 11:09:51",
-    "total": 1,
-    "updated_at": "2026-06-10 11:17:39"
+    "count": 1,
+    "generated_at": "2026-06-11 02:35:01"
   }
 }
