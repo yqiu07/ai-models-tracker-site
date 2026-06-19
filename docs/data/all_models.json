@@ -5762,13 +5762,47 @@
       "release_date": "2026-06-15",
       "created_date": "2026-06-17",
       "data_source": ""
+    },
+    {
+      "name": "京东视觉语言实时交互模型（未命名）",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "京东",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "视觉语言智能体",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "支持摄像头/直播流/监控流+语音I/O的实时流式交互模型，计划开源权重、数据、训练方法及完整系统",
+      "release_date": "2026-06-13",
+      "created_date": "2026-06-18",
+      "data_source": ""
+    },
+    {
+      "name": "Gemma 4 12B",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Google/DeepMind",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "开源轻量多模态模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "谷歌同步开源的12B参数多模态模型，支持原生音频输入，可在普通终端设备本地运行，显著降低AI开发与部署门槛",
+      "release_date": "2026-06-18",
+      "created_date": "2026-06-19",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 339,
+    "total": 341,
     "recycled": 14,
-    "stale_filtered": 40,
-    "dedup_filtered": 37,
-    "generated_at": "2026-06-18 02:41:31"
+    "stale_filtered": 41,
+    "dedup_filtered": 40,
+    "generated_at": "2026-06-19 02:51:30"
   }
 }
