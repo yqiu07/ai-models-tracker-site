@@ -5864,13 +5864,81 @@
       "release_date": "2026-06-16",
       "created_date": "2026-06-21",
       "data_source": ""
+    },
+    {
+      "name": "OpenAI Personal AGI Assistant (v0.1 prototype)",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "OpenAI",
+      "domestic": "国外",
+      "open_source": "",
+      "size": "",
+      "type": "智能体（Personal AGI Assistant）",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "OpenAI发布首个面向个人用户的AGI助手原型愿景，聚焦于日常任务、工作、学习与探索的高能力自主智能体，非开源模型，处于内部研究加速阶段规划中。",
+      "release_date": "2026-06-21",
+      "created_date": "2026-06-22",
+      "data_source": ""
+    },
+    {
+      "name": "微信小微（测试版）",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "腾讯",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "原生AI智能体",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "腾讯在微信主界面上线小范围灰度测试的原生AI助手‘小微’，支持文字/语音交互操控微信原生功能，融合腾讯自研及优质开源多模型技术栈。",
+      "release_date": "2026-06-20",
+      "created_date": "2026-06-22",
+      "data_source": ""
+    },
+    {
+      "name": "Kimi-Max v2026.06",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "月之暗面",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "多模态大语言模型",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "月之暗面发布Kimi-Max新版本，集成实时视频理解、高精度文档解析与跨模态推理能力，专为专业办公与科研场景优化，已接入部分企业API平台。",
+      "release_date": "2026-06-21",
+      "created_date": "2026-06-22",
+      "data_source": ""
+    },
+    {
+      "name": "混元T3-Agent",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "腾讯",
+      "domestic": "国内",
+      "open_source": "",
+      "size": "",
+      "type": "智能体框架",
+      "reasoning": "",
+      "task_type": "",
+      "website": "",
+      "note": "腾讯混元团队发布轻量化智能体运行时框架T3-Agent，支持低延迟本地化部署、多工具自动编排与微信生态深度协同，面向小程序与企业服务场景开放内测。",
+      "release_date": "2026-06-21",
+      "created_date": "2026-06-22",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 345,
+    "total": 349,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 40,
-    "generated_at": "2026-06-22 02:40:05"
+    "generated_at": "2026-06-23 02:06:16"
   }
 }
