@@ -6085,13 +6085,47 @@
       "release_date": "2026-06-26",
       "created_date": "2026-06-27",
       "data_source": ""
+    },
+    {
+      "name": "DeepSeek-V4-Pro-DSpark",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "深度求索",
+      "domestic": "国内",
+      "open_source": "开源",
+      "size": "",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-DSpark",
+      "note": "HuggingFace text-generation",
+      "release_date": "2026-06-27",
+      "created_date": "2026-06-28",
+      "data_source": ""
+    },
+    {
+      "name": "DeepSeek-V4-Flash-DSpark",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "深度求索",
+      "domestic": "国内",
+      "open_source": "开源",
+      "size": "",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-DSpark",
+      "note": "HuggingFace text-generation",
+      "release_date": "2026-06-27",
+      "created_date": "2026-06-28",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 358,
+    "total": 360,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 40,
-    "generated_at": "2026-06-27 02:04:14"
+    "generated_at": "2026-06-28 02:15:14"
   }
 }
