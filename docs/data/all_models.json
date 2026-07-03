@@ -6357,13 +6357,30 @@
       "release_date": "2026-06-30",
       "created_date": "2026-07-01",
       "data_source": ""
+    },
+    {
+      "name": "HARC-Llama-3.1-8B-Instruct",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "微软",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "8B",
+      "type": "基座",
+      "reasoning": "non-thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/microsoft/HARC-Llama-3.1-8B-Instruct",
+      "note": "HuggingFace text-generation",
+      "release_date": "2026-07-02",
+      "created_date": "2026-07-03",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 374,
+    "total": 375,
     "recycled": 14,
     "stale_filtered": 44,
-    "dedup_filtered": 40,
-    "generated_at": "2026-07-02 02:06:33"
+    "dedup_filtered": 41,
+    "generated_at": "2026-07-03 01:50:24"
   }
 }
