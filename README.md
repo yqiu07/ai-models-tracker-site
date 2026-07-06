@@ -133,32 +133,72 @@ cd Extract; python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
 
 ## 工作流程
 
-每轮模型追踪包含三个阶段：
+### 模式一：GitHub Actions 自动化（推荐）
 
-### 阶段 A：自动采集（v3 八步流水线）
+项目已配置 4 个自动化工作流，无需手动运行：
 
-运行 `python main.py`，自动执行 8 个步骤：
+| 工作流 | 触发方式 | 说明 |
+|--------|----------|------|
+| **Daily AI Model Pipeline** | 每天北京时间 8:00 自动运行 | 完整 8 步流水线 + 自动审核 + 部署到 GitHub Pages |
+| **Push DingTalk** | 手动触发（网页按钮） | 推送日报到钉钉群 |
+| **Review Daily Report** | 手动触发 | LLM 审核修正日报，移除不属于时间窗口的模型 |
+| **Smart Add Model** | 前端网页触发 | 从用户输入的文本/链接中提取模型信息 |
 
+**Daily Pipeline 自动执行流程**：
 ```
-Step 1    数据采集 → 多源采集（llmstats + 腾讯研究院 + HuggingFace）
-Step 2    增量去重 → 与总表对比，只保留新增模型
-Step 3    AI 审核 → GPT-5.5 名称规范 + 字段补全 + 重要性评级
-Step 4    数据校验 → Web Search 校验发布时间/官网/备注
-Step 5    交叉巡检 → LLM 联网搜索该时段新模型，与已有数据交叉比对补漏
-Step 6    合并归档 → 新增写入 increments/，合并到总表，合并前自动备份
-Step 7    钉钉推送（需 --push，从总表按发布时间筛选生成日报，变体自动合并）
-Step 8    运行记录 → 写入 run_log.csv
+1. Checkout 代码 → 2. 安装 Python 3.13 + 依赖
+3. 计算日期范围（默认昨天）
+4. 运行 main.py（8 步流水线：采集→去重→审核→校验→巡检→归档→推送→记录）
+5. 生成站点数据（JSON for GitHub Pages）
+6. 提交数据到仓库
+7. 自动审核日报（review_daily.py，LLM 修正错误）
+8. 重新生成站点数据
+9. 提交审核结果
+10. 部署到 GitHub Pages（https://yqiu07.github.io/ai-models-tracker-site/）
 ```
 
-### 阶段 B：AI 创作校验（推荐）
+### 模式二：本地手动运行
 
-在 AI 对话中完成高质量校验：读取文章全文 → 提取新模型 → 生成语义化备注 → 核实发布时间 → 补全字段 → 去重写入 Excel。
+所有命令在 `Model_Navigate/` 目录下执行：
 
-AI 会自动加载 `Model_Navigate/SKILL.md` 并按规范执行。
+```bash
+cd Model_Navigate
 
-### 阶段 C：推送与验收
+# 一键运行全流水线
+python main.py --since YYYYMMDD --until YYYYMMDD
 
-数据质量检查 → 钉钉日报推送 → 人工终判。
+# 含钉钉推送
+python main.py --since YYYYMMDD --until YYYYMMDD --push
+
+# 推送日报（预览加 --dry-run，可选 --created-date 精确控制）
+python push_dingtalk.py --since YYYYMMDD --until YYYYMMDD
+python push_dingtalk.py --since YYYYMMDD --until YYYYMMDD --created-date 2026-05-14
+
+# 模型审核（预览加 --dry-run）
+python review_models.py
+
+# 日报巡检修正（LLM 审核修正日报）
+python review_daily.py --since YYYYMMDD --until YYYYMMDD
+
+# 生成站点数据（用于 GitHub Pages 部署）
+python generate_site_data.py --since YYYYMMDD --until YYYYMMDD
+
+# LLM 自动提取
+cd Extract; python extract_models_llm.py --since YYYYMMDD --until YYYYMMDD
+```
+
+### 模式三：前端网页操作
+
+访问 https://yqiu07.github.io/ai-models-tracker-site/ 可完成以下操作：
+
+- **日报/总表导出**：点击右上角 `💾 JSON` 或 `📄 XLSX` 按钮导出数据
+- **手动添加模型**：点击 `➕ 手动添加` 按钮
+- **智能添加模型**：点击 `🤖 智能添加` 按钮（触发 GitHub Actions）
+- **回收站管理**：点击 `🗑️ 回收站` 查看/恢复删除的模型
+- **接入站管理**：点击 `🔗 接入站` 查看已接入的模型
+- **推送钉钉**：点击 `📩 推送钉钉` 按钮（触发 GitHub Actions）
+- **巡检修正**：点击 `⚙️ 巡检修正` 按钮（触发 GitHub Actions）
+- **更新数据**：点击 `🔄 更新` 按钮（触发 GitHub Actions）
 
 ---
 
@@ -269,55 +309,83 @@ python 20260509_1700_eval_full_pipeline.py
 ## 项目结构
 
 ```
-model-navigate-skill/               ← 项目根目录（GitHub 仓库）
-├── README.md                        ← 本文件（面向人的项目说明）
+ai-models-tracker-site/              ← 项目根目录（GitHub 仓库）
+── README.md                         ← 本文件（面向人的项目说明）
 ├── .gitignore
+├── _sync_to_docs.py                  ← 数据同步脚本（总表 → docs/data/）
+├── _backfill_tx.py                   ← 腾讯研究院数据回填脚本
 │
-└── Model_Navigate/                  ← Skill 包（AI 操作手册 + 核心脚本）
-    ├── SKILL.md                     ← AI 操作手册
-    ├── package.json                 ← Skill 元数据
-    ├── requirements.txt             ← Python 依赖
-    ├── .env.example                 ← API Key 配置模板
-    ├── config.py                    ← 全局配置（列定义、超时、黑名单等）
+├── .github/workflows/                ← GitHub Actions 自动化工作流
+│   ├── daily-pipeline.yml            ← 每日自动流水线（北京时间 8:00）
+│   ├── push-dingtalk.yml             ← 手动触发钉钉推送
+│   ├── review-daily.yml              ← 手动触发日报巡检修正
+│   ── smart-add.yml                 ← 前端触发智能添加模型
+│
+├── docs/                             ← GitHub Pages 静态站点
+│   ├── index.html                    ← 前端页面（日报/总表/仪表盘/数据源/日志）
+│   └── data/                         ← 站点 JSON 数据
+│       ├── all_models.json           ← 全量模型数据（前端总表）
+│       ├── daily_report.json         ← 最新日报数据
+│       ├── dashboard.json            ← 仪表盘统计数据
+│       ├── connected.json            ← 接入站数据
+│       ├── recycle.json              ← 回收站数据
+│       ├── dropout.json              ← 流失模型数据
+│       ├── sources.json              ← 数据源配置
+│       ├── site_meta.json            ← 站点元信息
+│       ├── pipeline_log.json         ← 流水线日志
+│       ├── history_index.json        ← 历史日报索引
+│       └── history/                  ← 历史日报归档（JSON + Markdown）
+│
+└── Model_Navigate/                   ← 核心流水线代码
+    ├── SKILL.md                      ← AI 操作手册
+    ├── package.json                  ← Skill 元数据
+    ├── requirements.txt              ← Python 依赖
+    ├── .env.example                  ← API Key 配置模板
+    ├── config.py                     ← 全局配置（URL、超时、UA、数据常量等）
     │
-    ├── main.py                      ← 流水线入口（v3 八步 + Trace 记录）
-    ├── auto_collect.py              ← 自动化数据采集
-    ├── cross_check.py               ← 多源交叉校验（LM Arena + HuggingFace）
-    ├── verify_models.py             ← 模型数据验证与一致性检查
-    ├── review_models.py             ← GPT-5.5 模型审核 + 重要性评级
-    ├── push_dingtalk.py             ← 钉钉日报生成与推送
+    ├── main.py                       ← 流水线入口（v3 八步 + Trace 记录）
+    ├── auto_collect.py               ← 自动化数据采集（llmstats + 腾讯研究院 + HuggingFace）
+    ├── cross_check.py                ← LLM 交叉巡检（联网搜索补漏）
+    ├── verify_models.py              ← Step 4 数据校验（DashScope 联网搜索）
+    ├── review_models.py              ← GPT-5.5 模型审核 + 重要性评级
+    ├── review_daily.py               ← 日报巡检修正（LLM 审核日报，移除错误模型）
+    ├── push_dingtalk.py              ← 钉钉日报生成与推送
+    ├── smart_add.py                  ← 智能添加模型（从文本/链接提取）
+    ├── generate_site_data.py         ← 生成站点 JSON 数据（供 GitHub Pages）
     │
-    ├── data/                        ← 运行时数据（v3 架构：总表 + increments/ + Backup/）
-    ├── Trace/                       ← 流水线运行记录（自动生成）
+    ├── data/                         ← 运行时数据（v3 架构）
+    │   ├── Object-Models.xlsx        ← 唯一真相源（总表）
+    │   ├── Object-Models-Updated.xlsx← 采集输出
+    │   ├── increments/               ← 增量归档
+    │   ├── Backup/                   ← 总表备份
+    │   ├── run_log.csv               ← 运行记录
+    │   └── pipeline_trace.json       ← 流水线 Trace 记录
     │
-    ├── Eval/                        ← 验收评估
-    │   ├── eval_pipeline.py         ← 评估脚本（金标 vs 流水线）
-    │   ├── gold_standard.xlsx       ← 金标文件
-    │   ├── pipeline_llmstats.xlsx   ← 流水线产出
-    │   └── eval_report.md           ← 评估报告
-    │
-    ├── REVIEW.md                    ← 优化总结
-    ├── TEST.md                      ← 金标评估表现
-    ├── TRACE.md                     ← 问题解决与优化轨迹
+    ├── Eval/                         ← 验收评估
+    │   ├── eval_pipeline.py          ← 评估脚本（金标 vs 流水线）
+    │   ├── gold_standard.xlsx        ← 金标文件
+    │   └── eval_report.md            ← 评估报告
     │
     ├── Crawl/
-    │   ├── TXresearch/
-    │   │   ├── crawl_sohu_lite.py   ← 腾讯研究院轻量爬虫（纯 requests，优先使用）
-    │   │   └── crawl_sohu.py        ← 腾讯研究院爬虫（Selenium，作为 fallback）
-    │   └── Arena_x/
-    │       ├── extract_llmstats_json.py  ← llmstats 数据提取
-    │       └── format_cases.py           ← Case 文件格式化
+    │   ├── TXresearch/               ← 腾讯研究院爬虫
+    │   │   ├── crawl_sohu_lite.py    ← 轻量爬虫（纯 requests）
+    │   │   └── crawl_sohu.py         ← Selenium fallback
+    │   └── Arena_x/                  ← llmstats 数据提取
+    │       └── extract_llmstats_json.py
     │
-    ├── Extract/
-    │   ├── extract_models_llm.py    ← LLM API 自动提取
-    │   ├── Taxonomy.xlsx            ← 字段填写规范
-    │   └── Focus.xlsx               ← 重点关注机构列表
+    ├── Extract/                      ← LLM 自动提取
+    │   ├── extract_models_llm.py
+    │   ├── Taxonomy.xlsx             ← 字段填写规范
+    │   └── Focus.xlsx                ← 重点关注机构列表
     │
-    ├── Report/
-    │   └── generate_report.py       ← 更新报告生成
+    ├── Report/                       ← 报告生成
+    │   └── generate_report.py
+    │
+    ├── Trace/                        ← 流水线运行记录
+    │   └── trace_audit.py
     │
     └── Test/
-        └── check_result.py          ← 数据完整性检查
+        └── check_result.py           ← 数据完整性检查
 ```
 
 ---
