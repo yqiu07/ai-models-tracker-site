@@ -1,4 +1,4 @@
-Re 2026/05/14/22:000
+Re 2026/07/06
 name: Model Navigate
 description: AI 模型导航与追踪系统，全自动化 AI 模型追踪流水线
 
