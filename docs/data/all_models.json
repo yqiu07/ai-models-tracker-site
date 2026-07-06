@@ -6374,13 +6374,81 @@
       "release_date": "2026-07-02",
       "created_date": "2026-07-03",
       "data_source": ""
+    },
+    {
+      "name": "gr00t17-lerobot-libero_goal-640",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "英伟达",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "",
+      "type": "未知",
+      "reasoning": "non-thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/nvidia/gr00t17-lerobot-libero_goal-640",
+      "note": "HuggingFace robotics",
+      "release_date": "2026-07-05",
+      "created_date": "2026-07-06",
+      "data_source": ""
+    },
+    {
+      "name": "gr00t17-lerobot-libero_10-640",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "英伟达",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "",
+      "type": "未知",
+      "reasoning": "non-thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/nvidia/gr00t17-lerobot-libero_10-640",
+      "note": "HuggingFace robotics",
+      "release_date": "2026-07-05",
+      "created_date": "2026-07-06",
+      "data_source": ""
+    },
+    {
+      "name": "gr00t17-lerobot-libero_object-640",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "英伟达",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "",
+      "type": "未知",
+      "reasoning": "non-thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/nvidia/gr00t17-lerobot-libero_object-640",
+      "note": "HuggingFace robotics",
+      "release_date": "2026-07-05",
+      "created_date": "2026-07-06",
+      "data_source": ""
+    },
+    {
+      "name": "gr00t17-lerobot-libero_spatial-640",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "英伟达",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "",
+      "type": "未知",
+      "reasoning": "non-thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/nvidia/gr00t17-lerobot-libero_spatial-640",
+      "note": "HuggingFace robotics",
+      "release_date": "2026-07-05",
+      "created_date": "2026-07-06",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 375,
+    "total": 379,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 41,
-    "generated_at": "2026-07-05 01:55:58"
+    "generated_at": "2026-07-06 02:03:01"
   }
 }
