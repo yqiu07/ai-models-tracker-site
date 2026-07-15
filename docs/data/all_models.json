@@ -6476,13 +6476,64 @@
       "release_date": "2026-07-08",
       "created_date": "2026-07-09",
       "data_source": ""
+    },
+    {
+      "name": "Nemotron-3-Embed-1B-NVFP4",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "英伟达",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "1B",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/nvidia/Nemotron-3-Embed-1B-NVFP4",
+      "note": "HuggingFace",
+      "release_date": "2026-07-14",
+      "created_date": "2026-07-15",
+      "data_source": ""
+    },
+    {
+      "name": "Nemotron-3-Embed-8B-BF16",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "英伟达",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "8B",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/nvidia/Nemotron-3-Embed-8B-BF16",
+      "note": "HuggingFace sentence-similarity",
+      "release_date": "2026-07-14",
+      "created_date": "2026-07-15",
+      "data_source": ""
+    },
+    {
+      "name": "Nemotron-3-Embed-1B-BF16",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "英伟达",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "1B",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/nvidia/Nemotron-3-Embed-1B-BF16",
+      "note": "HuggingFace sentence-similarity",
+      "release_date": "2026-07-14",
+      "created_date": "2026-07-15",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 381,
+    "total": 384,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 41,
-    "generated_at": "2026-07-14 01:19:27"
+    "generated_at": "2026-07-15 01:16:42"
   }
 }
