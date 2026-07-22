@@ -6561,13 +6561,30 @@
       "release_date": "2026-07-15",
       "created_date": "2026-07-16",
       "data_source": ""
+    },
+    {
+      "name": "Gemini 3.6 Flash",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Google",
+      "domestic": "国外",
+      "open_source": "闭源",
+      "size": "",
+      "type": "多模态",
+      "reasoning": "thinking",
+      "task_type": "通用对话",
+      "website": "https://llm-stats.com/models/gemini-3.6-flash",
+      "note": "1048k上下文",
+      "release_date": "2026-07-21",
+      "created_date": "2026-07-22",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 386,
+    "total": 387,
     "recycled": 14,
     "stale_filtered": 44,
-    "dedup_filtered": 41,
-    "generated_at": "2026-07-21 01:26:53"
+    "dedup_filtered": 43,
+    "generated_at": "2026-07-22 01:25:55"
   }
 }
