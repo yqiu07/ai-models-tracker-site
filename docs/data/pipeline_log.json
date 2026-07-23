@@ -1,7 +1,100 @@
 {
   "description": "Pipeline 执行日志，供前端日志Tab展示",
-  "total": 42,
+  "total": 43,
   "runs": [
+    {
+      "run_id": "20260723_run0145",
+      "date": "2026-07-23",
+      "trigger_time": "2026-07-23T01:45:13",
+      "trigger_type": "manual",
+      "status": "success",
+      "new_count": 0,
+      "duration_seconds": 15,
+      "since": "20260722",
+      "until": "20260722",
+      "steps": [
+        {
+          "number": 1,
+          "name": "数据采集",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:13",
+          "ended_at": "2026-07-23T01:45:22",
+          "duration_seconds": 9,
+          "metrics": {},
+          "errors": []
+        },
+        {
+          "number": 2,
+          "name": "增量去重",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:22",
+          "ended_at": "2026-07-23T01:45:23",
+          "duration_seconds": 1,
+          "metrics": {},
+          "errors": []
+        },
+        {
+          "number": 3,
+          "name": "LLM 审核",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:23",
+          "ended_at": "2026-07-23T01:45:24",
+          "duration_seconds": 1,
+          "metrics": {},
+          "errors": []
+        },
+        {
+          "number": 4,
+          "name": "数据校验",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:24",
+          "ended_at": "2026-07-23T01:45:25",
+          "duration_seconds": 1,
+          "metrics": {},
+          "errors": []
+        },
+        {
+          "number": 5,
+          "name": "交叉巡检",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:25",
+          "ended_at": "2026-07-23T01:45:28",
+          "duration_seconds": 3,
+          "metrics": {},
+          "errors": []
+        },
+        {
+          "number": 6,
+          "name": "合并归档",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:28",
+          "ended_at": "2026-07-23T01:45:28",
+          "duration_seconds": 0,
+          "metrics": {},
+          "errors": []
+        },
+        {
+          "number": 7,
+          "name": "钉钉推送",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:28",
+          "ended_at": "2026-07-23T01:45:29",
+          "duration_seconds": 1,
+          "metrics": {},
+          "errors": []
+        },
+        {
+          "number": 8,
+          "name": "运行记录",
+          "status": "success",
+          "started_at": "2026-07-23T01:45:29",
+          "ended_at": "2026-07-23T01:45:29",
+          "duration_seconds": 0,
+          "metrics": {},
+          "errors": []
+        }
+      ]
+    },
     {
       "run_id": "20260722_run0125",
       "date": "2026-07-22",
@@ -3909,5 +4002,5 @@
       ]
     }
   ],
-  "generated_at": "2026-07-22 01:25:58"
+  "generated_at": "2026-07-23 01:45:29"
 }
