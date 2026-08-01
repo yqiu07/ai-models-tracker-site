@@ -6680,13 +6680,30 @@
       "release_date": "2026-07-30",
       "created_date": "2026-07-31",
       "data_source": ""
+    },
+    {
+      "name": "DeepSeek-V4-Flash-0731",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "深度求索",
+      "domestic": "国内",
+      "open_source": "开源",
+      "size": "",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "",
+      "website": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731",
+      "note": "HuggingFace text-generation",
+      "release_date": "2026-07-31",
+      "created_date": "2026-08-01",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 393,
+    "total": 394,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 43,
-    "generated_at": "2026-07-31 01:45:39"
+    "generated_at": "2026-08-01 01:46:42"
   }
 }
