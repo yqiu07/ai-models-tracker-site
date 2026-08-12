@@ -6697,13 +6697,30 @@
       "release_date": "2026-07-31",
       "created_date": "2026-08-01",
       "data_source": ""
+    },
+    {
+      "name": "Nemotron 3.5 Lightning (30B A3B)",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "NVIDIA",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "30B",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "通用对话",
+      "website": "https://llm-stats.com/models/nemotron-3.5-lightning-30b-a3b",
+      "note": "MoE架构；30B参数；262k上下文；低成本；Openmdw",
+      "release_date": "2026-08-11",
+      "created_date": "2026-08-12",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 394,
+    "total": 395,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 43,
-    "generated_at": "2026-08-11 00:51:58"
+    "generated_at": "2026-08-12 00:58:37"
   }
 }
