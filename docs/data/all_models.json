@@ -6714,13 +6714,47 @@
       "release_date": "2026-08-11",
       "created_date": "2026-08-12",
       "data_source": ""
+    },
+    {
+      "name": "Grok 4.6",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "xAI",
+      "domestic": "国外",
+      "open_source": "闭源",
+      "size": "",
+      "type": "多模态",
+      "reasoning": "thinking",
+      "task_type": "通用对话",
+      "website": "https://llm-stats.com/models/grok-4.6",
+      "note": "500k上下文",
+      "release_date": "2026-08-12",
+      "created_date": "2026-08-13",
+      "data_source": ""
+    },
+    {
+      "name": "LFM2.5-VL-3B",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Liquid AI",
+      "domestic": "国外",
+      "open_source": "开源",
+      "size": "3B",
+      "type": "多模态",
+      "reasoning": "non-thinking",
+      "task_type": "通用对话",
+      "website": "https://llm-stats.com/models/lfm-2.5-vl-3b",
+      "note": "Lfm1 0",
+      "release_date": "2026-08-12",
+      "created_date": "2026-08-13",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 395,
+    "total": 397,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 43,
-    "generated_at": "2026-08-12 00:58:39"
+    "generated_at": "2026-08-13 01:00:09"
   }
 }
