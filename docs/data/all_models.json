@@ -6748,13 +6748,47 @@
       "release_date": "2026-08-12",
       "created_date": "2026-08-13",
       "data_source": ""
+    },
+    {
+      "name": "DeepSeek-V4-Pro-0813",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "DeepSeek",
+      "domestic": "国内",
+      "open_source": "开源",
+      "size": "2T",
+      "type": "基座",
+      "reasoning": "thinking",
+      "task_type": "通用对话",
+      "website": "https://llm-stats.com/models/deepseek-v4-pro-0813",
+      "note": "MoE架构；2T参数；1048k上下文；MIT",
+      "release_date": "2026-08-13",
+      "created_date": "2026-08-14",
+      "data_source": ""
+    },
+    {
+      "name": "Gemini 3.7 Flash",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "Google",
+      "domestic": "国外",
+      "open_source": "闭源",
+      "size": "",
+      "type": "多模态",
+      "reasoning": "thinking",
+      "task_type": "通用对话",
+      "website": "https://llm-stats.com/models/gemini-3.7-flash",
+      "note": "1048k上下文",
+      "release_date": "2026-08-13",
+      "created_date": "2026-08-14",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 397,
+    "total": 399,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 43,
-    "generated_at": "2026-08-13 01:00:09"
+    "generated_at": "2026-08-14 00:59:32"
   }
 }
