@@ -396,528 +396,6 @@
       "name": "qwen2.5-72b-instruct",
       "reason": "name_substring_match: 'qwen2.5-72b'",
       "matched_with": "qwen2.5-72b",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen3-235b-a22b-thinking-2507",
-      "reason": "name_substring_match: 'qwen3-235b-a22b'",
-      "matched_with": "qwen3-235b-a22b",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen3-235b-a22b-instruct-2507",
-      "reason": "name_substring_match: 'qwen3-235b-a22b'",
-      "matched_with": "qwen3-235b-a22b",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen3-max-preview",
-      "reason": "name_substring_match: 'qwen3-max'",
-      "matched_with": "qwen3-max",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen2.5-14b-instruct",
-      "reason": "name_substring_match: 'qwen2.5-14b'",
-      "matched_with": "qwen2.5-14b",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen3-max-thinking",
-      "reason": "name_substring_match: 'qwen3-max'",
-      "matched_with": "qwen3-max",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen-flash-no-guard",
-      "reason": "name_substring_match: 'qwen-flash'",
-      "matched_with": "qwen-flash",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen-plus-no-guard",
-      "reason": "name_substring_match: 'qwen-plus'",
-      "matched_with": "qwen-plus",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen-plus-character-no-guard",
-      "reason": "name_substring_match: 'qwen-plus-character'",
-      "matched_with": "qwen-plus-character",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen-long-no-guard",
-      "reason": "name_substring_match: 'qwen-long'",
-      "matched_with": "qwen-long",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen2.5-14b-instruct-1m-no-guard",
-      "reason": "name_substring_match: 'qwen2.5-14b-instruct-1m'",
-      "matched_with": "qwen2.5-14b-instruct-1m",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "GLM-4.7-Flash",
-      "reason": "name_substring_match: 'GLM-4.7'",
-      "matched_with": "GLM-4.7",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen2.5-0.5b-instruct-no-guard",
-      "reason": "name_substring_match: 'qwen2.5-0.5b-instruct'",
-      "matched_with": "qwen2.5-0.5b-instruct",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen2.5-1.5b-instruct-no-guard",
-      "reason": "name_substring_match: 'qwen2.5-1.5b-instruct'",
-      "matched_with": "qwen2.5-1.5b-instruct",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen2.5-3b-instruct-no-guard",
-      "reason": "name_substring_match: 'qwen2.5-3b-instruct'",
-      "matched_with": "qwen2.5-3b-instruct",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "claude-opus-4-6",
-      "reason": "name_substring_match: 'claude-opus-4-6-thinking'",
-      "matched_with": "claude-opus-4-6-thinking",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "MiniMax Music 2.5+",
-      "reason": "name_substring_match: 'MiniMax Music 2.5'",
-      "matched_with": "MiniMax Music 2.5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Marble 1.1",
-      "reason": "name_substring_match: 'Marble 1.1-Plus'",
-      "matched_with": "Marble 1.1-Plus",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "GPT-5.5 Pro",
-      "reason": "name_substring_match: 'GPT 5'",
-      "matched_with": "GPT 5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Grok Imagine Image",
-      "reason": "name_substring_match: 'Grok Imagine Image Pro'",
-      "matched_with": "Grok Imagine Image Pro",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "MiMo-V2.5-Pro",
-      "reason": "name_substring_match: 'MiMo-V2.5'",
-      "matched_with": "MiMo-V2.5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Hunyuan Hy3 preview",
-      "reason": "name_substring_match: 'Hy3 preview'",
-      "matched_with": "Hy3 preview",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemma 4",
-      "reason": "name_substring_match: 'gemma-4-26B-A4B'",
-      "matched_with": "gemma-4-26B-A4B",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "vermeer-XL",
-      "reason": "name_substring_match: 'vermeer-XL-CA'",
-      "matched_with": "vermeer-XL-CA",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "vermeer-L",
-      "reason": "name_substring_match: 'vermeer-L-AP'",
-      "matched_with": "vermeer-L-AP",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemini 3.5 Flash (Low)",
-      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
-      "matched_with": "Gemini 3.5 Flash",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Claude Mythos",
-      "reason": "name_substring_match: 'claude-mythos-preview'",
-      "matched_with": "claude-mythos-preview",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "DeepSeek-V4 Flash",
-      "reason": "name_substring_match: 'DeepSeek-V4-Flash-Max'",
-      "matched_with": "DeepSeek-V4-Flash-Max",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "WorkBuddy 企业版",
-      "reason": "name_substring_match: 'WorkBuddy'",
-      "matched_with": "WorkBuddy",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "diffusiongemma-26B-A4B-it-NVFP4",
-      "reason": "name_substring_match: 'DiffusionGemma 26B-A4B'",
-      "matched_with": "DiffusionGemma 26B-A4B",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Fable5",
-      "reason": "name_substring_match: 'Claude Fable 5'",
-      "matched_with": "Claude Fable 5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemini 3.5",
-      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
-      "matched_with": "Gemini 3.5 Flash",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "讯飞星火医疗大模型V3.5",
-      "reason": "name_exact_match: '讯飞星火医疗大模型V3.5'",
-      "matched_with": "讯飞星火医疗大模型V3.5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Claude Fable 5",
-      "reason": "name_exact_match: 'Claude Fable 5'",
-      "matched_with": "Claude Fable 5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Claude Mythos 5",
-      "reason": "name_substring_match: 'Mythos5'",
-      "matched_with": "Mythos5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Anthropic Claude Fable 5",
-      "reason": "name_substring_match: 'Claude Fable 5'",
-      "matched_with": "Claude Fable 5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "智谱GLM-5.2",
-      "reason": "name_substring_match: 'GLM-5'",
-      "matched_with": "GLM-5",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Lyria 3",
-      "reason": "name_substring_match: 'lyria-3-pro'",
-      "matched_with": "lyria-3-pro",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "GPT-5.6",
-      "reason": "name_exact_match: 'GPT-5.6'",
-      "matched_with": "GPT-5.6",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemini 3.5 Flash",
-      "reason": "name_exact_match: 'Gemini 3.5 Flash'",
-      "matched_with": "Gemini 3.5 Flash",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "HARC-Qwen2.5-7B-Instruct",
-      "reason": "name_substring_match: 'qwen2.5-7b-instruct'",
-      "matched_with": "qwen2.5-7b-instruct",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemini 3.5 Flash Cyber",
-      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
-      "matched_with": "Gemini 3.5 Flash",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemini 3.5 Flash-Lite",
-      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
-      "matched_with": "Gemini 3.5 Flash",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Claude 4.0",
-      "reason": "stale_gap: release=2026-05-29 created=2026-06-08",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "CUA (Contextual Utility Alignment) Training Framework",
-      "reason": "stale_gap: release=2026-05-31 created=2026-06-08",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemini 3.5",
-      "reason": "stale_gap: release=2026-05-19 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemma 4 12B",
-      "reason": "stale_gap: release=2026-05-23 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Music v2",
-      "reason": "stale_gap: release=2026-05-29 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "ESMFold2",
-      "reason": "stale_gap: release=2026-05-29 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Wall-OSS-0.5",
-      "reason": "stale_gap: release=2026-05-29 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Cosmos 3",
-      "reason": "stale_gap: release=2026-06-02 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "MPA",
-      "reason": "stale_gap: release=2026-06-02 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Step 3.7 Flash",
-      "reason": "stale_gap: release=2026-06-01 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "SkyClaw-v1.0",
-      "reason": "stale_gap: release=2026-05-27 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Keye-VL-2.0-30B-A3B",
-      "reason": "stale_gap: release=2026-05-27 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "GLM-5.1高速版",
-      "reason": "stale_gap: release=2026-04-07 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "LongCat-Video-Avatar 1.5",
-      "reason": "stale_gap: release=2026-05-25 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Hy-MT2",
-      "reason": "stale_gap: release=2026-05-22 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Gemini Omni Flash",
-      "reason": "stale_gap: release=2026-05-21 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Co-Scientist",
-      "reason": "stale_gap: release=2026-05-21 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Robin",
-      "reason": "stale_gap: release=2026-05-21 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Composer 2.5",
-      "reason": "stale_gap: release=2026-05-20 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Claude Opus 4.7 Fast",
-      "reason": "stale_gap: release=2026-04-16 created=2026-06-11",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Mano-P 72B",
-      "reason": "stale_gap: release=2026-06-01 created=2026-06-12",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Mano-P 4B (quantized)",
-      "reason": "stale_gap: release=2026-06-01 created=2026-06-12",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Grok-Imagine-Video-1.5-Preview",
-      "reason": "stale_gap: release=2026-06-01 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Qwen-VLA",
-      "reason": "stale_gap: release=2026-06-01 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Project Eden (Preview)",
-      "reason": "stale_gap: release=2026-06-03 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Mellum2",
-      "reason": "stale_gap: release=2026-06-03 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Holo3.1 系列",
-      "reason": "stale_gap: release=2026-06-03 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Ideogram 4.0",
-      "reason": "stale_gap: release=2026-06-04 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Reve 2.0",
-      "reason": "stale_gap: release=2026-06-04 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "GPT-Rosalind (升级版)",
-      "reason": "stale_gap: release=2026-06-05 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Nex-N2-Pro",
-      "reason": "stale_gap: release=2026-06-05 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Bernini",
-      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Higgs Audio v3",
-      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Magenta RealTime 2",
-      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Nemotron 3.5",
-      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "dots.tts",
-      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Riverflow 2.5",
-      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "MisoTTS 8B",
-      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "BLS-Mini-Code-1.0",
-      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Harness-1",
-      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "M3",
-      "reason": "stale_gap: release=2026-06-01 created=2026-06-19",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Spark",
-      "reason": "stale_gap: release=2026-06-12 created=2026-06-20",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Vera CPU (first-generation)",
-      "reason": "stale_gap: release=2026-06-01 created=2026-06-21",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "Mythos (unreleased public version, but newly designated as 'Frontier Model' under US executive order)",
-      "reason": "stale_gap: release=2026-06-02 created=2026-06-21",
-      "matched_with": "",
-      "removed_at": "2026-08-18 00:34"
-    },
-    {
-      "name": "qwen2.5-72b-instruct",
-      "reason": "name_substring_match: 'qwen2.5-72b'",
-      "matched_with": "qwen2.5-72b",
       "removed_at": "2026-08-19 00:34"
     },
     {
@@ -3001,7 +2479,529 @@
       "reason": "stale_gap: release=2026-06-02 created=2026-06-21",
       "matched_with": "",
       "removed_at": "2026-08-20 00:34"
+    },
+    {
+      "name": "qwen2.5-72b-instruct",
+      "reason": "name_substring_match: 'qwen2.5-72b'",
+      "matched_with": "qwen2.5-72b",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen3-235b-a22b-thinking-2507",
+      "reason": "name_substring_match: 'qwen3-235b-a22b'",
+      "matched_with": "qwen3-235b-a22b",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen3-235b-a22b-instruct-2507",
+      "reason": "name_substring_match: 'qwen3-235b-a22b'",
+      "matched_with": "qwen3-235b-a22b",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen3-max-preview",
+      "reason": "name_substring_match: 'qwen3-max'",
+      "matched_with": "qwen3-max",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen2.5-14b-instruct",
+      "reason": "name_substring_match: 'qwen2.5-14b'",
+      "matched_with": "qwen2.5-14b",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen3-max-thinking",
+      "reason": "name_substring_match: 'qwen3-max'",
+      "matched_with": "qwen3-max",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen-flash-no-guard",
+      "reason": "name_substring_match: 'qwen-flash'",
+      "matched_with": "qwen-flash",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen-plus-no-guard",
+      "reason": "name_substring_match: 'qwen-plus'",
+      "matched_with": "qwen-plus",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen-plus-character-no-guard",
+      "reason": "name_substring_match: 'qwen-plus-character'",
+      "matched_with": "qwen-plus-character",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen-long-no-guard",
+      "reason": "name_substring_match: 'qwen-long'",
+      "matched_with": "qwen-long",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen2.5-14b-instruct-1m-no-guard",
+      "reason": "name_substring_match: 'qwen2.5-14b-instruct-1m'",
+      "matched_with": "qwen2.5-14b-instruct-1m",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "GLM-4.7-Flash",
+      "reason": "name_substring_match: 'GLM-4.7'",
+      "matched_with": "GLM-4.7",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen2.5-0.5b-instruct-no-guard",
+      "reason": "name_substring_match: 'qwen2.5-0.5b-instruct'",
+      "matched_with": "qwen2.5-0.5b-instruct",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen2.5-1.5b-instruct-no-guard",
+      "reason": "name_substring_match: 'qwen2.5-1.5b-instruct'",
+      "matched_with": "qwen2.5-1.5b-instruct",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "qwen2.5-3b-instruct-no-guard",
+      "reason": "name_substring_match: 'qwen2.5-3b-instruct'",
+      "matched_with": "qwen2.5-3b-instruct",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "claude-opus-4-6",
+      "reason": "name_substring_match: 'claude-opus-4-6-thinking'",
+      "matched_with": "claude-opus-4-6-thinking",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "MiniMax Music 2.5+",
+      "reason": "name_substring_match: 'MiniMax Music 2.5'",
+      "matched_with": "MiniMax Music 2.5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Marble 1.1",
+      "reason": "name_substring_match: 'Marble 1.1-Plus'",
+      "matched_with": "Marble 1.1-Plus",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "GPT-5.5 Pro",
+      "reason": "name_substring_match: 'GPT 5'",
+      "matched_with": "GPT 5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Grok Imagine Image",
+      "reason": "name_substring_match: 'Grok Imagine Image Pro'",
+      "matched_with": "Grok Imagine Image Pro",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "MiMo-V2.5-Pro",
+      "reason": "name_substring_match: 'MiMo-V2.5'",
+      "matched_with": "MiMo-V2.5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Hunyuan Hy3 preview",
+      "reason": "name_substring_match: 'Hy3 preview'",
+      "matched_with": "Hy3 preview",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemma 4",
+      "reason": "name_substring_match: 'gemma-4-26B-A4B'",
+      "matched_with": "gemma-4-26B-A4B",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "vermeer-XL",
+      "reason": "name_substring_match: 'vermeer-XL-CA'",
+      "matched_with": "vermeer-XL-CA",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "vermeer-L",
+      "reason": "name_substring_match: 'vermeer-L-AP'",
+      "matched_with": "vermeer-L-AP",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemini 3.5 Flash (Low)",
+      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
+      "matched_with": "Gemini 3.5 Flash",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Claude Mythos",
+      "reason": "name_substring_match: 'claude-mythos-preview'",
+      "matched_with": "claude-mythos-preview",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "DeepSeek-V4 Flash",
+      "reason": "name_substring_match: 'DeepSeek-V4-Flash-Max'",
+      "matched_with": "DeepSeek-V4-Flash-Max",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "WorkBuddy 企业版",
+      "reason": "name_substring_match: 'WorkBuddy'",
+      "matched_with": "WorkBuddy",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "diffusiongemma-26B-A4B-it-NVFP4",
+      "reason": "name_substring_match: 'DiffusionGemma 26B-A4B'",
+      "matched_with": "DiffusionGemma 26B-A4B",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Fable5",
+      "reason": "name_substring_match: 'Claude Fable 5'",
+      "matched_with": "Claude Fable 5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemini 3.5",
+      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
+      "matched_with": "Gemini 3.5 Flash",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "讯飞星火医疗大模型V3.5",
+      "reason": "name_exact_match: '讯飞星火医疗大模型V3.5'",
+      "matched_with": "讯飞星火医疗大模型V3.5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Claude Fable 5",
+      "reason": "name_exact_match: 'Claude Fable 5'",
+      "matched_with": "Claude Fable 5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Claude Mythos 5",
+      "reason": "name_substring_match: 'Mythos5'",
+      "matched_with": "Mythos5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Anthropic Claude Fable 5",
+      "reason": "name_substring_match: 'Claude Fable 5'",
+      "matched_with": "Claude Fable 5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "智谱GLM-5.2",
+      "reason": "name_substring_match: 'GLM-5'",
+      "matched_with": "GLM-5",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Lyria 3",
+      "reason": "name_substring_match: 'lyria-3-pro'",
+      "matched_with": "lyria-3-pro",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "GPT-5.6",
+      "reason": "name_exact_match: 'GPT-5.6'",
+      "matched_with": "GPT-5.6",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemini 3.5 Flash",
+      "reason": "name_exact_match: 'Gemini 3.5 Flash'",
+      "matched_with": "Gemini 3.5 Flash",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "HARC-Qwen2.5-7B-Instruct",
+      "reason": "name_substring_match: 'qwen2.5-7b-instruct'",
+      "matched_with": "qwen2.5-7b-instruct",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemini 3.5 Flash Cyber",
+      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
+      "matched_with": "Gemini 3.5 Flash",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemini 3.5 Flash-Lite",
+      "reason": "name_substring_match: 'Gemini 3.5 Flash'",
+      "matched_with": "Gemini 3.5 Flash",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Claude 4.0",
+      "reason": "stale_gap: release=2026-05-29 created=2026-06-08",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "CUA (Contextual Utility Alignment) Training Framework",
+      "reason": "stale_gap: release=2026-05-31 created=2026-06-08",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemini 3.5",
+      "reason": "stale_gap: release=2026-05-19 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemma 4 12B",
+      "reason": "stale_gap: release=2026-05-23 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Music v2",
+      "reason": "stale_gap: release=2026-05-29 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "ESMFold2",
+      "reason": "stale_gap: release=2026-05-29 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Wall-OSS-0.5",
+      "reason": "stale_gap: release=2026-05-29 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Cosmos 3",
+      "reason": "stale_gap: release=2026-06-02 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "MPA",
+      "reason": "stale_gap: release=2026-06-02 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Step 3.7 Flash",
+      "reason": "stale_gap: release=2026-06-01 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "SkyClaw-v1.0",
+      "reason": "stale_gap: release=2026-05-27 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Keye-VL-2.0-30B-A3B",
+      "reason": "stale_gap: release=2026-05-27 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "GLM-5.1高速版",
+      "reason": "stale_gap: release=2026-04-07 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "LongCat-Video-Avatar 1.5",
+      "reason": "stale_gap: release=2026-05-25 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Hy-MT2",
+      "reason": "stale_gap: release=2026-05-22 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Gemini Omni Flash",
+      "reason": "stale_gap: release=2026-05-21 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Co-Scientist",
+      "reason": "stale_gap: release=2026-05-21 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Robin",
+      "reason": "stale_gap: release=2026-05-21 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Composer 2.5",
+      "reason": "stale_gap: release=2026-05-20 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Claude Opus 4.7 Fast",
+      "reason": "stale_gap: release=2026-04-16 created=2026-06-11",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Mano-P 72B",
+      "reason": "stale_gap: release=2026-06-01 created=2026-06-12",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Mano-P 4B (quantized)",
+      "reason": "stale_gap: release=2026-06-01 created=2026-06-12",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Grok-Imagine-Video-1.5-Preview",
+      "reason": "stale_gap: release=2026-06-01 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Qwen-VLA",
+      "reason": "stale_gap: release=2026-06-01 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Project Eden (Preview)",
+      "reason": "stale_gap: release=2026-06-03 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Mellum2",
+      "reason": "stale_gap: release=2026-06-03 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Holo3.1 系列",
+      "reason": "stale_gap: release=2026-06-03 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Ideogram 4.0",
+      "reason": "stale_gap: release=2026-06-04 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Reve 2.0",
+      "reason": "stale_gap: release=2026-06-04 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "GPT-Rosalind (升级版)",
+      "reason": "stale_gap: release=2026-06-05 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Nex-N2-Pro",
+      "reason": "stale_gap: release=2026-06-05 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Bernini",
+      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Higgs Audio v3",
+      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Magenta RealTime 2",
+      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Nemotron 3.5",
+      "reason": "stale_gap: release=2026-06-06 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "dots.tts",
+      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Riverflow 2.5",
+      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "MisoTTS 8B",
+      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "BLS-Mini-Code-1.0",
+      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Harness-1",
+      "reason": "stale_gap: release=2026-06-07 created=2026-06-16",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "M3",
+      "reason": "stale_gap: release=2026-06-01 created=2026-06-19",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Spark",
+      "reason": "stale_gap: release=2026-06-12 created=2026-06-20",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Vera CPU (first-generation)",
+      "reason": "stale_gap: release=2026-06-01 created=2026-06-21",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
+    },
+    {
+      "name": "Mythos (unreleased public version, but newly designated as 'Frontier Model' under US executive order)",
+      "reason": "stale_gap: release=2026-06-02 created=2026-06-21",
+      "matched_with": "",
+      "removed_at": "2026-08-21 00:37"
     }
   ],
-  "last_updated": "2026-08-20 00:34:46"
+  "last_updated": "2026-08-21 00:37:13"
 }
