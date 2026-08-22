@@ -6901,13 +6901,30 @@
       "release_date": "2026-08-14",
       "created_date": "2026-08-15",
       "data_source": ""
+    },
+    {
+      "name": "DeepSeek-V4-Flash-Vision-Exp",
+      "connected": "",
+      "workflow_progress": "",
+      "company": "DeepSeek",
+      "domestic": "国内",
+      "open_source": "闭源",
+      "size": "",
+      "type": "多模态",
+      "reasoning": "thinking",
+      "task_type": "通用对话",
+      "website": "https://llm-stats.com/models/deepseek-v4-flash-vision-exp",
+      "note": "1048k上下文；低成本；Unknown",
+      "release_date": "2026-08-21",
+      "created_date": "2026-08-22",
+      "data_source": ""
     }
   ],
   "meta": {
-    "total": 406,
+    "total": 407,
     "recycled": 14,
     "stale_filtered": 44,
     "dedup_filtered": 43,
-    "generated_at": "2026-08-21 00:37:16"
+    "generated_at": "2026-08-22 00:34:50"
   }
 }
