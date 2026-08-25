@@ -217,8 +217,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.435,
     "output_price": 0.87,
-    "throughput": 32.17009752941389,
-    "latency": 3860.5499999999993,
+    "throughput": 31.39108439901075,
+    "latency": 4611.4999999999945,
     "aime_2025_score": null,
     "hle_score": 0.6,
     "gpqa_score": null,
@@ -263,7 +263,7 @@
     "param_count": 1600000000000,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 21.721802588469746
+      "chat-arena": 22.336999474524575
     },
     "license_id": "mit"
   },
@@ -285,8 +285,8 @@
     "knowledge_cutoff": "2026-03-31",
     "input_price": 0.75,
     "output_price": 3.75,
-    "throughput": 25.082165424826666,
-    "latency": 4010.5999999999985,
+    "throughput": 25.688396782580917,
+    "latency": 4310.149999999999,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -331,7 +331,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 24.289146932000154
+      "chat-arena": 24.651118110803978
     },
     "license_id": "proprietary"
   },
@@ -399,7 +399,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 9.67582500832574
+      "chat-arena": 9.497047287155446
     },
     "license_id": "proprietary"
   },
@@ -931,7 +931,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 18.698030721890376
+      "chat-arena": 20.69321554184642
     },
     "license_id": "proprietary"
   },
@@ -1283,8 +1283,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.09,
     "output_price": 0.18,
-    "throughput": 19.92546465430154,
-    "latency": 4918.45,
+    "throughput": 19.783918235699147,
+    "latency": 5152.649999999996,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -1329,7 +1329,7 @@
     "param_count": 304000000000,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 23.492365006875826,
+      "chat-arena": 23.176882483867747,
       "coding-arena": 24.06860791309794
     },
     "license_id": "mit"
@@ -1418,8 +1418,8 @@
     "knowledge_cutoff": null,
     "input_price": 5,
     "output_price": 25,
-    "throughput": 2.6266817154600113,
-    "latency": 8180.4,
+    "throughput": 2.6483164543843034,
+    "latency": 8134.749999999999,
     "aime_2025_score": null,
     "hle_score": 0.647,
     "gpqa_score": null,
@@ -1464,7 +1464,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 24.479179997939436,
+      "chat-arena": 24.333018688309366,
       "coding-arena": 26.678541170513
     },
     "license_id": "proprietary"
@@ -1487,8 +1487,8 @@
     "knowledge_cutoff": "2026-03-31",
     "input_price": 1.5,
     "output_price": 7.5,
-    "throughput": 36.1722497542391,
-    "latency": 9150.449999999992,
+    "throughput": 33.37336141748918,
+    "latency": null,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -1602,7 +1602,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 19.431353616865017,
+      "chat-arena": 20.178586088845844,
       "coding-arena": 5.942108293638552
     },
     "license_id": "proprietary"
@@ -1757,8 +1757,8 @@
     "knowledge_cutoff": null,
     "input_price": 3,
     "output_price": 15,
-    "throughput": 7.034758689476144,
-    "latency": 14679.649999999998,
+    "throughput": 4.9572559022634115,
+    "latency": 14482.949999999999,
     "aime_2025_score": null,
     "hle_score": 0.56,
     "gpqa_score": 0.935,
@@ -1803,7 +1803,7 @@
     "param_count": 2800000000000,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 24.423352358593718,
+      "chat-arena": 24.39179131177347,
       "coding-arena": 18.15845141194032
     },
     "license_id": "kimi_k3"
@@ -1895,8 +1895,8 @@
     "knowledge_cutoff": "2026-02-16",
     "input_price": 5,
     "output_price": 30,
-    "throughput": 15.146041722993667,
-    "latency": 18129.149999999983,
+    "throughput": 11.578913417329721,
+    "latency": 15238.999999999998,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.946,
@@ -1941,7 +1941,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 24.360558252999994,
+      "chat-arena": 24.424638620958113,
       "coding-arena": 21.34407161647166
     },
     "license_id": "proprietary"
@@ -1964,8 +1964,8 @@
     "knowledge_cutoff": "2026-02-16",
     "input_price": 2,
     "output_price": 12,
-    "throughput": 18.84548629681641,
-    "latency": 2243,
+    "throughput": 19.211218702527812,
+    "latency": 2568.999999999999,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.929,
@@ -2033,8 +2033,8 @@
     "knowledge_cutoff": "2026-02-16",
     "input_price": 0.2,
     "output_price": 1.2,
-    "throughput": 152.94344785210535,
-    "latency": 4088,
+    "throughput": 65.32941683029519,
+    "latency": 4066.4,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": 0.923,
@@ -2079,7 +2079,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 23.14065818528119,
+      "chat-arena": 23.654824209792526,
       "coding-arena": 11.658601267582625
     },
     "license_id": "proprietary"
@@ -2303,8 +2303,8 @@
     "knowledge_cutoff": null,
     "input_price": 2,
     "output_price": 10,
-    "throughput": 2.6607404849003142,
-    "latency": 29945.599999999988,
+    "throughput": 4.106758623453517,
+    "latency": 29024.299999999996,
     "aime_2025_score": null,
     "hle_score": 0.574,
     "gpqa_score": null,
@@ -2504,8 +2504,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.95,
     "output_price": 3,
-    "throughput": 19.61261640995289,
-    "latency": 5763.5499999999965,
+    "throughput": 17.718280328822402,
+    "latency": 6201.249999999997,
     "aime_2025_score": null,
     "hle_score": 0.547,
     "gpqa_score": 0.912,
@@ -2550,7 +2550,7 @@
     "param_count": 753000000000,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 24.608634372823854,
+      "chat-arena": 24.79204714564653,
       "coding-arena": 15.909931054318804
     },
     "license_id": "mit"
@@ -2708,8 +2708,8 @@
     "knowledge_cutoff": null,
     "input_price": 10,
     "output_price": 50,
-    "throughput": 3.5548469088878556,
-    "latency": 12046.9,
+    "throughput": 3.4327755102086837,
+    "latency": 12010.599999999999,
     "aime_2025_score": null,
     "hle_score": 0.645,
     "gpqa_score": null,
@@ -2754,7 +2754,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 24.60036676049693,
+      "chat-arena": 24.613532846663972,
       "coding-arena": 20.026491125584908
     },
     "license_id": "proprietary"
@@ -3293,7 +3293,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 24.60565180023188,
+      "chat-arena": 24.504291679317063,
       "coding-arena": 16.88606163701752
     },
     "license_id": "proprietary"
@@ -3491,7 +3491,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 24.63747020566358,
+      "chat-arena": 24.548405529825693,
       "coding-arena": 17.078301736545285
     }
   },
@@ -3580,8 +3580,8 @@
     "knowledge_cutoff": null,
     "input_price": 1.25,
     "output_price": 2.5,
-    "throughput": null,
-    "latency": null,
+    "throughput": 58.676397112466866,
+    "latency": 1306.8,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -3625,7 +3625,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 21.455058826107166,
+      "chat-arena": 21.400198135619483,
       "coding-arena": 9.573797108291599
     }
   },
@@ -3826,7 +3826,7 @@
     "param_count": 1023244718976,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 24.57440190475005,
+      "chat-arena": 24.56983945818092,
       "coding-arena": 10.403588475125142
     }
   },
@@ -3848,7 +3848,7 @@
     "knowledge_cutoff": "2025-12-01",
     "input_price": 5,
     "output_price": 30,
-    "throughput": 15.061718177579445,
+    "throughput": 15.784260927682679,
     "latency": 1088.2,
     "aime_2025_score": null,
     "hle_score": 0.522,
@@ -4315,7 +4315,7 @@
     "knowledge_cutoff": null,
     "input_price": 0.75,
     "output_price": 3.5,
-    "throughput": 33.23095669966616,
+    "throughput": 32.539198146456854,
     "latency": 4516.749999999999,
     "aime_2025_score": null,
     "hle_score": 0.364,
@@ -5148,7 +5148,7 @@
     "param_count": null,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 23.825091580669444,
+      "chat-arena": 23.68337156186737,
       "coding-arena": 12.440833366142357
     }
   },
@@ -5304,8 +5304,8 @@
     "knowledge_cutoff": "2025-08-31",
     "input_price": 0.75,
     "output_price": 4.5,
-    "throughput": null,
-    "latency": null,
+    "throughput": 91.9963783946938,
+    "latency": 3108.75,
     "aime_2025_score": null,
     "hle_score": 0.282,
     "gpqa_score": 0.88,
@@ -5349,7 +5349,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 23.42173392219114,
+      "chat-arena": 23.332977375118162,
       "coding-arena": 14.614579978595659
     }
   },
@@ -5901,8 +5901,8 @@
     "knowledge_cutoff": null,
     "input_price": 2.5,
     "output_price": 15,
-    "throughput": null,
-    "latency": null,
+    "throughput": 14.177465750414916,
+    "latency": 4152,
     "aime_2025_score": null,
     "hle_score": 0.398,
     "gpqa_score": 0.928,
@@ -6671,7 +6671,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 25.459732992609453,
+      "chat-arena": 25.23838659209432,
       "coding-arena": 21.644679435624635
     }
   },
@@ -6693,8 +6693,8 @@
     "knowledge_cutoff": null,
     "input_price": 3,
     "output_price": 15,
-    "throughput": 1.1994468126875573,
-    "latency": 2267.6,
+    "throughput": 1.2488837764101206,
+    "latency": 2259.8,
     "aime_2025_score": null,
     "hle_score": 0.49,
     "gpqa_score": 0.899,
@@ -6872,7 +6872,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 20.426744702479997,
+      "chat-arena": 20.537185531820178,
       "coding-arena": 8.725576337764117
     }
   },
@@ -6958,8 +6958,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.3,
     "output_price": 1.2,
-    "throughput": null,
-    "latency": null,
+    "throughput": 38.5897451111676,
+    "latency": 2386.4,
     "aime_2025_score": null,
     "hle_score": null,
     "gpqa_score": null,
@@ -7201,7 +7201,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 25.10801596629909,
+      "chat-arena": 25.078077275664803,
       "coding-arena": 21.272588698493955
     }
   },
@@ -7223,7 +7223,7 @@
     "knowledge_cutoff": null,
     "input_price": 1.75,
     "output_price": 14,
-    "throughput": null,
+    "throughput": 16.016664654225707,
     "latency": null,
     "aime_2025_score": null,
     "hle_score": null,
@@ -7357,8 +7357,8 @@
     "knowledge_cutoff": null,
     "input_price": 0.1,
     "output_price": 0.4,
-    "throughput": null,
-    "latency": null,
+    "throughput": 55.65605696171868,
+    "latency": 1644.7499999999995,
     "aime_2025_score": 0.973,
     "hle_score": null,
     "gpqa_score": null,
@@ -7402,7 +7402,7 @@
     "param_count": 196000000000,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 22.883452654478607,
+      "chat-arena": 22.687390207784706,
       "coding-arena": 7.618037306571099
     }
   },
@@ -8066,7 +8066,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 22.1595079206186,
+      "chat-arena": 22.30791577601373,
       "coding-arena": 16.551827072240204
     }
   },
@@ -10287,7 +10287,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 24.388821464411336,
+      "chat-arena": 24.596034737878092,
       "coding-arena": 12.643877822011879
     }
   },
@@ -10555,7 +10555,7 @@
     "param_count": null,
     "is_open_source": false,
     "arena_scores": {
-      "chat-arena": 22.11301134858306,
+      "chat-arena": 22.15160605571794,
       "coding-arena": 9.698719645058535
     }
   },
@@ -11225,7 +11225,7 @@
     "param_count": 4000000000,
     "is_open_source": true,
     "arena_scores": {
-      "chat-arena": 18.840574077918937,
+      "chat-arena": 19.229351549403173,
       "coding-arena": 6.828550716942118
     }
   },
